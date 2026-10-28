@@ -1,0 +1,2 @@
+{"id": "q-example-1", "question": "<a hard question about The Forest>", "type": "hard", "expected_answer": "<the expected answer>", "evidence": [{"doc_id": "forest/<Page_One>.md", "quote": "<exact text copied from that file>"}, {"doc_id": "forest/<Page_Two>.md", "quote": "<exact text copied from that file>"}], "doc_ids": null, "notes": "<why this question is hard>"}
+{"id": "q-example-2", "question": "<a question the corpus cannot answer>", "type": "unanswerable", "expected_answer": null, "evidence": [], "doc_ids": null, "notes": "<why the corpus cannot answer it>"}

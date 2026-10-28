@@ -33,19 +33,19 @@
 - **Why:** We want to avoid giving a wrong answer silently: that would defeat the elementary purpose of this RAG implementation.
 
 ### 6. Response schema and citation check
-- **Options considered:**
-- **Picked:**
-- **Why:**
+- **Options considered:** Free text, JSON citing chunk ids, JSON citing excerpt numbers
+- **Picked:** {answerable, answer, citations: [int]}
+- **Why:** Excerpt numbers are shorter than the generated chunk ids, so we can limit the possibility that the model mis-copies. Invalid responses aren't retried.
 
 ### 7. What a reference points to
-- **Options considered:**
-- **Picked:**
-- **Why:**
+- **Options considered:** File, chunk, line number
+- **Picked:** chunk, correlated with the document, line, and source URL.
+- **Why:** By utilizing the chunk, we can see what the LLM was provided and use that to rectify against the answer. We also use the context around the chunk to further verify the output.
 
 ### 8. What is recomputed when a parameter changes
-- **Options considered:**
-- **Picked:**
-- **Why:**
+- **Options considered:** rebuild the entire index scheme on every change or keep a collection per chunk setting and indexing there
+- **Picked:** Index a document completely upon its initial inclusion, then create a new collection upon changes to chunk size.
+- **Why:** If every change required the whole indexing schema to be re-embedded, it would be very costly to iterate.
 
 ## Known Failures
 
