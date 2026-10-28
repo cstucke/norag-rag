@@ -1,12 +1,18 @@
 import argparse
 import hashlib
 import json
+import logging
 import re
 from functools import lru_cache
 from pathlib import Path
 
 import chromadb
+import openai
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+from openai import OpenAI
+
+from app.config import (CHROMA_DIR, CORPUS_DIR, DATA_DIR, GEMINI_MODEL, GOOGLE_API_KEY, INDEX_STATE_FILE, load_settings)
+from app.schemas import AskConfig, AskResponse, ErrorInfo, LLMAnswer, Reference
 
 from app.config import CHROMA_DIR, CORPUS_DIR, DATA_DIR, INDEX_STATE_FILE, load_settings
 
@@ -231,6 +237,128 @@ def ensure_indexed(doc_ids, settings):
     save_index_state(state)
     return count
 
+# ---------------------------------------------------------------------------
+# Retrieval and answering
+# ---------------------------------------------------------------------------
+
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+PROMPT = """You answer questions using ONLY the numbered excerpts below, taken from The Forest wiki.
+If the excerpts do not contain the answer, set "answerable" to false and explain briefly in "answer".
+Do not use outside knowledge.
+
+Return ONLY a JSON object with exactly these keys:
+{{"answerable": true|false, "answer": "<string>", "citations": [<excerpt numbers you used>]}}
+
+Excerpts:
+{excerpts}
+
+Question: {question}"""
+
+logger = logging.getLogger(__name__)
+
+
+def retrieve(question, doc_ids, settings):
+    """Top-k chunks of the selected docs, best first: [{id, text, metadata, distance}].
+    The evaluation harness calls this same function."""
+    ensure_indexed(doc_ids, settings)
+    where = {"doc_id": doc_ids[0]} if len(doc_ids) == 1 else {"doc_id": {"$in": doc_ids}}
+    result = get_collection(collection_name(settings)).query(
+        query_texts=[question], n_results=settings["top_k"], where=where)
+    return [{"id": chunk_id, "text": text, "metadata": metadata, "distance": distance}
+            for chunk_id, text, metadata, distance in zip(
+                result["ids"][0], result["documents"][0], result["metadatas"][0], result["distances"][0])]
+
+
+def build_prompt(question, chunks):
+    excerpts = "\n\n".join(
+        f"[{rank}] (source: {chunk['metadata']['title']}, "
+        f"lines {chunk['metadata']['line_start']}-{chunk['metadata']['line_end']})\n{chunk['text']}"
+        for rank, chunk in enumerate(chunks, 1))
+    return PROMPT.format(excerpts=excerpts, question=question)
+
+
+def call_llm(prompt):
+    """Gemini's raw reply text. API failures become the matching catalogue error."""
+    if not GOOGLE_API_KEY:
+        raise RagError("llm_not_configured")
+    # max_retries=0: otherwise the SDK retries on its own (D15: no retry),
+    # and the 60 s timeout would no longer be the limit
+    client = OpenAI(api_key=GOOGLE_API_KEY, base_url=GEMINI_BASE_URL, timeout=60, max_retries=0)
+    try:
+        response = client.chat.completions.create(
+            model=GEMINI_MODEL, messages=[{"role": "user", "content": prompt}],
+            temperature=0, response_format={"type": "json_object"})
+    except openai.APITimeoutError:
+        raise RagError("llm_timeout") from None
+    except openai.RateLimitError:
+        raise RagError("llm_rate_limited") from None
+    # Gemini answers a bad API key with 400 and an unknown model id with 404
+    except (openai.BadRequestError, openai.AuthenticationError,
+            openai.PermissionDeniedError, openai.NotFoundError):
+        raise RagError("llm_auth_or_model") from None
+    except openai.OpenAIError:
+        raise RagError("llm_error") from None
+    return response.choices[0].message.content or ""
+
+
+def strip_code_fence(text):
+    match = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", text.strip(), re.DOTALL)
+    return match.group(1) if match else text
+
+
+def parse_llm_output(raw, k):
+    """[DECISION D12] The validated LLMAnswer, with duplicate citations removed.
+    [DECISION D15] Any violation is invalid_llm_response: raw text logged, no retry, no repair."""
+    try:
+        llm_answer = LLMAnswer.model_validate_json(strip_code_fence(raw))
+        llm_answer.citations = list(dict.fromkeys(llm_answer.citations))
+        if any(not 1 <= citation <= k for citation in llm_answer.citations):
+            raise ValueError(f"citation outside 1..{k}: {llm_answer.citations}")
+        if llm_answer.answerable and (not llm_answer.answer.strip() or not llm_answer.citations):
+            raise ValueError("answerable=true without an answer or without citations")
+    except ValueError as reason:
+        logger.warning("invalid_llm_response (%s). Raw LLM output: %r", reason, raw)
+        raise RagError("invalid_llm_response") from None
+    return llm_answer
+
+
+def to_reference(rank, chunk):
+    meta = chunk["metadata"]
+    return Reference(ref=rank, chunk_id=chunk["id"], doc_id=meta["doc_id"], title=meta["title"],
+                     source_url=meta["source_url"], line_start=meta["line_start"],
+                     line_end=meta["line_end"], distance=chunk["distance"])
+
+
+def ask(question, doc_ids, settings):
+    """The whole /api/ask logic, also used by the evaluation harness (--with-llm).
+    Request errors are raised as RagError. Everything after retrieval is reported
+    in the returned AskResponse."""
+    if not question.strip():
+        raise RagError("empty_question")
+    if not doc_ids:
+        raise RagError("no_documents_selected")
+    config = AskConfig(chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
+                       top_k=settings["top_k"], model=GEMINI_MODEL)
+    chunks = retrieve(question, doc_ids, settings)
+    retrieved = [to_reference(rank, chunk) for rank, chunk in enumerate(chunks, 1)]
+    if not chunks:
+        # [DECISION D14] Nothing retrieved: the LLM is not called
+        return AskResponse(status="not_found", answer="Nothing was retrieved from the selected documents.",
+                           config=config)
+    try:
+        llm_answer = parse_llm_output(call_llm(build_prompt(question, chunks)), len(chunks))
+    except RagError as error:
+        return AskResponse(status="error", error=ErrorInfo(code=error.code, message=error.message),
+                           retrieved=retrieved, config=config)
+    references = [retrieved[citation - 1] for citation in llm_answer.citations]
+    if not llm_answer.answerable:
+        # [DECISION D14] The excerpts don't contain the answer
+        return AskResponse(status="not_found",
+                           answer=f"The selected documents don't contain an answer. {llm_answer.answer}".strip(),
+                           references=references, retrieved=retrieved, config=config)
+    return AskResponse(status="answered", answer=llm_answer.answer, references=references,
+                       retrieved=retrieved, config=config)
 
 # ---------------------------------------------------------------------------
 # CLI: python -m app.rag --index-all

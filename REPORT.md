@@ -8,17 +8,17 @@
 ## Decision Log
 
 ### 1. Corpus
-- **Options considered:**
-- **Picked:**
-- **Why:**
+- **Options considered:** Hobbies, course materials, and other 'niche' references.
+- **Picked:** The Forest online wiki, one of my favorite video games of all time.
+- **Why:** From personal experience, I know that LLMs are unreliable when trying to find accurate information on The Forest. The LLMs that we'll make calls to are unlikely to have been trained with this data in mind, so it's good to test the RAG capabilities against the wiki itself.
 
 ### 2. Stack (frontend, backend, embedding model, vector database, LLM)
-- **Options considered:**
-- **Picked:**
-- **Why:**
+- **Options considered:** Frontend: React/Next with Zod or plain HTML + JS, Backend: FastAPI, Flask, or Node.js, Vector DB: ChromaDB (never personally used one before, so went with your recommendation), LLM: Gemini
+- **Picked:** Plain HTML + JS, FastAPI, MiniLM, ChromaDB, Gemini 3.5 Flash
+- **Why:** Among the aforementioned technologies, I have the most experience with the selected ones. Furthermore, the LLM / embedding model choices are limited due to the resources at my disposal.
 
 ### 3. Question set
-- **Options considered:**
+- **Options considered:** 
 - **Picked:**
 - **Why:**
 
@@ -48,7 +48,7 @@
 - **Why:**
 
 ## Known Failures
-<!-- What breaks today. For each: a question that shows it, and what you observed. Starting point for V2. -->
+
 
 ### <Failure>
 - **Question:**
