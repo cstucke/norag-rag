@@ -1,0 +1,40 @@
+# Soda Crate
+Source: https://theforest.fandom.com/wiki/Soda_Crate
+Categories: Item
+Revision: 74202
+
+**Infobox: Soda Crate**
+**Description**
+- **Also known as:** Soda Box
+- **Added in:** v0.20
+- **Item type:** Crate
+- **Obtained through:** Not obtainable
+- **Equipable:** No
+- **Storage:** Cannot be stored
+**Statistics**
+- **Other Effects:** Contains Soda's
+- **Max. Stack:** 0
+
+**Soda Crates** are game objects that contain 4-5 soda's.
+
+## Gameplay
+
+**Soda Crates** can be found throughout the world. The player will be required to hit the crate with a weapon to open them. Enemies can knock these type of crates causing them to break open. These crates will respawn when you save and exit. They also respawn in caves when you exit and enter the cave again.
+
+## Gallery
+
+## Update history
+
+| Version | Changes |
+| --- | --- |
+| v0.67 | Soda cans should no longer fly out as high when boxes of them are opened |
+| v0.62 | Removed unbreakable boxes – now only breakable box will spawn |
+| v0.54 | Fixed some crates in caves not breakable or breaking at the wrong scale/wrong position when hit |
+| v0.51 | Flintlock shots now destroy breakable wood object (such as tables and crates) and stalagmites |
+| v0.38 | Removed loose sodas and cash pickups from caves, instead these are found on bodies, under bodies, or in suitcases/crates |
+| v0.25 | (multiplayer) Breakable crates in overworld are now synced between players |
+| v0.24 | (Audio) Added break SFX for wooden objects, cardboard boxes, laptops and effigies (Audio) Added slide SFX for wooden crates, small cages, tables, rocks, laptops and cardboard boxes |
+| v0.22 | (audio) New events added for breaking laptops,cardboard boxes and effigies (audio) Impact sfx added to cages crates and wooden table Broken crate bits no longer impede player movement |
+| v0.21 | All mutants can now interact with swinging bodies, dynamic crates and other objects |
+| v0.20 | **Soda Crates added to the game** New items added: Old breakable soda crate! Old breakable empty crate, old breakable dynamite crate |
+| v0.06b | Fixed some dynamic objects flying up in air on spawning (boxes, suitcases) |
