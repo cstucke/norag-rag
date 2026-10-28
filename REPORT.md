@@ -51,5 +51,11 @@
 
 
 ### <Failure>
-- **Question:**
-- **Observed:**
+- **Question:** "How much health does a starving cannibal have on normal difficulty?"
+- **Observed:** status not_found. The top 5 retrieved were chunks of the correct page, but the chunk with the correct information was not retrieved.
+
+- **Question:** "In which update was the katana added?", "Who is Matthew Cross?", "Has Sons of the Forest been released?"
+- **Observed:** 3 of 5 probe calls returned llm_error. Retrieval worked for all three, but the response returned an HTTP 503, with a message that "This model is currently experiencing high demand". This failure doesn't demonstrate anything about the integrity / validity of the project, but it does show that dependencies beyond the project scope can have a massive impact on the project's outcomes.
+
+- **Question:** "Has Sons of the Forest been released?"
+- **Observed:** The first two retrieved articles are the wiki landing page. The correct page (which actually references Sons of the Forest) only appears at rank 3.
