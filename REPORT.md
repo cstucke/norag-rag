@@ -18,19 +18,19 @@
 - **Why:** Among the aforementioned technologies, I have the most experience with the selected ones. Furthermore, the LLM / embedding model choices are limited due to the resources at my disposal.
 
 ### 3. Question set
-- **Options considered:** 
-- **Picked:**
-- **Why:**
+- **Options considered:** A variety of questions, the exact structure and reporting syntax wasn't given.
+- **Picked:** This set of 8 questions.
+- **Why:** I choose a series of questions that give insight to the places where our implementation decision really mattered (rather than where two different choices could have a convergent implementation / result).
 
 ### 4. What "the right passage was retrieved" means
-- **Options considered:**
-- **Picked:**
-- **Why:**
+- **Options considered:** Correct document retrieval, exact chunk id, or overlap with the evidence text.
+- **Picked:** All evidence text is direct quotes, with the location saved as a character span in the file. The retrieved chunk is validated if it originates from the same file and matches with the majority of the span (at least 50%).
+- **Why:** We can avoid the failures that come with exact chunk ids while allowing for greater accuracy than simple document retrieval validity.
 
 ### 5. When nothing relevant is retrieved
-- **Options considered:**
-- **Picked:**
-- **Why:**
+- **Options considered:** Distance from correct answer or letting the LLM decide
+- **Picked:** No threshold for retrieval. If no chunks are returned, the app will simply show "nothing retrieved".
+- **Why:** We want to avoid giving a wrong answer silently: that would defeat the elementary purpose of this RAG implementation.
 
 ### 6. Response schema and citation check
 - **Options considered:**

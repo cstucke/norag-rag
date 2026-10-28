@@ -360,6 +360,23 @@ def ask(question, doc_ids, settings):
     return AskResponse(status="answered", answer=llm_answer.answer, references=references,
                        retrieved=retrieved, config=config)
 
+def get_chunk(chunk_id):
+    """A stored chunk by its id, {doc_id}#cs{size}-ov{overlap}#{index}, which names
+    both its document and its collection."""
+    match = re.fullmatch(r"(.+)#cs(\d+)-ov(\d+)#\d+", chunk_id)
+    if not match:
+        raise RagError("chunk_not_found")
+    doc_id, size, overlap = match.groups()
+    doc_path(doc_id)  # doc_not_found if the document no longer exists
+    result = get_collection(f"rag_cs{size}_ov{overlap}").get(ids=[chunk_id])
+    if not result["ids"]:
+        raise RagError("chunk_not_found")
+    meta = result["metadatas"][0]
+    return {"id": chunk_id, "text": result["documents"][0], "doc_id": meta["doc_id"],
+            "title": meta["title"], "source_url": meta["source_url"],
+            "line_start": meta["line_start"], "line_end": meta["line_end"],
+            "char_start": meta["char_start"], "char_end": meta["char_end"]}
+
 # ---------------------------------------------------------------------------
 # CLI: python -m app.rag --index-all
 # ---------------------------------------------------------------------------

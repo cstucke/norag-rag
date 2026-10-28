@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG V1 — The Forest wiki</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>RAG V1 — The Forest wiki</h1>
+  <main>
+    <section id="documents-panel">
+      <h2>Documents</h2>
+      <p><span id="doc-count">0</span> documents, <span id="selected-count">0</span> selected</p>
+      <input id="doc-filter" type="search" placeholder="Filter documents">
+      <button id="select-all">Select all (filtered)</button>
+      <button id="clear-selection">Clear selection</button>
+      <ul id="doc-list"></ul>
+      <label>Upload <input id="upload" type="file" accept=".md,.txt"></label>
+      <p id="doc-error" class="error"></p>
+    </section>
+
+    <section id="settings-panel">
+      <h2>Settings</h2>
+      <label>Chunk size <input id="chunk-size" type="number"></label>
+      <label>Overlap <input id="chunk-overlap" type="number"></label>
+      <label>Top-k <input id="top-k" type="number"></label>
+      <button id="save-settings">Save</button>
+      <p id="settings-error" class="error"></p>
+      <p class="small">Changing chunk size or overlap re-indexes the selected documents on the next question (may be slow).</p>
+    </section>
+
+    <section id="ask-panel">
+      <h2>Ask</h2>
+      <textarea id="question" rows="3"></textarea>
+      <button id="ask">Ask</button>
+      <span id="working" hidden>Working…</span>
+      <div id="result" hidden>
+        <p id="status"></p>
+        <p id="answer"></p>
+        <p id="config" class="small"></p>
+        <h3>References</h3>
+        <ul id="references"></ul>
+        <details>
+          <summary>Retrieved passages (top-k)</summary>
+          <ul id="retrieved"></ul>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="chunk-dialog">
+    <h3 id="chunk-title"></h3>
+    <p id="chunk-meta" class="small"></p>
+    <pre id="chunk-text"></pre>
+    <button id="chunk-close">Close</button>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+body { font-family: system-ui, sans-serif; margin: 1rem; }
+main { display: grid; grid-template-columns: minmax(18rem, 1fr) 2fr; gap: 0 2rem; }
+#documents-panel { grid-row: span 2; }
+#doc-list { list-style: none; padding: 0; max-height: 60vh; overflow-y: auto; border: 1px solid #ccc; }
+#doc-list li { display: flex; justify-content: space-between; padding: 0.1rem 0.3rem; }
+textarea { width: 100%; box-sizing: border-box; }
+#status { font-weight: bold; }
+.error { color: #b00020; }
+.small { font-size: 0.85rem; color: #555; }
+button.link { background: none; border: none; padding: 0; color: #0645ad; cursor: pointer; font: inherit; text-align: left; }
+#chunk-dialog { max-width: 50rem; }
+#chunk-text { white-space: pre-wrap; max-height: 60vh; overflow-y: auto; }
