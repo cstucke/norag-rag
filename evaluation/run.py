@@ -1,6 +1,6 @@
-"""Retrieval evaluation harness (RAG_V1_SPEC.md, Step 9).
+"""Retrieval evaluation harness (RAG_V1_SPEC.md Step 9, RAG_V2_SPEC.md Steps 3-4).
 
-    python -m evaluation.run --questions evaluation/questions.jsonl \
+    python -m evaluation.run --questions evaluation/questions/kestrel.jsonl --corpus kestrel \
         [--chunk-size N --chunk-overlap N --top-k N] [--with-llm]
 
 Without --with-llm it makes no LLM calls, so the numbers are deterministic.
@@ -14,16 +14,38 @@ from pathlib import Path
 
 from app import rag
 from app.config import CORPUS_DIR, GEMINI_MODEL, load_settings, validate_settings
+from app.words import corpus_doc_ids
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
-MANIFEST_FILE = CORPUS_DIR / "forest" / "MANIFEST.json"
 # [DECISION D17] A chunk is a hit if it covers at least this share of the evidence span
 MIN_COVERAGE = 0.5
+# [DECISION D23] Metrics at k read the first k chunks of one top-10 ranking
+EVAL_KS = (1, 3, 5, 10)
+COLUMNS = [f"{name}@{k}" for name in ("hit", "all") for k in EVAL_KS] + ["mrr"]
+REQUIRED_FIELDS = ("id", "question", "type", "answerable", "evidence", "expected_answer")
 
 
-def load_questions(path):
+def load_questions(path, corpus):
+    """[DECISION D22] Kestrel format. Evidence names a bare file in `source`, so the
+    doc_id is <corpus>/<source>. The file itself is never rewritten."""
+    path = Path(path)
+    questions = []
     with open(path, "r", encoding="utf-8") as f:
-        return [json.loads(line) for line in f if line.strip()]
+        for number, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            try:
+                question = json.loads(line)
+                for field in REQUIRED_FIELDS:
+                    question[field]
+                for evidence in question["evidence"]:
+                    evidence["quote"]
+                    evidence["doc_id"] = f"{corpus}/{evidence['source']}"
+            except (ValueError, KeyError, TypeError):
+                raise rag.RagError("invalid_question_set",
+                                   f"Invalid question set {path.stem}, line {number}.") from None
+            questions.append(question)
+    return questions
 
 
 def locate_evidence(questions):
@@ -32,35 +54,39 @@ def locate_evidence(questions):
     or appears more than once."""
     problems = []
     for question in questions:
-        answerable = question["type"] != "unanswerable"
+        answerable = question["answerable"]
         if answerable != bool(question["evidence"]):
-            problems.append(f"{question['id']}: type {question['type']!r} but "
+            problems.append(f"{question['id']}: answerable is {answerable} but "
                             f"{'no' if answerable else 'some'} evidence")
         for evidence in question["evidence"]:
             quote = evidence["quote"]
             try:
                 text = rag.read_document(rag.doc_path(evidence["doc_id"]))
             except rag.RagError:
-                problems.append(f"{question['id']}: document not found: {evidence['doc_id']} (quote: {quote!r})")
+                problems.append(f"{question['id']}: {quote!r} (document not found: {evidence['doc_id']})")
                 continue
             count = text.count(quote)
             if count != 1:
-                problems.append(f"{question['id']}: quote found {count} times in {evidence['doc_id']}: {quote!r}")
+                found = "not found" if count == 0 else f"found {count} times"
+                problems.append(f"{question['id']}: {quote!r} ({found})")
                 continue
             start = text.find(quote)
             evidence["span"] = (start, start + len(quote))
     if problems:
-        sys.exit("Evidence check failed:\n" + "\n".join(f"  - {problem}" for problem in problems))
+        raise rag.RagError("evidence_check_failed", "Evidence check failed: " + "; ".join(problems))
 
 
-def forest_hashes():
-    return {f"forest/{path.name}": rag.file_sha256(path)
-            for path in sorted((CORPUS_DIR / "forest").glob("*.md"))}
+def corpus_hashes(doc_ids):
+    return {doc_id: rag.file_sha256(rag.doc_path(doc_id)) for doc_id in doc_ids}
 
 
-def corpus_check(hashes):
-    """Compare corpus/forest/ with MANIFEST.json; any difference makes runs incomparable."""
-    with open(MANIFEST_FILE, "r", encoding="utf-8") as f:
+def corpus_check(corpus, hashes):
+    """Compare corpus/<corpus>/ with its MANIFEST.json, if it has one; any difference
+    makes runs incomparable. Returns None when there is no manifest."""
+    manifest_file = CORPUS_DIR / corpus / "MANIFEST.json"
+    if not manifest_file.exists():
+        return None
+    with open(manifest_file, "r", encoding="utf-8") as f:
         manifest = {entry["doc_id"]: entry["sha256"] for entry in json.load(f)["files"]}
     return {"added": sorted(hashes.keys() - manifest.keys()),
             "deleted": sorted(manifest.keys() - hashes.keys()),
@@ -69,7 +95,7 @@ def corpus_check(hashes):
 
 
 def evaluate(question, doc_ids, settings):
-    chunks = rag.retrieve(question["question"], doc_ids, settings)
+    chunks = rag.retrieve(question["question"], doc_ids, {**settings, "top_k": max(EVAL_KS)})
     retrieved = [{"rank": rank, "chunk_id": chunk["id"], "doc_id": chunk["metadata"]["doc_id"],
                   "char_start": chunk["metadata"]["char_start"], "char_end": chunk["metadata"]["char_end"]}
                  for rank, chunk in enumerate(chunks, 1)]
@@ -86,21 +112,103 @@ def evaluate(question, doc_ids, settings):
             "all_evidence_hit": bool(evidence) and all(item["hit_ranks"] for item in evidence)}
 
 
+def hit_at(result, k):
+    return any(rank <= k for item in result["evidence"] for rank in item["hit_ranks"])
+
+
+def all_at(result, k):
+    return all(any(rank <= k for rank in item["hit_ranks"]) for item in result["evidence"])
+
+
 def metrics(results):
-    """[DECISION D18] hit@k, all@k and MRR over answerable questions."""
-    n = len(results)
-    return {"n": n,
-            "hit_at_k": sum(result["first_hit_rank"] is not None for result in results) / n,
-            "all_at_k": sum(result["all_evidence_hit"] for result in results) / n,
-            "mrr": sum(1 / result["first_hit_rank"] for result in results if result["first_hit_rank"]) / n}
+    """[DECISION D18] [DECISION D23] hit@k, all@k and MRR over the answerable questions in
+    results. With no answerable question, n is 0 and every metric is None."""
+    answerable = [result for result in results if result["evidence"]]
+    n = len(answerable)
+    values = {"n": n, "unanswerable": len(results) - n}
+    for k in EVAL_KS:
+        values[f"hit@{k}"] = sum(hit_at(result, k) for result in answerable) / n if n else None
+    for k in EVAL_KS:
+        values[f"all@{k}"] = sum(all_at(result, k) for result in answerable) / n if n else None
+    values["mrr"] = (sum(1 / result["first_hit_rank"] for result in answerable if result["first_hit_rank"]) / n
+                     if n else None)
+    return values
+
+
+def run_eval(questions_path, corpus, settings, with_llm):
+    """One evaluation run, shared by the CLI and POST /api/eval. Returns (results, results_path)."""
+    questions_path = Path(questions_path)
+    doc_ids = corpus_doc_ids(corpus)
+    questions = load_questions(questions_path, corpus)
+    if not questions:
+        raise rag.RagError("empty_question_set")
+    locate_evidence(questions)
+
+    hashes = corpus_hashes(doc_ids)
+    check = corpus_check(corpus, hashes)
+    if check is None:
+        print(f"corpus/{corpus}/ has no MANIFEST.json: corpus check skipped.")
+    elif any(check.values()):
+        print(f"WARNING: corpus/{corpus}/ no longer matches MANIFEST.json ({len(check['added'])} added, "
+              f"{len(check['deleted'])} deleted, {len(check['changed'])} changed). "
+              "These numbers are not comparable with runs on the original snapshot.")
+    fingerprint = hashlib.sha256(
+        "\n".join(f"{doc_id}:{sha256}" for doc_id, sha256 in sorted(hashes.items())).encode()).hexdigest()
+
+    results = []
+    for question in questions:
+        result = evaluate(question, doc_ids, settings)
+        if with_llm:
+            response = rag.ask(question["question"], doc_ids, settings)
+            result.update(status=response.status, answer=response.answer,
+                          error=response.error.code if response.error else None)
+        results.append(result)
+
+    unanswerable = [result for result in results if not result["evidence"]]
+    summary = {"overall": metrics(results),
+               "by_type": {kind: metrics([result for result in results if result["type"] == kind])
+                           for kind in sorted({result["type"] for result in results})},
+               "unanswerable": {"n": len(unanswerable)}}
+    if with_llm and unanswerable:
+        summary["unanswerable"]["not_found_share"] = (
+            sum(result["status"] == "not_found" for result in unanswerable) / len(unanswerable))
+        summary["unanswerable"]["llm_errors"] = sum(result["status"] == "error" for result in unanswerable)
+
+    config = {**settings, "corpus": corpus, "questions_file": questions_path.name, "eval_ks": list(EVAL_KS),
+              "embedding_model": rag.EMBEDDING_MODEL, "llm_model": GEMINI_MODEL if with_llm else None}
+    name = f"{corpus}_cs{settings['chunk_size']}_ov{settings['chunk_overlap']}"
+    if with_llm:
+        config["top_k_answers"] = settings["top_k"]
+        name += f"_llm_k{settings['top_k']}"
+
+    RESULTS_DIR.mkdir(exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    out = RESULTS_DIR / f"{stamp}_{name}.json"
+    report = {"config": config,
+              "questions_sha256": hashlib.sha256(questions_path.read_bytes()).hexdigest(),
+              "corpus_fingerprint": fingerprint,
+              "corpus_check": "no manifest" if check is None else {"matches_manifest": not any(check.values()), **check},
+              "metrics": summary,
+              "questions": results}
+    out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return report, out
+
+
+def cell(value):
+    return "–" if value is None else f"{value:.3f}"
+
+
+def print_row(label, values):
+    print(f"{label:<18}{values['n']:>4}" + "".join(f"{cell(values[column]):>8}" for column in COLUMNS))
 
 
 def main():
     parser = argparse.ArgumentParser(description="Retrieval evaluation: hit@k, all@k, MRR.")
     parser.add_argument("--questions", required=True, type=Path)
+    parser.add_argument("--corpus", default="forest")
     parser.add_argument("--chunk-size", type=int)
     parser.add_argument("--chunk-overlap", type=int)
-    parser.add_argument("--top-k", type=int)
+    parser.add_argument("--top-k", type=int, help="top_k used for answers (--with-llm); metrics always use EVAL_KS")
     parser.add_argument("--with-llm", action="store_true",
                         help="also run the full /api/ask logic for every question (costs API calls)")
     args = parser.parse_args()
@@ -116,69 +224,23 @@ def main():
     except ValueError as error:
         parser.error(str(error))
 
-    questions = load_questions(args.questions)
-    if not questions:
-        sys.exit(f"No questions in {args.questions}")
-    locate_evidence(questions)
+    try:
+        report, out = run_eval(args.questions, args.corpus, settings, args.with_llm)
+    except rag.RagError as error:
+        sys.exit(error.message)
 
-    hashes = forest_hashes()
-    check = corpus_check(hashes)
-    if any(check.values()):
-        print(f"WARNING: corpus/forest/ no longer matches MANIFEST.json ({len(check['added'])} added, "
-              f"{len(check['deleted'])} deleted, {len(check['changed'])} changed). "
-              "These numbers are not comparable with runs on the original snapshot.")
-    fingerprint = hashlib.sha256(
-        "\n".join(f"{doc_id}:{sha256}" for doc_id, sha256 in sorted(hashes.items())).encode()).hexdigest()
-
-    results = []
-    for question in questions:
-        # doc_ids null means the whole snapshot, corpus/forest/ (uploads are not part of it)
-        doc_ids = question.get("doc_ids") or sorted(hashes)
-        result = evaluate(question, doc_ids, settings)
-        if args.with_llm:
-            response = rag.ask(question["question"], doc_ids, settings)
-            result.update(status=response.status, answer=response.answer,
-                          error=response.error.code if response.error else None)
-        results.append(result)
-
-    answerable = [result for result in results if result["evidence"]]
-    unanswerable = [result for result in results if not result["evidence"]]
-    summary = {}
-    if answerable:
-        summary["all"] = metrics(answerable)
-        for kind in sorted({result["type"] for result in answerable}):
-            summary[kind] = metrics([result for result in answerable if result["type"] == kind])
-    summary["unanswerable"] = {"n": len(unanswerable)}
-    if args.with_llm and unanswerable:
-        summary["unanswerable"]["not_found_share"] = (
-            sum(result["status"] == "not_found" for result in unanswerable) / len(unanswerable))
-        summary["unanswerable"]["llm_errors"] = sum(result["status"] == "error" for result in unanswerable)
-
-    print(f"\nchunk_size={settings['chunk_size']} chunk_overlap={settings['chunk_overlap']} "
-          f"top_k={settings['top_k']} embedding={rag.EMBEDDING_MODEL}")
-    print(f"{'type':<14}{'n':>4}{'hit@k':>8}{'all@k':>8}{'MRR':>8}")
-    for kind, values in summary.items():
-        if kind != "unanswerable":
-            print(f"{kind:<14}{values['n']:>4}{values['hit_at_k']:>8.3f}"
-                  f"{values['all_at_k']:>8.3f}{values['mrr']:>8.3f}")
+    summary = report["metrics"]
+    print(f"\ncorpus={args.corpus} chunk_size={settings['chunk_size']} chunk_overlap={settings['chunk_overlap']} "
+          f"embedding={rag.EMBEDDING_MODEL}")
+    print(f"{'type':<18}{'n':>4}" + "".join(f"{column.replace('mrr', 'MRR'):>8}" for column in COLUMNS))
+    print_row("overall", summary["overall"])
+    for kind, values in summary["by_type"].items():
+        print_row(kind, values)
     line = f"unanswerable: {summary['unanswerable']['n']}"
     if "not_found_share" in summary["unanswerable"]:
         line += (f", returned not_found: {summary['unanswerable']['not_found_share']:.0%}"
                  f", LLM errors: {summary['unanswerable']['llm_errors']}")
     print(line)
-
-    RESULTS_DIR.mkdir(exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = RESULTS_DIR / (f"{stamp}_cs{settings['chunk_size']}_ov{settings['chunk_overlap']}"
-                         f"_k{settings['top_k']}.json")
-    report = {"config": {**settings, "embedding_model": rag.EMBEDDING_MODEL,
-                         "llm_model": GEMINI_MODEL if args.with_llm else None},
-              "questions_sha256": hashlib.sha256(args.questions.read_bytes()).hexdigest(),
-              "corpus_fingerprint": fingerprint,
-              "corpus_check": {"matches_manifest": not any(check.values()), **check},
-              "metrics": summary,
-              "questions": results}
-    out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Results: {out}")
 
 
