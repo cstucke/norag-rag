@@ -14,6 +14,10 @@ def tokenize(text):
     return TOKEN_RE.findall(text.lower())
 
 
+def corpus_names():
+    """Corpus names, from the doc_id prefixes (spec §4.2)."""
+    return sorted({doc["doc_id"].split("/")[0] for doc in rag.list_documents() if "/" in doc["doc_id"]})
+
 def corpus_doc_ids(corpus):
     """doc_ids of one corpus. A corpus is a top-level folder under corpus/ (spec §4.2)."""
     doc_ids = [doc["doc_id"] for doc in rag.list_documents() if doc["doc_id"].startswith(f"{corpus}/")]
