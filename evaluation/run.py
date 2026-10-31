@@ -134,6 +134,17 @@ def metrics(results):
                      if n else None)
     return values
 
+def llm_entry(response):
+    """One answer and the chunks behind it, so it can be graded from the results file alone.
+    [DECISION D26] The user fills in grade and grade_note; the harness never reads them back."""
+    # AskResponse carries no chunk text, so each chunk is fetched by its id
+    context = [{"rank": ref.ref, "chunk_id": ref.chunk_id, "doc_id": ref.doc_id, "line_start": ref.line_start,
+                "line_end": ref.line_end, "text": rag.get_chunk(ref.chunk_id)["text"]}
+               for ref in response.retrieved]
+    return {"status": response.status, "answer": response.answer,
+            "error": response.error.model_dump() if response.error else None,
+            "references": [{"ref": ref.ref, "chunk_id": ref.chunk_id} for ref in response.references],
+            "context": context, "grade": None, "grade_note": ""}
 
 def run_eval(questions_path, corpus, settings, with_llm):
     """One evaluation run, shared by the CLI and POST /api/eval. Returns (results, results_path)."""
@@ -159,9 +170,7 @@ def run_eval(questions_path, corpus, settings, with_llm):
     for question in questions:
         result = evaluate(question, doc_ids, settings)
         if with_llm:
-            response = rag.ask(question["question"], doc_ids, settings)
-            result.update(status=response.status, answer=response.answer,
-                          error=response.error.code if response.error else None)
+            result["llm"] = llm_entry(rag.ask(question["question"], doc_ids, settings))
         results.append(result)
 
     unanswerable = [result for result in results if not result["evidence"]]
@@ -171,8 +180,8 @@ def run_eval(questions_path, corpus, settings, with_llm):
                "unanswerable": {"n": len(unanswerable)}}
     if with_llm and unanswerable:
         summary["unanswerable"]["not_found_share"] = (
-            sum(result["status"] == "not_found" for result in unanswerable) / len(unanswerable))
-        summary["unanswerable"]["llm_errors"] = sum(result["status"] == "error" for result in unanswerable)
+            sum(result["llm"]["status"] == "not_found" for result in unanswerable) / len(unanswerable))
+        summary["unanswerable"]["llm_errors"] = sum(result["llm"]["status"] == "error" for result in unanswerable)
 
     config = {**settings, "corpus": corpus, "questions_file": questions_path.name, "eval_ks": list(EVAL_KS),
               "embedding_model": rag.EMBEDDING_MODEL, "llm_model": GEMINI_MODEL if with_llm else None}
