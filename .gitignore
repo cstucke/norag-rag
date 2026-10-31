@@ -24,6 +24,3 @@ chroma_db/
 .DS_Store
 .vscode/
 data/
-
-# Runs
-evaluation/results/

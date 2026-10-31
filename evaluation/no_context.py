@@ -1,4 +1,4 @@
-"""No-context test (RAG_V2_SPEC.md, Step 5): every question goes to the LLM without retrieval.
+"""No-context test: every question goes to the LLM without retrieval.
 
     python -m evaluation.no_context --questions evaluation/questions/kestrel.jsonl --corpus kestrel
 

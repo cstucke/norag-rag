@@ -1,4 +1,4 @@
-"""Retrieval evaluation harness (RAG_V1_SPEC.md Step 9, RAG_V2_SPEC.md Steps 3-4).
+"""Retrieval evaluation harness.
 
     python -m evaluation.run --questions evaluation/questions/kestrel.jsonl --corpus kestrel \
         [--chunk-size N --chunk-overlap N --top-k N] [--with-llm]
