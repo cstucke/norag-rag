@@ -1,53 +1,132 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>RAG V1 — The Forest wiki</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <h1>RAG V1 — The Forest wiki</h1>
-  <main>
-    <section id="documents-panel">
-      <h2>Documents</h2>
-      <p><span id="doc-count">0</span> documents, <span id="selected-count">0</span> selected</p>
-      <input id="doc-filter" type="search" placeholder="Filter documents">
-      <button id="select-all">Select all (filtered)</button>
-      <button id="clear-selection">Clear selection</button>
-      <ul id="doc-list"></ul>
-      <label>Upload <input id="upload" type="file" accept=".md,.txt"></label>
-      <p id="doc-error" class="error"></p>
-    </section>
+  <nav id="tab-bar">
+    <button id="show-ask">Ask</button>
+    <button id="show-eval">Evaluation</button>
+    <button id="show-words">Words</button>
+  </nav>
 
-    <section id="settings-panel">
-      <h2>Settings</h2>
-      <label>Chunk size <input id="chunk-size" type="number"></label>
-      <label>Overlap <input id="chunk-overlap" type="number"></label>
-      <label>Top-k <input id="top-k" type="number"></label>
-      <button id="save-settings">Save</button>
-      <p id="settings-error" class="error"></p>
-      <p class="small">Changing chunk size or overlap re-indexes the selected documents on the next question (may be slow).</p>
-    </section>
+  <div id="tab-ask">
 
-    <section id="ask-panel">
-      <h2>Ask</h2>
-      <textarea id="question" rows="3"></textarea>
-      <button id="ask">Ask</button>
-      <span id="working" hidden>Working…</span>
-      <div id="result" hidden>
-        <p id="status"></p>
-        <p id="answer"></p>
-        <p id="config" class="small"></p>
-        <h3>References</h3>
-        <ul id="references"></ul>
-        <details>
-          <summary>Retrieved passages (top-k)</summary>
-          <ul id="retrieved"></ul>
-        </details>
+    <main>
+      <section id="documents-panel">
+        <h2>Documents</h2>
+        <p><span id="doc-count">0</span> documents, <span id="selected-count">0</span> selected</p>
+        <input id="doc-filter" type="search" placeholder="Filter documents">
+        <button id="select-all">Select all (filtered)</button>
+        <button id="clear-selection">Clear selection</button>
+        <ul id="doc-list"></ul>
+        <label>Upload <input id="upload" type="file" accept=".md,.txt"></label>
+        <p id="doc-error" class="error"></p>
+      </section>
+
+      <section id="settings-panel">
+        <h2>Settings</h2>
+        <label>Chunk size <input id="chunk-size" type="number"></label>
+        <label>Overlap <input id="chunk-overlap" type="number"></label>
+        <label>Top-k <input id="top-k" type="number"></label>
+        <button id="save-settings">Save</button>
+        <p id="settings-error" class="error"></p>
+        <p class="small">Changing chunk size or overlap re-indexes the selected documents on the next question (may be
+          slow).</p>
+      </section>
+
+      <section id="ask-panel">
+        <h2>Ask</h2>
+        <textarea id="question" rows="3"></textarea>
+        <button id="ask">Ask</button>
+        <span id="working" hidden>Working…</span>
+        <div id="result" hidden>
+          <p id="status"></p>
+          <p id="answer"></p>
+          <p id="config" class="small"></p>
+          <h3>References</h3>
+          <ul id="references"></ul>
+          <details>
+            <summary>Retrieved passages (top-k)</summary>
+            <ul id="retrieved"></ul>
+          </details>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <div id="tab-eval" hidden>
+    <h2>Evaluation</h2>
+    <label>Question set <select id="eval-set"></select></label>
+    <label>Chunk size <input id="eval-chunk-size" type="number"></label>
+    <label>Overlap <input id="eval-chunk-overlap" type="number"></label>
+    <label>Top-k <input id="eval-top-k" type="number"></label>
+    <p class="small">Used for this run only. Not saved. Top-k only affects generated answers.</p>
+    <p><label><input id="eval-with-llm" type="checkbox"> Also generate answers (calls the LLM: slower, costs API
+        calls)</label></p>
+    <button id="eval-run">Run</button>
+    <span id="eval-working" hidden>Working…</span>
+    <p id="eval-error" class="error"></p>
+    <div id="eval-result" hidden>
+      <p>Results file: <code id="eval-file"></code></p>
+      <p id="eval-corpus-check"></p>
+      <table id="eval-table"></table>
+    </div>
+  </div>
+
+  <div id="tab-words" hidden>
+    <h2>Words</h2>
+    <label>Corpus <select id="words-corpus"></select></label>
+    <p class="small"><span id="words-config"></span> Counts use the current settings. The first load of a corpus may
+      index it (slow).</p>
+    <div id="words-columns">
+      <div>
+        <section>
+          <h3>Vocabulary</h3>
+          <button id="vocabulary-load">Load vocabulary</button>
+          <p id="vocabulary-error" class="error"></p>
+          <div id="vocabulary-result" hidden>
+            <p id="vocabulary-totals"></p>
+            <input id="vocabulary-filter" type="search" placeholder="Filter words">
+            <p id="vocabulary-showing" class="small"></p>
+            <div class="table-box">
+              <table id="vocabulary-table"></table>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h3>Question</h3>
+          <label>Question set <select id="question-set"></select></label>
+          <label>Question <select id="question-pick"></select></label>
+          <p id="question-info" class="small"></p>
+          <textarea id="words-question" rows="3"></textarea>
+          <button id="question-analyse">Analyse</button>
+          <p id="question-error" class="error"></p>
+          <table id="question-table"></table>
+        </section>
       </div>
-    </section>
-  </main>
+      <section id="word-panel">
+        <h3>Word → chunks</h3>
+        <input id="word-input">
+        <button id="word-show">Show</button>
+        <p id="word-error" class="error"></p>
+        <div id="word-result" hidden>
+          <p id="word-totals"></p>
+          <p id="word-showing" class="small"></p>
+          <div class="table-box">
+            <table id="word-table"></table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <dialog id="chunk-dialog">
     <h3 id="chunk-title"></h3>
@@ -57,5 +136,8 @@
   </dialog>
 
   <script src="app.js"></script>
+  <script src="evaluation.js"></script>
+  <script src="words.js"></script>
 </body>
+
 </html>
