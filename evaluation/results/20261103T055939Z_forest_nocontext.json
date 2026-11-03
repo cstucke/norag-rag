@@ -1,0 +1,148 @@
+{
+  "config": {
+    "model": "gemini-3.5-flash",
+    "corpus": "forest",
+    "prompt_template": "Answer this question about The Forest, the survival horror video game by Endnight Games from your own knowledge.\nIf you don't know, say so.\n\nReturn ONLY a JSON object: {\"answer\": \"<string>\"}\n\nQuestion: <question>"
+  },
+  "questions_sha256": "681f23de8d25c9d59159fd9456848159b664409fb8cf41ae943798eb55402f81",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "exact_identifier",
+      "question": "What item does the console command additem 242 give me?",
+      "expected_answer": "Keycard 2, the gold Keycard Two, which is a story item.",
+      "model_output": "{\"answer\": \"Camcorder\"}",
+      "error": null,
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q02",
+      "type": "exact_identifier",
+      "question": "What does the console command forcerain 5 do?",
+      "expected_answer": "It changes the weather to cloudy, so despite the name it brings no rain. forcerain cloud does the same thing.",
+      "model_output": null,
+      "error": {
+        "code": "llm_error",
+        "message": "LLM call failed."
+      },
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q03",
+      "type": "split_answer",
+      "question": "What does the sanity stat actually do to my character, and how do I raise it?",
+      "expected_answer": "It has no effect on the player, and its only use is that being under 90% lets you build effigies. It goes up by listening to music on the cassette player, sitting on benches, chairs, bone chairs or couches, sleeping, and eating fresh meat.",
+      "model_output": "{\"answer\": \"In The Forest, sanity has very little negative impact on your gameplay and does not lower your health, stamina, or make enemies more aggressive. Its primary effect is unlocking the ability to build Effigies once your sanity drops below 90%. At low sanity, you may also experience audio hallucinations like phantom cannibal noises or footsteps. You can raise your sanity by sleeping in a shelter, resting on built benches or chairs, listening to music on the Cassette Player, and eating fresh cooked meat or berries instead of cannibal limbs.\"}",
+      "error": null,
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q04",
+      "type": "split_answer",
+      "question": "Which places can I save at without building anything, and where are my save files on Windows?",
+      "expected_answer": "The orange tents, the blue tents and the yacht can be used to save without being built. On Windows the saves are in %appdata%\\..\\LocalLow\\SKS\\TheForest, which is C:\\Users\\<your username>\\AppData\\LocalLow\\SKS\\TheForest.",
+      "model_output": "{\"answer\": \"You can save without building anything at pre-existing tents (found in abandoned campsites and inside caves) and on the bed inside the Yacht. On Windows, your save files are located at: C:\\\\Users\\\\<Username>\\\\AppData\\\\LocalLow\\\\Endnight\\\\TheForest\\\\<SteamID>\\\\\"}",
+      "error": null,
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q05",
+      "type": "vocabulary",
+      "question": "My character ate some wild berries and seems queasy, but nothing on screen says what's wrong. What's going on, and where can I check?",
+      "expected_answer": "The character is probably sick, which is food poisoning. The game doesn't show it on the HUD, so it can only be seen on the stats page of the Survival Guide. It has a 20% chance of kicking in when food deals damage, and it lowers the fullness, thirst, health and energy regained from eating.",
+      "model_output": "{\"answer\": \"Your character ate poisonous berries (such as Twinberries or Snowberries), which damages your health and reduces your fullness. You can check which berries are safe to eat, as well as review your character's overall status and stats, inside your Survival Guide (opened by pressing 'B' on PC or the designated book button on consoles).\"}",
+      "error": null,
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q06",
+      "type": "vocabulary",
+      "question": "What can I do to stop getting hypothermia?",
+      "expected_answer": "The wiki calls this being cold. Keep warm with a lit fire-upgraded weapon, a lit fire, sunlight or by catching on fire, and booze temporarily resets all cold effects. It comes from long spells in snow, swimming or standing in rain at night, and deep cave water.",
+      "model_output": "{\"answer\": \"To stop or prevent hypothermia in The Forest, you can stand near a lit fire, craft and equip a Warm Suit, hold a lit torch or lit upgraded stick, or seek shelter from rain and snow.\"}",
+      "error": null,
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q07",
+      "type": "versions",
+      "question": "Whose death is recorded in the autopsy report found in Cave 2?",
+      "expected_answer": "Jessica Cross, since v1.0. Before that the report featured Megan Cross.",
+      "model_output": "{\"answer\": \"Megan Cross\"}",
+      "error": null,
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q08",
+      "type": "versions",
+      "question": "Can I add booze after cloth to make a fire upgrade burn longer?",
+      "expected_answer": "No. Update v0.32 added it, with up to 3x the burn length and swing amount, but it was later removed without notice. A fire upgrade is now cloth plus a supported weapon.",
+      "model_output": null,
+      "error": {
+        "code": "llm_rate_limited",
+        "message": "LLM rate limit reached — try again shortly."
+      },
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q09",
+      "type": "two_hop",
+      "question": "How old was the child test subject who became the mutant some players call Legsy?",
+      "expected_answer": "12. Legsy is Virginia, also known as Subject 37B5, and the Jarius Project slideshow gives that subject's age as 12.",
+      "model_output": null,
+      "error": {
+        "code": "llm_rate_limited",
+        "message": "LLM rate limit reached — try again shortly."
+      },
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q10",
+      "type": "two_hop",
+      "question": "What do I need to bring to fully explore the cave with the beheaded lawyers, and in which cave can I find the tool?",
+      "expected_answer": "A rebreather and two explosives. The rebreather is found in Cave 5 - Submerged Cave.",
+      "model_output": null,
+      "error": {
+        "code": "llm_rate_limited",
+        "message": "LLM rate limit reached — try again shortly."
+      },
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q11",
+      "type": "not_in_corpus",
+      "question": "Who voices Eric LeBlanc in The Forest?",
+      "expected_answer": "Not in the documents. The Endnight Games credits list the voice cast but don't say who played which character.",
+      "model_output": null,
+      "error": {
+        "code": "llm_rate_limited",
+        "message": "LLM rate limit reached — try again shortly."
+      },
+      "correct": null,
+      "note": ""
+    },
+    {
+      "id": "q12",
+      "type": "not_in_corpus",
+      "question": "What Metacritic score did The Forest get?",
+      "expected_answer": "Not in the documents.",
+      "model_output": null,
+      "error": {
+        "code": "llm_rate_limited",
+        "message": "LLM rate limit reached — try again shortly."
+      },
+      "correct": null,
+      "note": ""
+    }
+  ]
+}

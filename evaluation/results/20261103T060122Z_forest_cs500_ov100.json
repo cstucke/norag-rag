@@ -1,0 +1,1197 @@
+{
+  "config": {
+    "chunk_size": 500,
+    "chunk_overlap": 100,
+    "top_k": 5,
+    "corpus": "forest",
+    "questions_file": "forest.jsonl",
+    "eval_ks": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "embedding_model": "all-MiniLM-L6-v2",
+    "llm_model": null
+  },
+  "questions_sha256": "681f23de8d25c9d59159fd9456848159b664409fb8cf41ae943798eb55402f81",
+  "corpus_fingerprint": "021320569c9e9e745817202433f69e3eae1505d57744f73ffe0e05a14616b196",
+  "corpus_check": {
+    "matches_manifest": true,
+    "added": [],
+    "deleted": [],
+    "changed": []
+  },
+  "metrics": {
+    "overall": {
+      "n": 10,
+      "unanswerable": 2,
+      "hit@1": 0.2,
+      "hit@3": 0.4,
+      "hit@5": 0.4,
+      "hit@10": 0.4,
+      "all@1": 0.1,
+      "all@3": 0.2,
+      "all@5": 0.2,
+      "all@10": 0.2,
+      "mrr": 0.3
+    },
+    "by_type": {
+      "exact_identifier": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.0,
+        "hit@3": 0.0,
+        "hit@5": 0.0,
+        "hit@10": 0.0,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 0.0,
+        "mrr": 0.0
+      },
+      "not_in_corpus": {
+        "n": 0,
+        "unanswerable": 2,
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null,
+        "hit@10": null,
+        "all@1": null,
+        "all@3": null,
+        "all@5": null,
+        "all@10": null,
+        "mrr": null
+      },
+      "split_answer": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.5,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 0.0,
+        "mrr": 0.75
+      },
+      "two_hop": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.0,
+        "hit@3": 0.0,
+        "hit@5": 0.0,
+        "hit@10": 0.0,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 0.0,
+        "mrr": 0.0
+      },
+      "versions": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.0,
+        "hit@3": 0.5,
+        "hit@5": 0.5,
+        "hit@10": 0.5,
+        "all@1": 0.0,
+        "all@3": 0.5,
+        "all@5": 0.5,
+        "all@10": 0.5,
+        "mrr": 0.25
+      },
+      "vocabulary": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.5,
+        "hit@3": 0.5,
+        "hit@5": 0.5,
+        "hit@10": 0.5,
+        "all@1": 0.5,
+        "all@3": 0.5,
+        "all@5": 0.5,
+        "all@10": 0.5,
+        "mrr": 0.5
+      }
+    },
+    "unanswerable": {
+      "n": 2
+    }
+  },
+  "questions": [
+    {
+      "id": "q01",
+      "type": "exact_identifier",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/V1.0.md#cs500-ov100#86",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 34400,
+          "char_end": 34900
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/V1.0.md#cs500-ov100#87",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 34800,
+          "char_end": 35300
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Map_pieces.md#cs500-ov100#3",
+          "doc_id": "forest/Map_pieces.md",
+          "char_start": 1200,
+          "char_end": 1700
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#51",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 20400,
+          "char_end": 20900
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Don_t_Save_The_Forest.md#cs500-ov100#2",
+          "doc_id": "forest/Don_t_Save_The_Forest.md",
+          "char_start": 800,
+          "char_end": 1219
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Mushroom.md#cs500-ov100#5",
+          "doc_id": "forest/Mushroom.md",
+          "char_start": 2000,
+          "char_end": 2500
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#53",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 21200,
+          "char_end": 21700
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#0",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/V1.0.md#cs500-ov100#85",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 34000,
+          "char_end": 34500
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#61",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 24400,
+          "char_end": 24900
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 37426,
+          "char_end": 37455,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q02",
+      "type": "exact_identifier",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#0",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/V1.0.md#cs500-ov100#87",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 34800,
+          "char_end": 35300
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#5",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 2000,
+          "char_end": 2500
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Dedicated_Servers.md#cs500-ov100#13",
+          "doc_id": "forest/Dedicated_Servers.md",
+          "char_start": 5200,
+          "char_end": 5700
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/V0.20.md#cs500-ov100#5",
+          "doc_id": "forest/V0.20.md",
+          "char_start": 2000,
+          "char_end": 2500
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/V1.0.md#cs500-ov100#88",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 35200,
+          "char_end": 35700
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Controls.md#cs500-ov100#0",
+          "doc_id": "forest/Controls.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Dedicated_Servers.md#cs500-ov100#3",
+          "doc_id": "forest/Dedicated_Servers.md",
+          "char_start": 1200,
+          "char_end": 1700
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#168",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 67200,
+          "char_end": 67700
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Console_Commands.md#cs500-ov100#1",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 400,
+          "char_end": 900
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 11254,
+          "char_end": 11317,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q03",
+      "type": "split_answer",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Sanity.md#cs500-ov100#0",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Sanity.md#cs500-ov100#1",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 400,
+          "char_end": 900
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Sanity.md#cs500-ov100#7",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 2800,
+          "char_end": 3096
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Sanity.md#cs500-ov100#6",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 2400,
+          "char_end": 2900
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Sanity.md#cs500-ov100#5",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 2000,
+          "char_end": 2500
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Patchnotes.md#cs500-ov100#668",
+          "doc_id": "forest/Patchnotes.md",
+          "char_start": 267200,
+          "char_end": 267700
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/V0.29.md#cs500-ov100#6",
+          "doc_id": "forest/V0.29.md",
+          "char_start": 2400,
+          "char_end": 2900
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Enemies.md#cs500-ov100#52",
+          "doc_id": "forest/Enemies.md",
+          "char_start": 20800,
+          "char_end": 21300
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Patchnotes_Formatted.md#cs500-ov100#886",
+          "doc_id": "forest/Patchnotes_Formatted.md",
+          "char_start": 354400,
+          "char_end": 354900
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Strength.md#cs500-ov100#20",
+          "doc_id": "forest/Strength.md",
+          "char_start": 8000,
+          "char_end": 8500
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Sanity.md",
+          "char_start": 162,
+          "char_end": 231,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "forest/Sanity.md",
+          "char_start": 1077,
+          "char_end": 1123,
+          "hit_ranks": []
+        },
+        {
+          "doc_id": "forest/Sanity.md",
+          "char_start": 2187,
+          "char_end": 2260,
+          "hit_ranks": [
+            5
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q04",
+      "type": "split_answer",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Save.md#cs500-ov100#4",
+          "doc_id": "forest/Save.md",
+          "char_start": 1600,
+          "char_end": 2100
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Save.md#cs500-ov100#2",
+          "doc_id": "forest/Save.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Save.md#cs500-ov100#3",
+          "doc_id": "forest/Save.md",
+          "char_start": 1200,
+          "char_end": 1700
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Save.md#cs500-ov100#63",
+          "doc_id": "forest/Save.md",
+          "char_start": 25200,
+          "char_end": 25700
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/V0.53.md#cs500-ov100#4",
+          "doc_id": "forest/V0.53.md",
+          "char_start": 1600,
+          "char_end": 2100
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Glitches.md#cs500-ov100#136",
+          "doc_id": "forest/Glitches.md",
+          "char_start": 54400,
+          "char_end": 54900
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Interviews.md#cs500-ov100#116",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 46400,
+          "char_end": 46900
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/V0.35.md#cs500-ov100#19",
+          "doc_id": "forest/V0.35.md",
+          "char_start": 7600,
+          "char_end": 8100
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Patchnotes.md#cs500-ov100#917",
+          "doc_id": "forest/Patchnotes.md",
+          "char_start": 366800,
+          "char_end": 367300
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Save.md#cs500-ov100#0",
+          "doc_id": "forest/Save.md",
+          "char_start": 0,
+          "char_end": 500
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Save.md",
+          "char_start": 1136,
+          "char_end": 1196,
+          "hit_ranks": [
+            2
+          ]
+        },
+        {
+          "doc_id": "forest/Save.md",
+          "char_start": 2825,
+          "char_end": 2858,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": 2,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q05",
+      "type": "vocabulary",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Twinberry.md#cs500-ov100#12",
+          "doc_id": "forest/Twinberry.md",
+          "char_start": 4800,
+          "char_end": 5041
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Snowberry.md#cs500-ov100#11",
+          "doc_id": "forest/Snowberry.md",
+          "char_start": 4400,
+          "char_end": 4900
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Twinberry.md#cs500-ov100#11",
+          "doc_id": "forest/Twinberry.md",
+          "char_start": 4400,
+          "char_end": 4900
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Berry.md#cs500-ov100#0",
+          "doc_id": "forest/Berry.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Blueberry.md#cs500-ov100#12",
+          "doc_id": "forest/Blueberry.md",
+          "char_start": 4800,
+          "char_end": 5300
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Save.md#cs500-ov100#52",
+          "doc_id": "forest/Save.md",
+          "char_start": 20800,
+          "char_end": 21300
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Blueberry.md#cs500-ov100#11",
+          "doc_id": "forest/Blueberry.md",
+          "char_start": 4400,
+          "char_end": 4900
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Twinberry.md#cs500-ov100#8",
+          "doc_id": "forest/Twinberry.md",
+          "char_start": 3200,
+          "char_end": 3700
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Bush.md#cs500-ov100#10",
+          "doc_id": "forest/Bush.md",
+          "char_start": 4000,
+          "char_end": 4500
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Twinberry.md#cs500-ov100#10",
+          "doc_id": "forest/Twinberry.md",
+          "char_start": 4000,
+          "char_end": 4500
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Sick.md",
+          "char_start": 203,
+          "char_end": 275,
+          "hit_ranks": []
+        },
+        {
+          "doc_id": "forest/Sick.md",
+          "char_start": 347,
+          "char_end": 419,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q06",
+      "type": "vocabulary",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Temperature.md#cs500-ov100#5",
+          "doc_id": "forest/Temperature.md",
+          "char_start": 2000,
+          "char_end": 2500
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/HUD.md#cs500-ov100#2",
+          "doc_id": "forest/HUD.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Suggestions.md#cs500-ov100#124",
+          "doc_id": "forest/Suggestions.md",
+          "char_start": 49600,
+          "char_end": 50100
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/V0.25.md#cs500-ov100#11",
+          "doc_id": "forest/V0.25.md",
+          "char_start": 4400,
+          "char_end": 4900
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Temperature.md#cs500-ov100#3",
+          "doc_id": "forest/Temperature.md",
+          "char_start": 1200,
+          "char_end": 1700
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Temperature.md#cs500-ov100#18",
+          "doc_id": "forest/Temperature.md",
+          "char_start": 7200,
+          "char_end": 7700
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Amanita_Mushroom.md#cs500-ov100#9",
+          "doc_id": "forest/Amanita_Mushroom.md",
+          "char_start": 3600,
+          "char_end": 4071
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Temperature.md#cs500-ov100#21",
+          "doc_id": "forest/Temperature.md",
+          "char_start": 8400,
+          "char_end": 8900
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Armor.md#cs500-ov100#6",
+          "doc_id": "forest/Armor.md",
+          "char_start": 2400,
+          "char_end": 2900
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Hydration.md#cs500-ov100#12",
+          "doc_id": "forest/Hydration.md",
+          "char_start": 4800,
+          "char_end": 5300
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Temperature.md",
+          "char_start": 2010,
+          "char_end": 2043,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "forest/Temperature.md",
+          "char_start": 2122,
+          "char_end": 2188,
+          "hit_ranks": [
+            1
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true
+    },
+    {
+      "id": "q07",
+      "type": "versions",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Autopsy_Report.md#cs500-ov100#0",
+          "doc_id": "forest/Autopsy_Report.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Autopsy_Report.md#cs500-ov100#1",
+          "doc_id": "forest/Autopsy_Report.md",
+          "char_start": 400,
+          "char_end": 900
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Cave_1_-_Dead_Cave.md#cs500-ov100#0",
+          "doc_id": "forest/Cave_1_-_Dead_Cave.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Story.md#cs500-ov100#14",
+          "doc_id": "forest/Story.md",
+          "char_start": 5600,
+          "char_end": 6100
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Cave_6_-_Lawyer_Cave.md#cs500-ov100#0",
+          "doc_id": "forest/Cave_6_-_Lawyer_Cave.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Cave_2_-_Hanging_Cave.md#cs500-ov100#0",
+          "doc_id": "forest/Cave_2_-_Hanging_Cave.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Sahara_Laboratory.md#cs500-ov100#32",
+          "doc_id": "forest/Sahara_Laboratory.md",
+          "char_start": 12800,
+          "char_end": 13300
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Patchnotes_Formatted.md#cs500-ov100#726",
+          "doc_id": "forest/Patchnotes_Formatted.md",
+          "char_start": 290400,
+          "char_end": 290900
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Cave_2_-_Hanging_Cave.md#cs500-ov100#6",
+          "doc_id": "forest/Cave_2_-_Hanging_Cave.md",
+          "char_start": 2400,
+          "char_end": 2900
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Cave_3_-_Wet_Cave.md#cs500-ov100#0",
+          "doc_id": "forest/Cave_3_-_Wet_Cave.md",
+          "char_start": 0,
+          "char_end": 500
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Autopsy_Report.md",
+          "char_start": 549,
+          "char_end": 643,
+          "hit_ranks": [
+            2
+          ]
+        }
+      ],
+      "first_hit_rank": 2,
+      "all_evidence_hit": true
+    },
+    {
+      "id": "q08",
+      "type": "versions",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Upgrades.md#cs500-ov100#12",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 4800,
+          "char_end": 5300
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Burning.md#cs500-ov100#14",
+          "doc_id": "forest/Burning.md",
+          "char_start": 5600,
+          "char_end": 6100
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Upgrades.md#cs500-ov100#30",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 12000,
+          "char_end": 12500
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Burning.md#cs500-ov100#10",
+          "doc_id": "forest/Burning.md",
+          "char_start": 4000,
+          "char_end": 4500
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Upgrades.md#cs500-ov100#11",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 4400,
+          "char_end": 4900
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Booze.md#cs500-ov100#10",
+          "doc_id": "forest/Booze.md",
+          "char_start": 4000,
+          "char_end": 4500
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Cloth.md#cs500-ov100#19",
+          "doc_id": "forest/Cloth.md",
+          "char_start": 7600,
+          "char_end": 8100
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Upgrades.md#cs500-ov100#31",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 12400,
+          "char_end": 12900
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Burning.md#cs500-ov100#31",
+          "doc_id": "forest/Burning.md",
+          "char_start": 12400,
+          "char_end": 12900
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Upgrades.md#cs500-ov100#10",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 4000,
+          "char_end": 4500
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 3724,
+          "char_end": 3855,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q09",
+      "type": "two_hop",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Suggestions.md#cs500-ov100#271",
+          "doc_id": "forest/Suggestions.md",
+          "char_start": 108400,
+          "char_end": 108900
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Mutant.md#cs500-ov100#11",
+          "doc_id": "forest/Mutant.md",
+          "char_start": 4400,
+          "char_end": 4900
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Dynamite_Mutant.md#cs500-ov100#2",
+          "doc_id": "forest/Dynamite_Mutant.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Mutant_Baby.md#cs500-ov100#6",
+          "doc_id": "forest/Mutant_Baby.md",
+          "char_start": 2400,
+          "char_end": 2900
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Mutant_Baby.md#cs500-ov100#0",
+          "doc_id": "forest/Mutant_Baby.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Girl.md#cs500-ov100#8",
+          "doc_id": "forest/Girl.md",
+          "char_start": 3200,
+          "char_end": 3700
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Mutant_Baby.md#cs500-ov100#2",
+          "doc_id": "forest/Mutant_Baby.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Mutant_Baby.md#cs500-ov100#3",
+          "doc_id": "forest/Mutant_Baby.md",
+          "char_start": 1200,
+          "char_end": 1700
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Creepy_Mutant.md#cs500-ov100#21",
+          "doc_id": "forest/Creepy_Mutant.md",
+          "char_start": 8400,
+          "char_end": 8900
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Creepy_Mutant.md#cs500-ov100#7",
+          "doc_id": "forest/Creepy_Mutant.md",
+          "char_start": 2800,
+          "char_end": 3300
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Virginia.md",
+          "char_start": 153,
+          "char_end": 208,
+          "hit_ranks": []
+        },
+        {
+          "doc_id": "forest/Jarius_Project.md",
+          "char_start": 1417,
+          "char_end": 1461,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q10",
+      "type": "two_hop",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Cave_3_-_Wet_Cave.md#cs500-ov100#1",
+          "doc_id": "forest/Cave_3_-_Wet_Cave.md",
+          "char_start": 400,
+          "char_end": 900
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Keycard.md#cs500-ov100#2",
+          "doc_id": "forest/Keycard.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Cave_3_-_Wet_Cave.md#cs500-ov100#3",
+          "doc_id": "forest/Cave_3_-_Wet_Cave.md",
+          "char_start": 1200,
+          "char_end": 1700
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Speedrun.md#cs500-ov100#2",
+          "doc_id": "forest/Speedrun.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Cave_10_-_Waterfall_Cave.md#cs500-ov100#2",
+          "doc_id": "forest/Cave_10_-_Waterfall_Cave.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Cave_Explorers.md#cs500-ov100#5",
+          "doc_id": "forest/Cave_Explorers.md",
+          "char_start": 2000,
+          "char_end": 2489
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Cave_9_-_Ledge_Cave.md#cs500-ov100#1",
+          "doc_id": "forest/Cave_9_-_Ledge_Cave.md",
+          "char_start": 400,
+          "char_end": 900
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Crucifix.md#cs500-ov100#2",
+          "doc_id": "forest/Crucifix.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Climbing_Axe.md#cs500-ov100#6",
+          "doc_id": "forest/Climbing_Axe.md",
+          "char_start": 2400,
+          "char_end": 2900
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md#cs500-ov100#2",
+          "doc_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md",
+          "char_start": 800,
+          "char_end": 1300
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Cave_6_-_Lawyer_Cave.md",
+          "char_start": 497,
+          "char_end": 588,
+          "hit_ranks": []
+        },
+        {
+          "doc_id": "forest/Rebreather.md",
+          "char_start": 190,
+          "char_end": 232,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q11",
+      "type": "not_in_corpus",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs500-ov100#0",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Player.md#cs500-ov100#0",
+          "doc_id": "forest/Player.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs500-ov100#1",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 400,
+          "char_end": 900
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Endnight_Games.md#cs500-ov100#2",
+          "doc_id": "forest/Endnight_Games.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs500-ov100#24",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 9600,
+          "char_end": 9751
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Characters.md#cs500-ov100#0",
+          "doc_id": "forest/Characters.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Sam_Sounde.md#cs500-ov100#0",
+          "doc_id": "forest/Sam_Sounde.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Endnight_Games.md#cs500-ov100#4",
+          "doc_id": "forest/Endnight_Games.md",
+          "char_start": 1600,
+          "char_end": 2100
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs500-ov100#2",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 800,
+          "char_end": 1300
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs500-ov100#22",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 8800,
+          "char_end": 9300
+        }
+      ],
+      "evidence": [],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    },
+    {
+      "id": "q12",
+      "type": "not_in_corpus",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Interviews.md#cs500-ov100#304",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 121600,
+          "char_end": 122100
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Suggestions.md#cs500-ov100#0",
+          "doc_id": "forest/Suggestions.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Interviews.md#cs500-ov100#153",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 61200,
+          "char_end": 61700
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Soundtrack.md#cs500-ov100#0",
+          "doc_id": "forest/Soundtrack.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Interviews.md#cs500-ov100#246",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 98400,
+          "char_end": 98900
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/The_Forest_Wiki.md#cs500-ov100#0",
+          "doc_id": "forest/The_Forest_Wiki.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Previous_Polls.md#cs500-ov100#0",
+          "doc_id": "forest/Previous_Polls.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Previous_News.md#cs500-ov100#10",
+          "doc_id": "forest/Previous_News.md",
+          "char_start": 4000,
+          "char_end": 4500
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/The_Forest.md#cs500-ov100#0",
+          "doc_id": "forest/The_Forest.md",
+          "char_start": 0,
+          "char_end": 500
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Interviews.md#cs500-ov100#284",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 113600,
+          "char_end": 114100
+        }
+      ],
+      "evidence": [],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    }
+  ]
+}
