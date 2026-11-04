@@ -39,6 +39,12 @@ ERRORS = {
     "llm_error": (502, "LLM call failed."),
     "invalid_llm_response": (200, "The model returned an invalid answer, so it was not shown."),
     "chunk_not_found": (404, "Passage not found (index may have changed)."),
+    "unknown_corpus": (404, "Corpus not found."),
+    "unknown_question_set": (404, "Question set not found."),
+    "invalid_question_set": (400, "Invalid question set."),
+    "empty_question_set": (400, "The question set has no questions."),
+    "evidence_check_failed": (400, "Evidence check failed."),
+    "invalid_word": (400, "Enter one word (letters and digits only)."),
 }
 
 
@@ -243,7 +249,7 @@ def ensure_indexed(doc_ids, settings):
 
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
-PROMPT = """You answer questions using ONLY the numbered excerpts below, taken from The Forest wiki.
+PROMPT = """You answer questions using ONLY the numbered excerpts below, taken from the selected documents.
 If the excerpts do not contain the answer, set "answerable" to false and explain briefly in "answer".
 Do not use outside knowledge.
 

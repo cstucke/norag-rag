@@ -1,0 +1,146 @@
+{
+  "config": {
+    "chunk_size": 1000,
+    "chunk_overlap": 200,
+    "top_k": 5,
+    "embedding_model": "all-MiniLM-L6-v2",
+    "llm_model": null
+  },
+  "questions_sha256": "6d1111ec87c502510956f4311134f404cd838734df75cd7abea41b31daf1f559",
+  "corpus_fingerprint": "021320569c9e9e745817202433f69e3eae1505d57744f73ffe0e05a14616b196",
+  "corpus_check": {
+    "matches_manifest": true,
+    "added": [],
+    "deleted": [],
+    "changed": []
+  },
+  "metrics": {
+    "all": {
+      "n": 2,
+      "hit_at_k": 0.5,
+      "all_at_k": 0.5,
+      "mrr": 0.16666666666666666
+    },
+    "factual": {
+      "n": 1,
+      "hit_at_k": 1.0,
+      "all_at_k": 1.0,
+      "mrr": 0.3333333333333333
+    },
+    "hard": {
+      "n": 1,
+      "hit_at_k": 0.0,
+      "all_at_k": 0.0,
+      "mrr": 0.0
+    },
+    "unanswerable": {
+      "n": 0
+    }
+  },
+  "questions": [
+    {
+      "id": "tmp1",
+      "type": "factual",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Combat.md#cs1000-ov200#1",
+          "doc_id": "forest/Combat.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Stamina.md#cs1000-ov200#1",
+          "doc_id": "forest/Stamina.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Katana.md#cs1000-ov200#2",
+          "doc_id": "forest/Katana.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Speed.md#cs1000-ov200#0",
+          "doc_id": "forest/Speed.md",
+          "char_start": 0,
+          "char_end": 832
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Katana.md#cs1000-ov200#1",
+          "doc_id": "forest/Katana.md",
+          "char_start": 800,
+          "char_end": 1800
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Katana.md",
+          "char_start": 1895,
+          "char_end": 1930,
+          "hit_ranks": [
+            3
+          ]
+        }
+      ],
+      "first_hit_rank": 3,
+      "all_evidence_hit": true
+    },
+    {
+      "id": "tmp2",
+      "type": "hard",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Skinny_Mutant.md#cs1000-ov200#1",
+          "doc_id": "forest/Skinny_Mutant.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Knocked_down.md#cs1000-ov200#1",
+          "doc_id": "forest/Knocked_down.md",
+          "char_start": 800,
+          "char_end": 1370
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Skinny_Mutant.md#cs1000-ov200#2",
+          "doc_id": "forest/Skinny_Mutant.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Skinny_Mutant.md#cs1000-ov200#3",
+          "doc_id": "forest/Skinny_Mutant.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Major_Cannibalism.md#cs1000-ov200#0",
+          "doc_id": "forest/Major_Cannibalism.md",
+          "char_start": 0,
+          "char_end": 545
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Skinny_Mutant.md",
+          "char_start": 514,
+          "char_end": 591,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false
+    }
+  ]
+}
