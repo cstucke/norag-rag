@@ -116,7 +116,8 @@ async function ask() {
   // Hide the previous answer, so it can't be mistaken for the answer to this question
   $("result").hidden = true;
   try {
-    showResult(await api("POST", "/api/ask", { question: $("question").value, doc_ids: [...selected] }));
+    showResult(await api("POST", "/api/ask", { question: $("question").value, doc_ids: [...selected],
+      retrievers: checkedRetrievers("ask-retrievers") }));
   } catch {
     showResult({ status: "error", error: { message: "Request failed." } });
   } finally {
@@ -150,6 +151,7 @@ function showResult(data) {
       link.textContent = "wiki page";
       item.append(" ", link);
     }
+    renderFoundBy(ref, item);
     return item;
   }));
   $("retrieved").replaceChildren(...(data.retrieved || []).map((ref) => {
@@ -206,3 +208,46 @@ for (const name of TABS) {
     for (const tab of TABS) $(`tab-${tab}`).hidden = tab !== name;
   });
 }
+
+// ---------------------------------------------------------------------------
+// Retrievers (V3)
+// ---------------------------------------------------------------------------
+
+const RETRIEVER_LABELS = { dense: "Dense", bm25: "BM25", graph: "Graph" };
+
+// One checkbox per retriever, checked for the defaults. A disabled box is also unchecked,
+// since input:checked would still match it
+function showRetrievers(fieldsetId, data) {
+  for (const name of data.available) {
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = name;
+    checkbox.checked = data.default.includes(name);
+    const label = document.createElement("label");
+    label.append(checkbox, " ", RETRIEVER_LABELS[name]);
+    if (name === "graph" && !data.graph_built) {
+      checkbox.disabled = true;
+      checkbox.checked = false;
+      label.append(" (not built for the current settings)");
+    }
+    $(fieldsetId).append(label, " ");
+  }
+}
+
+function checkedRetrievers(fieldsetId) {
+  return [...$(fieldsetId).querySelectorAll("input:checked")].map((checkbox) => checkbox.value);
+}
+
+// "found by: dense #2 · bm25 #1", only the retrievers that found the chunk
+function renderFoundBy(ref, element) {
+  const ranks = Object.entries(ref.found_by || {}).filter(([, rank]) => rank !== null);
+  const line = document.createElement("div");
+  line.className = "small";
+  line.textContent = "found by: " + ranks.map(([name, rank]) => `${name} #${rank}`).join(" · ");
+  element.append(line);
+}
+
+api("GET", "/api/retrievers").then((data) => {
+  showRetrievers("ask-retrievers", data);
+  showRetrievers("eval-retrievers", data);
+});

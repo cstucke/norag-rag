@@ -44,6 +44,9 @@
       <section id="ask-panel">
         <h2>Ask</h2>
         <textarea id="question" rows="3"></textarea>
+        <fieldset id="ask-retrievers">
+          <legend>Retrievers</legend>
+        </fieldset>
         <button id="ask">Ask</button>
         <span id="working" hidden>Working…</span>
         <div id="result" hidden>
@@ -69,6 +72,9 @@
     <label>Overlap <input id="eval-chunk-overlap" type="number"></label>
     <label>Top-k <input id="eval-top-k" type="number"></label>
     <p class="small">Used for this run only. Not saved. Top-k only affects generated answers.</p>
+    <fieldset id="eval-retrievers">
+      <legend>Retrievers</legend>
+    </fieldset>
     <p><label><input id="eval-with-llm" type="checkbox"> Also generate answers (calls the LLM: slower, costs API
         calls)</label></p>
     <button id="eval-run">Run</button>

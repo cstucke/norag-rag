@@ -51,6 +51,7 @@ class EvalRequest(BaseModel):
     chunk_overlap: Any = None
     top_k: Any = None
     with_llm: bool = False
+    retrievers: list[str] | None = None
 
 
 class WordsQuestionRequest(BaseModel):

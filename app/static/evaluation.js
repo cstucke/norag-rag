@@ -1,5 +1,24 @@
 // Evaluation tab: a thin client over POST /api/eval. Uses $ and api() from app.js
-const EVAL_COLUMNS = ["hit@1", "hit@3", "hit@5", "hit@10", "all@1", "all@3", "all@5", "all@10", "mrr"];
+const EVAL_COLUMNS = ["hit@1", "hit@3", "hit@5", "hit@10", "all@1", "all@3", "all@5", "all@10",
+  "recall@1", "recall@3", "recall@5", "recall@10", "mrr"];
+const EVAL_KS = [1, 3, 5, 10];
+
+// The cost and graph-reach lines go under the table
+const evalLines = document.createElement("div");
+$("eval-table").after(evalLines);
+
+function costText(cost) {
+  const answer = cost.answer_ms === null ? "–" : `${cost.answer_ms.toFixed(0)} ms`;
+  return `Cost per question: retrieval ${cost.retrieval_ms.toFixed(0)} ms, LLM calls ${cost.llm_calls.toFixed(2)}, ` +
+    `tokens ${cost.prompt_tokens.toFixed(0)} prompt / ${cost.completion_tokens.toFixed(0)} completion, answer ${answer}`;
+}
+
+function reachText(values, name) {
+  return `(n=${values.n})` + EVAL_KS.map((k) => {
+    const value = values[`${name}@${k}`];
+    return ` @${k} ${value === null ? "–" : value.toFixed(3)}`;
+  }).join("");
+}
 
 // tableRow and selectOption are also used by words.js, which loads after this file
 function tableRow(tag, cells) {
@@ -38,6 +57,16 @@ function showEvalResult(data) {
     tableRow("th", ["type", "n", ...EVAL_COLUMNS.map((column) => column.replace("mrr", "MRR"))]),
     metricsRow("overall", data.metrics.overall),
     ...Object.entries(data.metrics.by_type).map(([type, values]) => metricsRow(type, values)));
+  const lines = [costText(data.metrics.cost)];
+  if (data.metrics.graph_reach) {
+    lines.push(`Graph reach ${reachText(data.metrics.graph_reach, "graph_reach")} · ` +
+      `graph-only reach ${reachText(data.metrics.graph_only_reach, "graph_only_reach")}`);
+  }
+  evalLines.replaceChildren(...lines.map((text) => {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = text;
+    return paragraph;
+  }));
   $("eval-result").hidden = false;
 }
 
@@ -54,6 +83,7 @@ async function runEval() {
       chunk_overlap: Number($("eval-chunk-overlap").value),
       top_k: Number($("eval-top-k").value),
       with_llm: $("eval-with-llm").checked,
+      retrievers: checkedRetrievers("eval-retrievers"),
     });
     if (data.status === "error") $("eval-error").textContent = data.error.message;
     else showEvalResult(data);
