@@ -283,6 +283,9 @@ def build_prompt(question, chunks):
         for rank, chunk in enumerate(chunks, 1))
     return PROMPT.format(excerpts=excerpts, question=question)
 
+# [DECISION D46] Running totals of LLM usage. A caller measures its own cost as the
+# difference between a copy taken before and a copy taken after
+USAGE = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
 def call_llm(prompt):
     """Gemini's raw reply text. API failures become the matching catalogue error."""
@@ -305,6 +308,11 @@ def call_llm(prompt):
         raise RagError("llm_auth_or_model") from None
     except openai.OpenAIError:
         raise RagError("llm_error") from None
+    USAGE["calls"] += 1
+    # Without a usage block the call still counts, with 0 tokens
+    if response.usage:
+        USAGE["prompt_tokens"] += response.usage.prompt_tokens
+        USAGE["completion_tokens"] += response.usage.completion_tokens
     return response.choices[0].message.content or ""
 
 
