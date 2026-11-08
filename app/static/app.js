@@ -160,6 +160,7 @@ function showResult(data) {
     return item;
   }));
   $("result").hidden = false;
+  renderGraphPath(data.graph_path);
 }
 
 async function openChunk(chunkId) {
@@ -251,3 +252,38 @@ api("GET", "/api/retrievers").then((data) => {
   showRetrievers("ask-retrievers", data);
   showRetrievers("eval-retrievers", data);
 });
+
+// The path behind an answer when the graph is on: the entities found in the question, then the
+// edges followed that have a passage in the context, each with its passages. Hidden otherwise
+function renderGraphPath(path) {
+  const box = $("graph-path");
+  box.hidden = !path;
+  if (!path) return;
+  const title = document.createElement("h3");
+  title.textContent = "Graph path";
+  const entities = document.createElement("p");
+  entities.textContent = path.entities.length
+    ? "Entities in the question: " + path.entities.map((entity) => `${entity.name} (${entity.type})`).join(", ")
+    : "No entity from the question was found in the graph.";
+  const parts = [title, entities];
+  if (path.entities.length) {
+    const edges = document.createElement("ul");
+    edges.append(...path.edges.map((edge) => {
+      const item = document.createElement("li");
+      item.append(`${edge.source_name} —${edge.relation}→ ${edge.target_name} (hop ${edge.hop}) `);
+      for (const chunkId of edge.chunk_ids) {
+        // "support-runbook-errors.md#7" is enough to tell chunks apart; the full id is the tooltip
+        const button = passageButton(chunkId.replace(/^.*\//, "").replace(/#cs\d+-ov\d+#/, "#"), chunkId);
+        button.title = chunkId;
+        item.append(button, " ");
+      }
+      return item;
+    }));
+    const heading = document.createElement("p");
+    heading.textContent = path.edges.length
+      ? "Edges followed:" : "No edge followed from these entities has a passage in the context.";
+    parts.push(heading);
+    if (path.edges.length) parts.push(edges);
+  }
+  box.replaceChildren(...parts);
+}
