@@ -1,0 +1,2906 @@
+{
+  "config": {
+    "chunk_size": 1000,
+    "chunk_overlap": 200,
+    "top_k": 5,
+    "corpus": "forest",
+    "questions_file": "forest.jsonl",
+    "eval_ks": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "embedding_model": "all-MiniLM-L6-v2",
+    "llm_model": null,
+    "retrievers": [
+      "dense",
+      "bm25"
+    ],
+    "candidates": 20,
+    "rrf_k": 60,
+    "bm25_chunk_ids_sha256": "a0a22057d9b87ee9d27c847582ea19e93e9d1dd7afb56c525a3c2c9cbf9cde90"
+  },
+  "questions_sha256": "681f23de8d25c9d59159fd9456848159b664409fb8cf41ae943798eb55402f81",
+  "corpus_fingerprint": "021320569c9e9e745817202433f69e3eae1505d57744f73ffe0e05a14616b196",
+  "corpus_check": {
+    "matches_manifest": true,
+    "added": [],
+    "deleted": [],
+    "changed": []
+  },
+  "metrics": {
+    "overall": {
+      "n": 10,
+      "unanswerable": 2,
+      "hit@1": 0.4,
+      "hit@3": 0.5,
+      "hit@5": 0.6,
+      "hit@10": 0.9,
+      "all@1": 0.1,
+      "all@3": 0.2,
+      "all@5": 0.2,
+      "all@10": 0.5,
+      "recall@1": 0.23333333333333334,
+      "recall@3": 0.36666666666666664,
+      "recall@5": 0.4166666666666667,
+      "recall@10": 0.7166666666666667,
+      "mrr": 0.5102777777777778
+    },
+    "by_type": {
+      "exact_identifier": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.0,
+        "hit@3": 0.0,
+        "hit@5": 0.0,
+        "hit@10": 1.0,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 1.0,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 1.0,
+        "mrr": 0.1388888888888889
+      },
+      "not_in_corpus": {
+        "n": 0,
+        "unanswerable": 2,
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null,
+        "hit@10": null,
+        "all@1": null,
+        "all@3": null,
+        "all@5": null,
+        "all@10": null,
+        "recall@1": null,
+        "recall@3": null,
+        "recall@5": null,
+        "recall@10": null,
+        "mrr": null
+      },
+      "split_answer": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 1.0,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 0.0,
+        "recall@1": 0.41666666666666663,
+        "recall@3": 0.5833333333333333,
+        "recall@5": 0.5833333333333333,
+        "recall@10": 0.5833333333333333,
+        "mrr": 1.0
+      },
+      "two_hop": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.5,
+        "hit@3": 0.5,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 0.0,
+        "recall@1": 0.25,
+        "recall@3": 0.25,
+        "recall@5": 0.5,
+        "recall@10": 0.5,
+        "mrr": 0.6
+      },
+      "versions": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.5,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 0.5,
+        "all@3": 1.0,
+        "all@5": 1.0,
+        "all@10": 1.0,
+        "recall@1": 0.5,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.75
+      },
+      "vocabulary": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.0,
+        "hit@3": 0.0,
+        "hit@5": 0.0,
+        "hit@10": 0.5,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 0.5,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.5,
+        "mrr": 0.0625
+      }
+    },
+    "unanswerable": {
+      "n": 2
+    },
+    "cost": {
+      "retrieval_ms": 800.5739928824672,
+      "llm_calls": 0.0,
+      "prompt_tokens": 0.0,
+      "completion_tokens": 0.0,
+      "answer_ms": null
+    }
+  },
+  "questions": [
+    {
+      "id": "q01",
+      "type": "exact_identifier",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/V1.0.md#cs1000-ov200#43",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 34400,
+          "char_end": 35400
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Don_t_Save_The_Forest.md#cs1000-ov200#1",
+          "doc_id": "forest/Don_t_Save_The_Forest.md",
+          "char_start": 800,
+          "char_end": 1219
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Climate_Change.md#cs1000-ov200#1",
+          "doc_id": "forest/Climate_Change.md",
+          "char_start": 800,
+          "char_end": 1158
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#53",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 42400,
+          "char_end": 43400
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/V1.0.md#cs1000-ov200#44",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 35200,
+          "char_end": 36200
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#2",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/V1.0.md#cs1000-ov200#42",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 33600,
+          "char_end": 34600
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Mushroom.md#cs1000-ov200#2",
+          "doc_id": "forest/Mushroom.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#46",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 36800,
+          "char_end": 37800
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#25",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 20000,
+          "char_end": 21000
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 37426,
+          "char_end": 37455,
+          "hit_ranks": [
+            9
+          ]
+        }
+      ],
+      "first_hit_rank": 9,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/V1.0.md#cs1000-ov200#43",
+            "doc_id": "forest/V1.0.md",
+            "fused_score": 0.03278688524590164,
+            "found_by": {
+              "dense": 1,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Don_t_Save_The_Forest.md#cs1000-ov200#1",
+            "doc_id": "forest/Don_t_Save_The_Forest.md",
+            "fused_score": 0.0315136476426799,
+            "found_by": {
+              "dense": 2,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Climate_Change.md#cs1000-ov200#1",
+            "doc_id": "forest/Climate_Change.md",
+            "fused_score": 0.030776515151515152,
+            "found_by": {
+              "dense": 4,
+              "bm25": 6,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#53",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.0293236301369863,
+            "found_by": {
+              "dense": 13,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/V1.0.md#cs1000-ov200#44",
+            "doc_id": "forest/V1.0.md",
+            "fused_score": 0.029030910609857977,
+            "found_by": {
+              "dense": 3,
+              "bm25": 16,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#2",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.02761904761904762,
+            "found_by": {
+              "dense": 10,
+              "bm25": 15,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/V1.0.md#cs1000-ov200#42",
+            "doc_id": "forest/V1.0.md",
+            "fused_score": 0.027598020555767037,
+            "found_by": {
+              "dense": 11,
+              "bm25": 14,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Mushroom.md#cs1000-ov200#2",
+            "doc_id": "forest/Mushroom.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#46",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#25",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Console_Commands.md",
+            "quote": "| Keycard 2 | `additem 242` |",
+            "fused_rank": 9,
+            "rank_in": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 7437.976749963127,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q02",
+      "type": "exact_identifier",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/V1.0.md#cs1000-ov200#43",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 34400,
+          "char_end": 35400
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/V1.0.md#cs1000-ov200#44",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 35200,
+          "char_end": 36200
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#2",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#0",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#90",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 72000,
+          "char_end": 73000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#13",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 10400,
+          "char_end": 11400
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#14",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 11200,
+          "char_end": 12200
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Console_Commands.md#cs1000-ov200#8",
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 6400,
+          "char_end": 7400
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Passenger.md#cs1000-ov200#6",
+          "doc_id": "forest/Passenger.md",
+          "char_start": 4800,
+          "char_end": 5800
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Get_Closure.md#cs1000-ov200#5",
+          "doc_id": "forest/Get_Closure.md",
+          "char_start": 4000,
+          "char_end": 4833
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Console_Commands.md",
+          "char_start": 11254,
+          "char_end": 11317,
+          "hit_ranks": [
+            6,
+            7
+          ]
+        }
+      ],
+      "first_hit_rank": 6,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/V1.0.md#cs1000-ov200#43",
+            "doc_id": "forest/V1.0.md",
+            "fused_score": 0.03225806451612903,
+            "found_by": {
+              "dense": 2,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/V1.0.md#cs1000-ov200#44",
+            "doc_id": "forest/V1.0.md",
+            "fused_score": 0.03055037313432836,
+            "found_by": {
+              "dense": 4,
+              "bm25": 7,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#2",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.030536130536130537,
+            "found_by": {
+              "dense": 5,
+              "bm25": 6,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#0",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.02921395544346364,
+            "found_by": {
+              "dense": 1,
+              "bm25": 18,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#90",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.0273972602739726,
+            "found_by": {
+              "dense": 13,
+              "bm25": 13,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#13",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": null,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#14",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Console_Commands.md#cs1000-ov200#8",
+            "doc_id": "forest/Console_Commands.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Passenger.md#cs1000-ov200#6",
+            "doc_id": "forest/Passenger.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Get_Closure.md#cs1000-ov200#5",
+            "doc_id": "forest/Get_Closure.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": null,
+              "bm25": 5,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Console_Commands.md",
+            "quote": "| `forcerain cloud` `forcerain 5` | Changes weather to cloudy |",
+            "fused_rank": 6,
+            "rank_in": {
+              "dense": null,
+              "bm25": 1,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 652.9346249299124,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q03",
+      "type": "split_answer",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Sanity.md#cs1000-ov200#0",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Sanity.md#cs1000-ov200#2",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Sanity.md#cs1000-ov200#3",
+          "doc_id": "forest/Sanity.md",
+          "char_start": 2400,
+          "char_end": 3096
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Weight.md#cs1000-ov200#1",
+          "doc_id": "forest/Weight.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Athleticism.md#cs1000-ov200#0",
+          "doc_id": "forest/Athleticism.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Strength.md#cs1000-ov200#10",
+          "doc_id": "forest/Strength.md",
+          "char_start": 8000,
+          "char_end": 8655
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#49",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 39200,
+          "char_end": 40200
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Stats.md#cs1000-ov200#0",
+          "doc_id": "forest/Stats.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/FAQ.md#cs1000-ov200#0",
+          "doc_id": "forest/FAQ.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Patchnotes.md#cs1000-ov200#334",
+          "doc_id": "forest/Patchnotes.md",
+          "char_start": 267200,
+          "char_end": 268200
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Sanity.md",
+          "char_start": 162,
+          "char_end": 231,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "forest/Sanity.md",
+          "char_start": 1077,
+          "char_end": 1123,
+          "hit_ranks": []
+        },
+        {
+          "doc_id": "forest/Sanity.md",
+          "char_start": 2187,
+          "char_end": 2260,
+          "hit_ranks": [
+            2
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Sanity.md#cs1000-ov200#0",
+            "doc_id": "forest/Sanity.md",
+            "fused_score": 0.03278688524590164,
+            "found_by": {
+              "dense": 1,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Sanity.md#cs1000-ov200#2",
+            "doc_id": "forest/Sanity.md",
+            "fused_score": 0.03125,
+            "found_by": {
+              "dense": 4,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Sanity.md#cs1000-ov200#3",
+            "doc_id": "forest/Sanity.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Weight.md#cs1000-ov200#1",
+            "doc_id": "forest/Weight.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Athleticism.md#cs1000-ov200#0",
+            "doc_id": "forest/Athleticism.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Strength.md#cs1000-ov200#10",
+            "doc_id": "forest/Strength.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#49",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": null,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Stats.md#cs1000-ov200#0",
+            "doc_id": "forest/Stats.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/FAQ.md#cs1000-ov200#0",
+            "doc_id": "forest/FAQ.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": null,
+              "bm25": 6,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Patchnotes.md#cs1000-ov200#334",
+            "doc_id": "forest/Patchnotes.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Sanity.md",
+            "quote": "Having **sanity** under 90% is required to be able to build effigies.",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "forest/Sanity.md",
+            "quote": "Listening to music through the cassette player",
+            "fused_rank": null,
+            "rank_in": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "forest/Sanity.md",
+            "quote": "It has been confirmed that Sanity has no effect on the player whatsoever.",
+            "fused_rank": 2,
+            "rank_in": {
+              "dense": 4,
+              "bm25": 4,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 145.76229092199355,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q04",
+      "type": "split_answer",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Save.md#cs1000-ov200#1",
+          "doc_id": "forest/Save.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Glitches.md#cs1000-ov200#57",
+          "doc_id": "forest/Glitches.md",
+          "char_start": 45600,
+          "char_end": 46600
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Save.md#cs1000-ov200#2",
+          "doc_id": "forest/Save.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Suggestions.md#cs1000-ov200#150",
+          "doc_id": "forest/Suggestions.md",
+          "char_start": 120000,
+          "char_end": 121000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Jhepong_s_Safe_Survival_Guide.md#cs1000-ov200#3",
+          "doc_id": "forest/Jhepong_s_Safe_Survival_Guide.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Save.md#cs1000-ov200#27",
+          "doc_id": "forest/Save.md",
+          "char_start": 21600,
+          "char_end": 22600
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Glitches.md#cs1000-ov200#38",
+          "doc_id": "forest/Glitches.md",
+          "char_start": 30400,
+          "char_end": 31400
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Patchnotes.md#cs1000-ov200#522",
+          "doc_id": "forest/Patchnotes.md",
+          "char_start": 417600,
+          "char_end": 418600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Save.md#cs1000-ov200#18",
+          "doc_id": "forest/Save.md",
+          "char_start": 14400,
+          "char_end": 15400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Save.md#cs1000-ov200#0",
+          "doc_id": "forest/Save.md",
+          "char_start": 0,
+          "char_end": 1000
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Save.md",
+          "char_start": 1136,
+          "char_end": 1196,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "forest/Save.md",
+          "char_start": 2825,
+          "char_end": 2858,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Save.md#cs1000-ov200#1",
+            "doc_id": "forest/Save.md",
+            "fused_score": 0.0315136476426799,
+            "found_by": {
+              "dense": 2,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Glitches.md#cs1000-ov200#57",
+            "doc_id": "forest/Glitches.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": null,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Save.md#cs1000-ov200#2",
+            "doc_id": "forest/Save.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Suggestions.md#cs1000-ov200#150",
+            "doc_id": "forest/Suggestions.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Jhepong_s_Safe_Survival_Guide.md#cs1000-ov200#3",
+            "doc_id": "forest/Jhepong_s_Safe_Survival_Guide.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Save.md#cs1000-ov200#27",
+            "doc_id": "forest/Save.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Glitches.md#cs1000-ov200#38",
+            "doc_id": "forest/Glitches.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Patchnotes.md#cs1000-ov200#522",
+            "doc_id": "forest/Patchnotes.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Save.md#cs1000-ov200#18",
+            "doc_id": "forest/Save.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Save.md#cs1000-ov200#0",
+            "doc_id": "forest/Save.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Save.md",
+            "quote": "Type in `%appdata%\\..\\LocalLow\\SKS\\TheForest` and click `OK`",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 2,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "forest/Save.md",
+            "quote": "| Orange Tents | Can't be built |",
+            "fused_rank": null,
+            "rank_in": {
+              "dense": null,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 145.75795794371516,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q05",
+      "type": "vocabulary",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Suggestions.md#cs1000-ov200#79",
+          "doc_id": "forest/Suggestions.md",
+          "char_start": 63200,
+          "char_end": 64200
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Twinberry.md#cs1000-ov200#6",
+          "doc_id": "forest/Twinberry.md",
+          "char_start": 4800,
+          "char_end": 5041
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Suggestions.md#cs1000-ov200#61",
+          "doc_id": "forest/Suggestions.md",
+          "char_start": 48800,
+          "char_end": 49800
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Twinberry.md#cs1000-ov200#5",
+          "doc_id": "forest/Twinberry.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#56",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 44800,
+          "char_end": 45800
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/V0.21.md#cs1000-ov200#1",
+          "doc_id": "forest/V0.21.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Bush.md#cs1000-ov200#5",
+          "doc_id": "forest/Bush.md",
+          "char_start": 4000,
+          "char_end": 4665
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Glitches.md#cs1000-ov200#38",
+          "doc_id": "forest/Glitches.md",
+          "char_start": 30400,
+          "char_end": 31400
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Glitches.md#cs1000-ov200#23",
+          "doc_id": "forest/Glitches.md",
+          "char_start": 18400,
+          "char_end": 19400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Twinberry.md#cs1000-ov200#1",
+          "doc_id": "forest/Twinberry.md",
+          "char_start": 800,
+          "char_end": 1800
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Sick.md",
+          "char_start": 203,
+          "char_end": 275,
+          "hit_ranks": []
+        },
+        {
+          "doc_id": "forest/Sick.md",
+          "char_start": 347,
+          "char_end": 419,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": null,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Suggestions.md#cs1000-ov200#79",
+            "doc_id": "forest/Suggestions.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": null,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Twinberry.md#cs1000-ov200#6",
+            "doc_id": "forest/Twinberry.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Suggestions.md#cs1000-ov200#61",
+            "doc_id": "forest/Suggestions.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Twinberry.md#cs1000-ov200#5",
+            "doc_id": "forest/Twinberry.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#56",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/V0.21.md#cs1000-ov200#1",
+            "doc_id": "forest/V0.21.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Bush.md#cs1000-ov200#5",
+            "doc_id": "forest/Bush.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Glitches.md#cs1000-ov200#38",
+            "doc_id": "forest/Glitches.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Glitches.md#cs1000-ov200#23",
+            "doc_id": "forest/Glitches.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": null,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Twinberry.md#cs1000-ov200#1",
+            "doc_id": "forest/Twinberry.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Sick.md",
+            "quote": "**Sickness** can only be viewed on the stats page of the Survival Guide.",
+            "fused_rank": null,
+            "rank_in": {
+              "dense": null,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "forest/Sick.md",
+            "quote": "**Sickness** has 20% chance of kicking in when getting damage from food.",
+            "fused_rank": null,
+            "rank_in": {
+              "dense": null,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 147.3972499370575,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q06",
+      "type": "vocabulary",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Hydration.md#cs1000-ov200#6",
+          "doc_id": "forest/Hydration.md",
+          "char_start": 4800,
+          "char_end": 5469
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#50",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 40000,
+          "char_end": 41000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/FAQ.md#cs1000-ov200#0",
+          "doc_id": "forest/FAQ.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Suggestions.md#cs1000-ov200#62",
+          "doc_id": "forest/Suggestions.md",
+          "char_start": 49600,
+          "char_end": 50600
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#41",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 32800,
+          "char_end": 33800
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Temperature.md#cs1000-ov200#1",
+          "doc_id": "forest/Temperature.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#49",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 39200,
+          "char_end": 40200
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Temperature.md#cs1000-ov200#2",
+          "doc_id": "forest/Temperature.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Hydration.md#cs1000-ov200#5",
+          "doc_id": "forest/Hydration.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#8",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 6400,
+          "char_end": 7400
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Temperature.md",
+          "char_start": 2010,
+          "char_end": 2043,
+          "hit_ranks": [
+            8
+          ]
+        },
+        {
+          "doc_id": "forest/Temperature.md",
+          "char_start": 2122,
+          "char_end": 2188,
+          "hit_ranks": [
+            8
+          ]
+        }
+      ],
+      "first_hit_rank": 8,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Hydration.md#cs1000-ov200#6",
+            "doc_id": "forest/Hydration.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#50",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": null,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/FAQ.md#cs1000-ov200#0",
+            "doc_id": "forest/FAQ.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Suggestions.md#cs1000-ov200#62",
+            "doc_id": "forest/Suggestions.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#41",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Temperature.md#cs1000-ov200#1",
+            "doc_id": "forest/Temperature.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#49",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Temperature.md#cs1000-ov200#2",
+            "doc_id": "forest/Temperature.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Hydration.md#cs1000-ov200#5",
+            "doc_id": "forest/Hydration.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#8",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": null,
+              "bm25": 5,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Temperature.md",
+            "quote": "There are five ways to keep warm:",
+            "fused_rank": 8,
+            "rank_in": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "forest/Temperature.md",
+            "quote": "Additionally, using booze will temporarily reset all cold effects.",
+            "fused_rank": 8,
+            "rank_in": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 255.64645801205188,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q07",
+      "type": "versions",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Autopsy_Report.md#cs1000-ov200#0",
+          "doc_id": "forest/Autopsy_Report.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Cave_2_-_Hanging_Cave.md#cs1000-ov200#0",
+          "doc_id": "forest/Cave_2_-_Hanging_Cave.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Autopsy_Report.md#cs1000-ov200#3",
+          "doc_id": "forest/Autopsy_Report.md",
+          "char_start": 2400,
+          "char_end": 2929
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Cave_5_-_Submerged_Cave.md#cs1000-ov200#0",
+          "doc_id": "forest/Cave_5_-_Submerged_Cave.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Cave_1_-_Dead_Cave.md#cs1000-ov200#0",
+          "doc_id": "forest/Cave_1_-_Dead_Cave.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Cave_2_-_Hanging_Cave.md#cs1000-ov200#1",
+          "doc_id": "forest/Cave_2_-_Hanging_Cave.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Autopsy_Report.md#cs1000-ov200#1",
+          "doc_id": "forest/Autopsy_Report.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Cave_Science_-_Sahara_Cave.md#cs1000-ov200#0",
+          "doc_id": "forest/Cave_Science_-_Sahara_Cave.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Notes.md#cs1000-ov200#4",
+          "doc_id": "forest/Notes.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Story.md#cs1000-ov200#7",
+          "doc_id": "forest/Story.md",
+          "char_start": 5600,
+          "char_end": 6600
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Autopsy_Report.md",
+          "char_start": 549,
+          "char_end": 643,
+          "hit_ranks": [
+            1
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Autopsy_Report.md#cs1000-ov200#0",
+            "doc_id": "forest/Autopsy_Report.md",
+            "fused_score": 0.03278688524590164,
+            "found_by": {
+              "dense": 1,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Cave_2_-_Hanging_Cave.md#cs1000-ov200#0",
+            "doc_id": "forest/Cave_2_-_Hanging_Cave.md",
+            "fused_score": 0.030536130536130537,
+            "found_by": {
+              "dense": 5,
+              "bm25": 6,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Autopsy_Report.md#cs1000-ov200#3",
+            "doc_id": "forest/Autopsy_Report.md",
+            "fused_score": 0.029877369007803793,
+            "found_by": {
+              "dense": 9,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Cave_5_-_Submerged_Cave.md#cs1000-ov200#0",
+            "doc_id": "forest/Cave_5_-_Submerged_Cave.md",
+            "fused_score": 0.02548701298701299,
+            "found_by": {
+              "dense": 17,
+              "bm25": 20,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Cave_1_-_Dead_Cave.md#cs1000-ov200#0",
+            "doc_id": "forest/Cave_1_-_Dead_Cave.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Cave_2_-_Hanging_Cave.md#cs1000-ov200#1",
+            "doc_id": "forest/Cave_2_-_Hanging_Cave.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Autopsy_Report.md#cs1000-ov200#1",
+            "doc_id": "forest/Autopsy_Report.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Cave_Science_-_Sahara_Cave.md#cs1000-ov200#0",
+            "doc_id": "forest/Cave_Science_-_Sahara_Cave.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Notes.md#cs1000-ov200#4",
+            "doc_id": "forest/Notes.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Story.md#cs1000-ov200#7",
+            "doc_id": "forest/Story.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Autopsy_Report.md",
+            "quote": "The autopsy report first featured Megan Cross, but was later changed in v1.0 to Jessica Cross.",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": 1,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 136.257000034675,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q08",
+      "type": "versions",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Booze.md#cs1000-ov200#5",
+          "doc_id": "forest/Booze.md",
+          "char_start": 4000,
+          "char_end": 4960
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Upgrades.md#cs1000-ov200#4",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Burning.md#cs1000-ov200#7",
+          "doc_id": "forest/Burning.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Upgrades.md#cs1000-ov200#6",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 4800,
+          "char_end": 5800
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Burning.md#cs1000-ov200#5",
+          "doc_id": "forest/Burning.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Cloth.md#cs1000-ov200#9",
+          "doc_id": "forest/Cloth.md",
+          "char_start": 7200,
+          "char_end": 8200
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Booze.md#cs1000-ov200#4",
+          "doc_id": "forest/Booze.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Burning.md#cs1000-ov200#6",
+          "doc_id": "forest/Burning.md",
+          "char_start": 4800,
+          "char_end": 5800
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Upgrades.md#cs1000-ov200#7",
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Burning.md#cs1000-ov200#15",
+          "doc_id": "forest/Burning.md",
+          "char_start": 12000,
+          "char_end": 13000
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Upgrades.md",
+          "char_start": 3724,
+          "char_end": 3855,
+          "hit_ranks": [
+            2
+          ]
+        }
+      ],
+      "first_hit_rank": 2,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Booze.md#cs1000-ov200#5",
+            "doc_id": "forest/Booze.md",
+            "fused_score": 0.03252247488101534,
+            "found_by": {
+              "dense": 2,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Upgrades.md#cs1000-ov200#4",
+            "doc_id": "forest/Upgrades.md",
+            "fused_score": 0.031754032258064516,
+            "found_by": {
+              "dense": 4,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Burning.md#cs1000-ov200#7",
+            "doc_id": "forest/Burning.md",
+            "fused_score": 0.03125763125763126,
+            "found_by": {
+              "dense": 3,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Upgrades.md#cs1000-ov200#6",
+            "doc_id": "forest/Upgrades.md",
+            "fused_score": 0.031099324975891997,
+            "found_by": {
+              "dense": 1,
+              "bm25": 8,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Burning.md#cs1000-ov200#5",
+            "doc_id": "forest/Burning.md",
+            "fused_score": 0.031024531024531024,
+            "found_by": {
+              "dense": 6,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Cloth.md#cs1000-ov200#9",
+            "doc_id": "forest/Cloth.md",
+            "fused_score": 0.029709507042253523,
+            "found_by": {
+              "dense": 11,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Booze.md#cs1000-ov200#4",
+            "doc_id": "forest/Booze.md",
+            "fused_score": 0.029211087420042643,
+            "found_by": {
+              "dense": 7,
+              "bm25": 10,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Burning.md#cs1000-ov200#6",
+            "doc_id": "forest/Burning.md",
+            "fused_score": 0.02821939586645469,
+            "found_by": {
+              "dense": 8,
+              "bm25": 14,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Upgrades.md#cs1000-ov200#7",
+            "doc_id": "forest/Upgrades.md",
+            "fused_score": 0.02782608695652174,
+            "found_by": {
+              "dense": 9,
+              "bm25": 15,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Burning.md#cs1000-ov200#15",
+            "doc_id": "forest/Burning.md",
+            "fused_score": 0.027651515151515153,
+            "found_by": {
+              "dense": 20,
+              "bm25": 6,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Upgrades.md",
+            "quote": "which increases the benefits by up to 3x times the burn length and swing amount, however this was removed without notice or reason.",
+            "fused_rank": 2,
+            "rank_in": {
+              "dense": 4,
+              "bm25": 2,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 130.90662495233119,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q09",
+      "type": "two_hop",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Creepy_Mutant.md#cs1000-ov200#10",
+          "doc_id": "forest/Creepy_Mutant.md",
+          "char_start": 8000,
+          "char_end": 9000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Mutant_Baby.md#cs1000-ov200#0",
+          "doc_id": "forest/Mutant_Baby.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Story.md#cs1000-ov200#5",
+          "doc_id": "forest/Story.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Mutant_Baby.md#cs1000-ov200#1",
+          "doc_id": "forest/Mutant_Baby.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Virginia.md#cs1000-ov200#0",
+          "doc_id": "forest/Virginia.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Girl.md#cs1000-ov200#0",
+          "doc_id": "forest/Girl.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#152",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 121600,
+          "char_end": 122600
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Creepy_Mutant.md#cs1000-ov200#7",
+          "doc_id": "forest/Creepy_Mutant.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Yacht.md#cs1000-ov200#3",
+          "doc_id": "forest/Yacht.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#151",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 120800,
+          "char_end": 121800
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Virginia.md",
+          "char_start": 153,
+          "char_end": 208,
+          "hit_ranks": [
+            5
+          ]
+        },
+        {
+          "doc_id": "forest/Jarius_Project.md",
+          "char_start": 1417,
+          "char_end": 1461,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": 5,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Creepy_Mutant.md#cs1000-ov200#10",
+            "doc_id": "forest/Creepy_Mutant.md",
+            "fused_score": 0.028370221327967807,
+            "found_by": {
+              "dense": 10,
+              "bm25": 11,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Mutant_Baby.md#cs1000-ov200#0",
+            "doc_id": "forest/Mutant_Baby.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Story.md#cs1000-ov200#5",
+            "doc_id": "forest/Story.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": null,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Mutant_Baby.md#cs1000-ov200#1",
+            "doc_id": "forest/Mutant_Baby.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Virginia.md#cs1000-ov200#0",
+            "doc_id": "forest/Virginia.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Girl.md#cs1000-ov200#0",
+            "doc_id": "forest/Girl.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#152",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Creepy_Mutant.md#cs1000-ov200#7",
+            "doc_id": "forest/Creepy_Mutant.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Yacht.md#cs1000-ov200#3",
+            "doc_id": "forest/Yacht.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#151",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": null,
+              "bm25": 5,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Virginia.md",
+            "quote": "- **Also known as:** Spider Mutant; Legsy; Subject 37B5",
+            "fused_rank": 5,
+            "rank_in": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "forest/Jarius_Project.md",
+            "quote": "* Subject 37B5, nicknamed 'Virginia': Age 12",
+            "fused_rank": null,
+            "rank_in": {
+              "dense": null,
+              "bm25": 12,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 149.6485830284655,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q10",
+      "type": "two_hop",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Cave_6_-_Lawyer_Cave.md#cs1000-ov200#0",
+          "doc_id": "forest/Cave_6_-_Lawyer_Cave.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md#cs1000-ov200#0",
+          "doc_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md#cs1000-ov200#1",
+          "doc_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/To_Do_List.md#cs1000-ov200#2",
+          "doc_id": "forest/To_Do_List.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Cave_3_-_Wet_Cave.md#cs1000-ov200#0",
+          "doc_id": "forest/Cave_3_-_Wet_Cave.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Cave_Explorers.md#cs1000-ov200#2",
+          "doc_id": "forest/Cave_Explorers.md",
+          "char_start": 1600,
+          "char_end": 2489
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Dr._Mathew_Cross.md#cs1000-ov200#4",
+          "doc_id": "forest/Dr._Mathew_Cross.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/ARMIN_S_SURVIVAL.md#cs1000-ov200#2",
+          "doc_id": "forest/ARMIN_S_SURVIVAL.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#18",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 14400,
+          "char_end": 15400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Speedrun.md#cs1000-ov200#1",
+          "doc_id": "forest/Speedrun.md",
+          "char_start": 800,
+          "char_end": 1762
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "forest/Cave_6_-_Lawyer_Cave.md",
+          "char_start": 497,
+          "char_end": 588,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "forest/Rebreather.md",
+          "char_start": 190,
+          "char_end": 232,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Cave_6_-_Lawyer_Cave.md#cs1000-ov200#0",
+            "doc_id": "forest/Cave_6_-_Lawyer_Cave.md",
+            "fused_score": 0.032018442622950824,
+            "found_by": {
+              "dense": 4,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md#cs1000-ov200#0",
+            "doc_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md",
+            "fused_score": 0.029631255487269532,
+            "found_by": {
+              "dense": 8,
+              "bm25": 7,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md#cs1000-ov200#1",
+            "doc_id": "forest/Cave_7_-_Chasm_Cave_(north)_-_Sinkhole_Cave_(south).md",
+            "fused_score": 0.028949545078577336,
+            "found_by": {
+              "dense": 2,
+              "bm25": 18,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/To_Do_List.md#cs1000-ov200#2",
+            "doc_id": "forest/To_Do_List.md",
+            "fused_score": 0.02878726010616578,
+            "found_by": {
+              "dense": 19,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Cave_3_-_Wet_Cave.md#cs1000-ov200#0",
+            "doc_id": "forest/Cave_3_-_Wet_Cave.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Cave_Explorers.md#cs1000-ov200#2",
+            "doc_id": "forest/Cave_Explorers.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Dr._Mathew_Cross.md#cs1000-ov200#4",
+            "doc_id": "forest/Dr._Mathew_Cross.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/ARMIN_S_SURVIVAL.md#cs1000-ov200#2",
+            "doc_id": "forest/ARMIN_S_SURVIVAL.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#18",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": null,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Speedrun.md#cs1000-ov200#1",
+            "doc_id": "forest/Speedrun.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "forest/Cave_6_-_Lawyer_Cave.md",
+            "quote": "In order to fully explore the cave, the player will need the rebreather and two explosives.",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 4,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "forest/Rebreather.md",
+            "quote": "- **Location(s):** Cave 5 - Submerged Cave",
+            "fused_rank": null,
+            "rank_in": {
+              "dense": null,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 149.88370798528194,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q11",
+      "type": "not_in_corpus",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs1000-ov200#0",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Player.md#cs1000-ov200#0",
+          "doc_id": "forest/Player.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs1000-ov200#11",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 8800,
+          "char_end": 9751
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/The_Dark_Haired_Man_Book.md#cs1000-ov200#0",
+          "doc_id": "forest/The_Dark_Haired_Man_Book.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Eric_LeBlanc.md#cs1000-ov200#10",
+          "doc_id": "forest/Eric_LeBlanc.md",
+          "char_start": 8000,
+          "char_end": 9000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/Timmy.md#cs1000-ov200#0",
+          "doc_id": "forest/Timmy.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Sam_Sounde.md#cs1000-ov200#0",
+          "doc_id": "forest/Sam_Sounde.md",
+          "char_start": 0,
+          "char_end": 835
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/Characters.md#cs1000-ov200#0",
+          "doc_id": "forest/Characters.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Endnight_Games.md#cs1000-ov200#2",
+          "doc_id": "forest/Endnight_Games.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/Endnight_Games.md#cs1000-ov200#3",
+          "doc_id": "forest/Endnight_Games.md",
+          "char_start": 2400,
+          "char_end": 3341
+        }
+      ],
+      "evidence": [],
+      "first_hit_rank": null,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Eric_LeBlanc.md#cs1000-ov200#0",
+            "doc_id": "forest/Eric_LeBlanc.md",
+            "fused_score": 0.03278688524590164,
+            "found_by": {
+              "dense": 1,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Player.md#cs1000-ov200#0",
+            "doc_id": "forest/Player.md",
+            "fused_score": 0.03200204813108039,
+            "found_by": {
+              "dense": 2,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Eric_LeBlanc.md#cs1000-ov200#11",
+            "doc_id": "forest/Eric_LeBlanc.md",
+            "fused_score": 0.03149801587301587,
+            "found_by": {
+              "dense": 3,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/The_Dark_Haired_Man_Book.md#cs1000-ov200#0",
+            "doc_id": "forest/The_Dark_Haired_Man_Book.md",
+            "fused_score": 0.029857397504456328,
+            "found_by": {
+              "dense": 8,
+              "bm25": 6,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Eric_LeBlanc.md#cs1000-ov200#10",
+            "doc_id": "forest/Eric_LeBlanc.md",
+            "fused_score": 0.02877846790890269,
+            "found_by": {
+              "dense": 9,
+              "bm25": 10,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/Timmy.md#cs1000-ov200#0",
+            "doc_id": "forest/Timmy.md",
+            "fused_score": 0.028629032258064516,
+            "found_by": {
+              "dense": 20,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Sam_Sounde.md#cs1000-ov200#0",
+            "doc_id": "forest/Sam_Sounde.md",
+            "fused_score": 0.028370221327967807,
+            "found_by": {
+              "dense": 10,
+              "bm25": 11,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/Characters.md#cs1000-ov200#0",
+            "doc_id": "forest/Characters.md",
+            "fused_score": 0.026144907723855092,
+            "found_by": {
+              "dense": 17,
+              "bm25": 16,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Endnight_Games.md#cs1000-ov200#2",
+            "doc_id": "forest/Endnight_Games.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/Endnight_Games.md#cs1000-ov200#3",
+            "doc_id": "forest/Endnight_Games.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 123.95079189445823,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q12",
+      "type": "not_in_corpus",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#126",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 100800,
+          "char_end": 101800
+        },
+        {
+          "rank": 2,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#51",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 40800,
+          "char_end": 41800
+        },
+        {
+          "rank": 3,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#103",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 82400,
+          "char_end": 83400
+        },
+        {
+          "rank": 4,
+          "chunk_id": "forest/Previous_News.md#cs1000-ov200#5",
+          "doc_id": "forest/Previous_News.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#139",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 111200,
+          "char_end": 112200
+        },
+        {
+          "rank": 6,
+          "chunk_id": "forest/The_Forest_Wiki.md#cs1000-ov200#4",
+          "doc_id": "forest/The_Forest_Wiki.md",
+          "char_start": 3200,
+          "char_end": 3849
+        },
+        {
+          "rank": 7,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#21",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 16800,
+          "char_end": 17800
+        },
+        {
+          "rank": 8,
+          "chunk_id": "forest/The_Forest_Wiki_Flex_section.md#cs1000-ov200#2",
+          "doc_id": "forest/The_Forest_Wiki_Flex_section.md",
+          "char_start": 1600,
+          "char_end": 1841
+        },
+        {
+          "rank": 9,
+          "chunk_id": "forest/Interviews.md#cs1000-ov200#143",
+          "doc_id": "forest/Interviews.md",
+          "char_start": 114400,
+          "char_end": 115400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "forest/V1.0.md#cs1000-ov200#0",
+          "doc_id": "forest/V1.0.md",
+          "char_start": 0,
+          "char_end": 1000
+        }
+      ],
+      "evidence": [],
+      "first_hit_rank": null,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#126",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#51",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": null,
+              "bm25": 1,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#103",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": null,
+              "bm25": 2,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "forest/Previous_News.md#cs1000-ov200#5",
+            "doc_id": "forest/Previous_News.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#139",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": null,
+              "bm25": 3,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "forest/The_Forest_Wiki.md#cs1000-ov200#4",
+            "doc_id": "forest/The_Forest_Wiki.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#21",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": null,
+              "bm25": 4,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "forest/The_Forest_Wiki_Flex_section.md#cs1000-ov200#2",
+            "doc_id": "forest/The_Forest_Wiki_Flex_section.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "forest/Interviews.md#cs1000-ov200#143",
+            "doc_id": "forest/Interviews.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": null,
+              "bm25": 5,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "forest/V1.0.md#cs1000-ov200#0",
+            "doc_id": "forest/V1.0.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 130.7658749865368,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    }
+  ]
+}

@@ -21,6 +21,7 @@ class Reference(BaseModel):
     line_start: int
     line_end: int
     distance: float
+    found_by: dict[str, int | None] | None = None
 
 
 class ErrorInfo(BaseModel):

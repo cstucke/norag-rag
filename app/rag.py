@@ -45,6 +45,7 @@ ERRORS = {
     "empty_question_set": (400, "The question set has no questions."),
     "evidence_check_failed": (400, "Evidence check failed."),
     "invalid_word": (400, "Enter one word (letters and digits only)."),
+    "invalid_retrievers": (400, "Switch on at least one retriever."),
 }
 
 
@@ -344,7 +345,7 @@ def to_reference(rank, chunk):
                      line_end=meta["line_end"], distance=chunk["distance"])
 
 
-def ask(question, doc_ids, settings):
+def ask(question, doc_ids, settings, retrievers=None):
     """The whole /api/ask logic, also used by the evaluation harness (--with-llm).
     Request errors are raised as RagError. Everything after retrieval is reported
     in the returned AskResponse."""
@@ -354,8 +355,14 @@ def ask(question, doc_ids, settings):
         raise RagError("no_documents_selected")
     config = AskConfig(chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
                        top_k=settings["top_k"], model=GEMINI_MODEL)
-    chunks = retrieve(question, doc_ids, settings)
+    # hybrid imports rag, so it can't be imported at the top of this module
+    from app import hybrid
+    chunks = hybrid.fused_retrieve(question, doc_ids, settings,
+                                   hybrid.DEFAULT_RETRIEVERS if retrievers is None else retrievers,
+                                   settings["top_k"])["chunks"]
     retrieved = [to_reference(rank, chunk) for rank, chunk in enumerate(chunks, 1)]
+    for reference, chunk in zip(retrieved, chunks):
+        reference.found_by = chunk["found_by"]
     if not chunks:
         # [DECISION D14] Nothing retrieved: the LLM is not called
         return AskResponse(status="not_found", answer="Nothing was retrieved from the selected documents.",
