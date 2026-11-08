@@ -1,11 +1,14 @@
 # norag-rag project
 
-This workspace contains 2 Python applications to compare **NoRAG** (full-context prompting) versus **RAG** (retrieval-augmented generation) using **Google Gemini** via the **OpenAI SDK**.
+This workspace contains Python applications to compare **NoRAG** (full-context prompting) versus **RAG** (retrieval-augmented generation) using **Google Gemini** via the **OpenAI SDK**.
+
+For the BM25 lexical-retrieval example, see [bm25/README.md](./bm25/README.md).
+For the two-hop retrieval exercise, see the [concept graph challenge](./concepts/concept_graph_challenge_part1.md).
 
 ## Applications
 
 1. `ask_norag_google.py`
-- NoRAG with Google Gemini via OpenAI SDK (`gemini-2.5-flash-lite`).
+- NoRAG with Google Gemini via OpenAI SDK (`gemini-3.5-flash-lite`).
 - Loads `docs/CrimeAndPunishment.txt`, injects a "needle" passage, and runs two direct large-context questions:
 	- a baseline question about Marmeladov (present in the original book)
 	- a needle question about Denis (the injected passage)
@@ -13,13 +16,19 @@ This workspace contains 2 Python applications to compare **NoRAG** (full-context
 2. `ask_rag_google.py`
 - RAG with Google Gemini for generation via OpenAI SDK.
 - Uses local embeddings (`all-MiniLM-L6-v2`) + local ChromaDB (`chroma_db/`) to retrieve relevant chunks before asking the model.
-- Default retrieval uses `n_results=5` for the question: `What does this say about Denis?`
+- Currently points to `docs/CrimeAndPunishment.txt` and retrieves `n_results=5` for the question: `What does this say about Denis?`
+
+3. `bm25/ask_bm25_rag_google.py`
+- RAG with Google Gemini for generation via OpenAI SDK and in-memory BM25 lexical retrieval.
+- See [bm25/README.md](./bm25/README.md) for how it works, how to run it, and the BM25 challenge.
 
 ## Project Structure
 
 - `docs/CrimeAndPunishment.txt`: main source text used by the scripts.
 - `docs/CrimeAndPunishment-shorter.txt`: shortened version of the main source text for quicker testing and rapid experimentation in Gemini online at https://gemini.google.com/app (See note below)
 - `chroma_db/`: persistent local vector database (used by RAG scripts).
+- `bm25/`: BM25 retrieval example and challenges.
+- `concepts/`: multi-hop retrieval challenge.
 - `requirements.txt`: Python dependencies.
 
 ## Prerequisites
@@ -68,11 +77,17 @@ python ask_norag_google.py
 python ask_rag_google.py
 ```
 
+### 3) BM25 RAG + Google
+
+```bash
+python bm25/ask_bm25_rag_google.py
+```
+
 ## Notes
 
 - Both applications use the OpenAI SDK to interact with Google Gemini via Google's OpenAI-compatible endpoint.
-- The RAG app indexes text chunks into `chroma_db/` and reuses them across runs.
-- First RAG run may take longer due to indexing.
+- The RAG app splits the text into fixed-size chunks with an overlap (`CHUNK_SIZE`, `OVERLAP_PERCENT` and `MIN_PARAGRAPH_LENGTH` at the top of the script), indexes them into `chroma_db/` and reuses them across runs.
+- There is one index per document (`DOCUMENT_FILE`) and chunking configuration. When no index exists for the current document and settings, the script asks before building one (this takes a little while).
 - Debug prompt printing can be enabled by passing `debug=True` in the NoRAG app.
 - RAG app prints retrieved context for verification.
 - Streaming output is enabled by default in both applications (controlled by `STREAM_ON` variable).
