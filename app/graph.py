@@ -349,6 +349,86 @@ def print_stats(settings):
           f"{build['completion_tokens']} completion tokens, {build['seconds']} s (started {build['started_at']})")
 
 # ---------------------------------------------------------------------------
+# Retriever
+# ---------------------------------------------------------------------------
+
+HOP_WEIGHTS = {1: 1.0, 2: 0.5}
+
+
+def link_entities(question, nodes):
+    """[DECISION D43] Entity linking by string matching, no LLM. A node matches if one of its surface
+    forms (normalized, at least 2 characters) appears in the normalized question as whole words. A
+    matched form contained in a longer matched form doesn't count. Returns the seed nodes, by id."""
+    text = f" {normalize(question)} "
+    matched = []  # (normalized form, node)
+    for node in nodes:
+        for form in node["names"]:
+            norm = normalize(form)
+            if len(norm) >= 2 and f" {norm} " in text:
+                matched.append((norm, node))
+    seeds = {node["id"]: node for norm, node in matched
+             if not any(len(other) > len(norm) and f" {norm} " in f" {other} " for other, _ in matched)}
+    return [seeds[node_id] for node_id in sorted(seeds)]
+
+
+def doc_id_of_chunk(chunk_id):
+    """chunk ids are {doc_id}#cs{size}-ov{overlap}#{index}"""
+    return re.fullmatch(r"(.+)#cs\d+-ov\d+#\d+", chunk_id).group(1)
+
+
+def graph_search(question, doc_ids, settings, n):
+    """[DECISION D43] Returns (chunk_ids, info): up to n chunks of the selected docs, best first, and the
+    path behind them. Seeds are the entities found in the question. Breadth-first over edges, in both
+    directions, up to 2 hops: an edge touching a seed is hop 1, an edge touching a hop-1 neighbour (and
+    no seed) is hop 2. Each followed edge adds 1.0 (hop 1) or 0.5 (hop 2) to every chunk it comes from.
+    No seed: no chunk."""
+    graph = load_graph(settings)
+    names = {node["id"]: node["name"] for node in graph["nodes"]}
+    seeds = link_entities(question, graph["nodes"])
+    seed_ids = {node["id"] for node in seeds}
+
+    followed = []  # (hop, edge)
+    for edge in graph["edges"]:
+        if {edge["source"], edge["target"]} & seed_ids:
+            followed.append((1, edge))
+    neighbours = {end for _, edge in followed for end in (edge["source"], edge["target"])} - seed_ids
+    for edge in graph["edges"]:
+        ends = {edge["source"], edge["target"]}
+        if not ends & seed_ids and ends & neighbours:
+            followed.append((2, edge))
+
+    scores = {}
+    for hop, edge in followed:
+        for chunk_id in edge["chunk_ids"]:
+            scores[chunk_id] = scores.get(chunk_id, 0.0) + HOP_WEIGHTS[hop]
+    selected = set(doc_ids)
+    ranked = sorted((chunk_id for chunk_id in scores if doc_id_of_chunk(chunk_id) in selected),
+                    key=lambda chunk_id: (-scores[chunk_id], chunk_id))
+    if ranked:
+        # A graph built before the corpus changed can point at chunks that no longer exist
+        present = set(rag.get_collection(rag.collection_name(settings)).get(ids=ranked, include=[])["ids"])
+        ranked = [chunk_id for chunk_id in ranked if chunk_id in present]
+    info = {"entities": [{"id": node["id"], "name": node["name"], "type": node["type"]} for node in seeds],
+            "edges": [{"source": edge["source"], "relation": edge["relation"], "target": edge["target"],
+                       "source_name": names[edge["source"]], "target_name": names[edge["target"]],
+                       "hop": hop, "chunk_ids": edge["chunk_ids"]} for hop, edge in followed]}
+    return ranked[:n], info
+
+
+def context_path(info, chunks):
+    """What the UI shows: the seeds, and the followed edges that have a chunk in the context sent to
+    the LLM, each with only those chunk ids. None when the graph is off."""
+    if info is None:
+        return None
+    in_context = {chunk["id"] for chunk in chunks}
+    edges = []
+    for edge in info["edges"]:
+        shown = [chunk_id for chunk_id in edge["chunk_ids"] if chunk_id in in_context]
+        if shown:
+            edges.append({**edge, "chunk_ids": shown})
+    return {"entities": info["entities"], "edges": edges}
+
+# ---------------------------------------------------------------------------
 # CLI: python -m app.graph build | resolve | stats
 # ---------------------------------------------------------------------------
 
