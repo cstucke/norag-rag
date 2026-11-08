@@ -212,3 +212,167 @@ def write_graph(settings, graph):
     GRAPH_DIR.mkdir(parents=True, exist_ok=True)
     with open(graph_path(settings), "w", encoding="utf-8") as f:
         json.dump(graph, f, indent=2, ensure_ascii=False)
+
+
+# ---------------------------------------------------------------------------
+# Build
+# ---------------------------------------------------------------------------
+
+def extract_all(chunks, sleep):
+    """One extraction entry per (chunk_id, text), printing one progress line each. `sleep` seconds
+    are waited between calls, for rate limits."""
+    extractions = []
+    for number, (chunk_id, text) in enumerate(chunks, 1):
+        if number > 1 and sleep:
+            time.sleep(sleep)
+        entry = extract_chunk(chunk_id, text)
+        extractions.append(entry)
+        detail = f" ({entry['error']['code']})" if entry["error"] else ""
+        print(f"[{number}/{len(chunks)}] {chunk_id}: {entry['status']}{detail}, "
+              f"{len(entry['triples'])} triples, {len(entry['rejected'])} rejected")
+    return extractions
+
+
+def need_api_key():
+    # Not a per-chunk failure: without a key every call would fail and overwrite a good graph file
+    if not rag.GOOGLE_API_KEY:
+        raise rag.RagError("llm_not_configured")
+
+
+def cost_since(before, start):
+    """[DECISION D42] Build cost from the USAGE difference and the wall time. Only calls that
+    got an answer are counted (D46)."""
+    return {"llm_calls": rag.USAGE["calls"] - before["calls"],
+            "prompt_tokens": rag.USAGE["prompt_tokens"] - before["prompt_tokens"],
+            "completion_tokens": rag.USAGE["completion_tokens"] - before["completion_tokens"],
+            "seconds": time.perf_counter() - start}
+
+
+def count_problems(extractions):
+    return {"failed_chunks": sum(entry["status"] == "failed" for entry in extractions),
+            "rejected_triples": sum(len(entry["rejected"]) for entry in extractions)}
+
+
+def build(settings, sleep):
+    """Extracts every Kestrel chunk, resolves, writes the graph file."""
+    need_api_key()
+    chunks = kestrel_chunks(settings)
+    print(f"{len(chunks)} Kestrel chunks, so {len(chunks)} LLM calls.")
+    started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    before, start = dict(rag.USAGE), time.perf_counter()
+    extractions = extract_all(chunks, sleep)
+    cost = cost_since(before, start)
+    nodes, edges = resolve(extractions)
+    graph = {"config": {"corpus": CORPUS, "chunk_size": settings["chunk_size"],
+                        "chunk_overlap": settings["chunk_overlap"], "model": GEMINI_MODEL,
+                        "entity_types": ENTITY_TYPES, "relation_types": RELATION_TYPES,
+                        "prompt_template": PROMPT},
+             "build": {"started_at": started_at, "chunks": len(chunks), **cost, **count_problems(extractions)},
+             "extractions": extractions, "nodes": nodes, "edges": edges}
+    graph["build"]["seconds"] = round(graph["build"]["seconds"], 1)
+    write_graph(settings, graph)
+    print(f"Wrote {graph_path(settings)}")
+
+
+def retry_failed(settings, sleep):
+    """Re-extracts only the failed chunks of the existing file, re-resolves, adds their cost to build."""
+    graph = load_graph(settings)
+    texts = dict(kestrel_chunks(settings))
+    todo = [number for number, entry in enumerate(graph["extractions"])
+            if entry["status"] == "failed" and entry["chunk_id"] in texts]
+    if not todo:
+        print("No failed chunk to retry.")
+        return
+    need_api_key()
+    print(f"{len(todo)} failed chunks, so {len(todo)} LLM calls.")
+    before, start = dict(rag.USAGE), time.perf_counter()
+    redone = extract_all([(graph["extractions"][number]["chunk_id"], texts[graph["extractions"][number]["chunk_id"]])
+                          for number in todo], sleep)
+    cost = cost_since(before, start)
+    for number, entry in zip(todo, redone):
+        graph["extractions"][number] = entry
+    build = graph["build"]
+    for field in ("llm_calls", "prompt_tokens", "completion_tokens"):
+        build[field] += cost[field]
+    build["seconds"] = round(build["seconds"] + cost["seconds"], 1)
+    build.update(count_problems(graph["extractions"]))
+    graph["nodes"], graph["edges"] = resolve(graph["extractions"])
+    write_graph(settings, graph)
+    print(f"Wrote {graph_path(settings)}")
+
+
+def resolve_again(settings):
+    """Rebuilds nodes and edges from the stored extractions, with no LLM call, to try a change of the
+    resolution rule for free."""
+    graph = load_graph(settings)
+    graph["nodes"], graph["edges"] = resolve(graph["extractions"])
+    write_graph(settings, graph)
+    print(f"Wrote {graph_path(settings)}: {len(graph['nodes'])} entities, {len(graph['edges'])} edges")
+
+# ---------------------------------------------------------------------------
+# Stats
+# ---------------------------------------------------------------------------
+
+def print_stats(settings):
+    graph = load_graph(settings)
+    nodes, edges, build = graph["nodes"], graph["edges"], graph["build"]
+    print(f"Graph file: {graph_path(settings)}")
+    per_type = Counter(node["type"] for node in nodes)
+    print(f"Entities: {len(nodes)}")
+    for kind in ENTITY_TYPES:
+        print(f"  {kind}: {per_type[kind]}")
+    per_relation = Counter(edge["relation"] for edge in edges)
+    print(f"Edges: {len(edges)}")
+    for relation in RELATION_TYPES:
+        print(f"  {relation}: {per_relation[relation]}")
+    merges = [node for node in nodes if len(node["names"]) > 1]
+    print(f"Merges (entities with more than one surface form): {len(merges)}")
+    for node in merges:
+        print(f"  {node['id']}: " + " | ".join(node["names"]))
+    # The same normalized name under different types: the type rule kept them apart
+    by_name = {}
+    for node in nodes:
+        by_name.setdefault(node["id"].split(":", 1)[1], []).append(node["id"])
+    missed = {name: ids for name, ids in by_name.items() if len(ids) > 1}
+    print(f"Possible missed merges (same normalized name, different types): {len(missed)}")
+    for name, ids in sorted(missed.items()):
+        print(f"  {name!r}: " + ", ".join(ids))
+    failed = [entry for entry in graph["extractions"] if entry["status"] == "failed"]
+    print(f"Failed chunks: {len(failed)}")
+    for entry in failed:
+        print(f"  {entry['chunk_id']}: {entry['error']['code']}")
+    rejected = [(entry["chunk_id"], item) for entry in graph["extractions"] for item in entry["rejected"]]
+    print(f"Rejected triples: {len(rejected)}")
+    for chunk_id, item in rejected:
+        print(f"  {chunk_id}: {json.dumps(item['triple'], ensure_ascii=False)} -> {item['error']}")
+    print(f"Build: {build['chunks']} chunks, {build['llm_calls']} LLM calls, {build['prompt_tokens']} prompt / "
+          f"{build['completion_tokens']} completion tokens, {build['seconds']} s (started {build['started_at']})")
+
+# ---------------------------------------------------------------------------
+# CLI: python -m app.graph build | resolve | stats
+# ---------------------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser(description="Concept graph of the Kestrel corpus, at the saved settings.")
+    commands = parser.add_subparsers(dest="command", required=True)
+    build_parser = commands.add_parser("build", help="extract every chunk (one LLM call each) and write the graph")
+    build_parser.add_argument("--sleep", type=float, default=0, help="seconds to wait between calls")
+    build_parser.add_argument("--retry-failed", action="store_true",
+                              help="only re-extract the failed chunks of the existing file")
+    commands.add_parser("resolve", help="rebuild nodes and edges from the stored extractions (no LLM call)")
+    commands.add_parser("stats", help="print the graph's numbers, merges and build cost")
+    args = parser.parse_args()
+    settings = load_settings()
+    try:
+        if args.command == "build":
+            (retry_failed if args.retry_failed else build)(settings, args.sleep)
+        elif args.command == "resolve":
+            resolve_again(settings)
+        else:
+            print_stats(settings)
+    except rag.RagError as error:
+        sys.exit(error.message)
+
+
+if __name__ == "__main__":
+    main()
