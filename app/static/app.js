@@ -194,3 +194,15 @@ $("chunk-close").addEventListener("click", () => $("chunk-dialog").close());
 
 loadDocuments();
 api("GET", "/api/settings").then(showSettings);
+
+// ---------------------------------------------------------------------------
+// Tabs
+// ---------------------------------------------------------------------------
+
+const TABS = ["ask", "eval", "words"];
+
+for (const name of TABS) {
+  $(`show-${name}`).addEventListener("click", () => {
+    for (const tab of TABS) $(`tab-${tab}`).hidden = tab !== name;
+  });
+}

@@ -10,3 +10,15 @@ textarea { width: 100%; box-sizing: border-box; }
 button.link { background: none; border: none; padding: 0; color: #0645ad; cursor: pointer; font: inherit; text-align: left; }
 #chunk-dialog { max-width: 50rem; }
 #chunk-text { white-space: pre-wrap; max-height: 60vh; overflow-y: auto; }
+#tab-bar { margin-bottom: 1rem; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid #ccc; padding: 0.1rem 0.5rem; text-align: left; }
+.table-box { max-height: 60vh; overflow-y: auto; }
+/* minmax(0, ...) and the max-width stop a long question from widening its column */
+#words-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; }
+#question-pick { max-width: 100%; }
+/* Stays in view, so clicking a word lower down the page visibly does something */
+#word-panel { position: sticky; top: 0; align-self: start; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover { background: #eef; }
+tr.absent { color: #b00020; }
