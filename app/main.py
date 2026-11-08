@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app import rag
+from app import graph, rag
 from app.config import BASE_DIR, load_settings, save_settings, validate_settings
 from app.rag import ERRORS, RagError
 from app.schemas import EvalRequest, WordsQuestionRequest
@@ -104,8 +106,8 @@ def get_question_sets():
 
 @app.get("/api/retrievers")
 def get_retrievers():
-    # graph_built stays false until the graph exists (Step 8)
-    return {"available": list(RETRIEVERS), "default": list(DEFAULT_RETRIEVERS), "graph_built": False}
+        return {"available": list(RETRIEVERS), "default": list(DEFAULT_RETRIEVERS),
+            "graph_built": graph.graph_built(load_settings())}
 
 @app.post("/api/eval")
 def post_eval(body: EvalRequest):

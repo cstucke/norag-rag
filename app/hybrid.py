@@ -1,7 +1,7 @@
 """Hybrid retrieval: plain RRF over the retrievers switched on."""
 import time
 
-from app import bm25_index, rag
+from app import bm25_index, graph, rag
 
 RETRIEVERS = ("dense", "bm25", "graph")
 # [DECISION D37] V2 behaviour. Changed once the default configuration is picked
@@ -20,8 +20,7 @@ def fused_retrieve(question, doc_ids, settings, retrievers, top_k, candidates=RR
     for name in retrievers:
         if name not in RETRIEVERS:
             raise rag.RagError("invalid_retrievers", f"Unknown retriever: {name}. Use dense, bm25 or graph.")
-    if "graph" in retrievers:
-        raise rag.RagError("invalid_retrievers", "The graph retriever isn't built yet.")
+        
     if candidates < top_k:
         raise rag.RagError("invalid_settings", "candidates must be at least top_k.")
 
@@ -31,6 +30,7 @@ def fused_retrieve(question, doc_ids, settings, retrievers, top_k, candidates=RR
     lists = {name: None for name in RETRIEVERS}
     timing_ms = {name: None for name in RETRIEVERS}
     known = {}  # chunk_id -> chunk in the rag.retrieve shape
+    graph_info = None
     for name in RETRIEVERS:
         if name not in retrievers:
             continue
@@ -41,6 +41,8 @@ def fused_retrieve(question, doc_ids, settings, retrievers, top_k, candidates=RR
             lists["dense"] = [chunk["id"] for chunk in dense]
         elif name == "bm25":
             lists["bm25"] = bm25_index.search(question, doc_ids, settings, candidates)
+        elif name == "graph":
+            lists["graph"], graph_info = graph.graph_search(question, doc_ids, settings, candidates)
         timing_ms[name] = (time.perf_counter() - retriever_start) * 1000
 
     scores = {}
@@ -62,4 +64,4 @@ def fused_retrieve(question, doc_ids, settings, retrievers, top_k, candidates=RR
                             for name, ranked in lists.items()}}
               for chunk_id in fused]
     timing_ms["total"] = (time.perf_counter() - start) * 1000
-    return {"chunks": chunks, "lists": lists, "graph": None, "timing_ms": timing_ms}
+    return {"chunks": chunks, "lists": lists, "graph": graph_info, "timing_ms": timing_ms}

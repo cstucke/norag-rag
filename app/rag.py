@@ -357,10 +357,13 @@ def ask(question, doc_ids, settings, retrievers=None):
     config = AskConfig(chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
                        top_k=settings["top_k"], model=GEMINI_MODEL)
     # hybrid imports rag, so it can't be imported at the top of this module
-    from app import hybrid
-    chunks = hybrid.fused_retrieve(question, doc_ids, settings,
-                                   hybrid.DEFAULT_RETRIEVERS if retrievers is None else retrievers,
-                                   settings["top_k"])["chunks"]
+    from app import graph, hybrid
+    fused = hybrid.fused_retrieve(question, doc_ids, settings,
+                                  hybrid.DEFAULT_RETRIEVERS if retrievers is None else retrievers,
+                                  settings["top_k"])
+    chunks = fused["chunks"]
+    # None when the graph is off
+    graph_path = graph.context_path(fused["graph"], chunks)
     retrieved = [to_reference(rank, chunk) for rank, chunk in enumerate(chunks, 1)]
     for reference, chunk in zip(retrieved, chunks):
         reference.found_by = chunk["found_by"]
@@ -380,7 +383,7 @@ def ask(question, doc_ids, settings, retrievers=None):
                            answer=f"The selected documents don't contain an answer. {llm_answer.answer}".strip(),
                            references=references, retrieved=retrieved, config=config)
     return AskResponse(status="answered", answer=llm_answer.answer, references=references,
-                       retrieved=retrieved, config=config)
+                       retrieved=retrieved, config=config, graph_path=graph_path)
 
 def get_chunk(chunk_id):
     """A stored chunk by its id, {doc_id}#cs{size}-ov{overlap}#{index}, which names

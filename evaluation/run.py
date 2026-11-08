@@ -14,8 +14,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from app import bm25_index, hybrid, rag
-from app.config import CORPUS_DIR, GEMINI_MODEL, load_settings, validate_settings
+from app import bm25_index, graph, hybrid, rag
+from app.config import BASE_DIR, CORPUS_DIR, GEMINI_MODEL, load_settings, validate_settings, validate_settings
 from app.words import corpus_doc_ids
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
@@ -259,6 +259,9 @@ def run_eval(questions_path, corpus, settings, with_llm, retrievers=hybrid.DEFAU
               "retrievers": list(retrievers), "candidates": candidates, "rrf_k": rrf_k}
     if "bm25" in retrievers:
         config["bm25_chunk_ids_sha256"] = bm25_index.current_index(settings)["chunk_ids_sha256"]
+        if "graph" in retrievers:
+            config["graph_file"] = graph.graph_path(settings).relative_to(BASE_DIR).as_posix()
+            config["graph_build"] = graph.load_graph(settings)["build"]
     name = f"{corpus}_cs{settings['chunk_size']}_ov{settings['chunk_overlap']}_{'+'.join(retrievers)}"
     if with_llm:
         config["top_k_answers"] = settings["top_k"]
