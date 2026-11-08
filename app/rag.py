@@ -46,6 +46,7 @@ ERRORS = {
     "evidence_check_failed": (400, "Evidence check failed."),
     "invalid_word": (400, "Enter one word (letters and digits only)."),
     "invalid_retrievers": (400, "Switch on at least one retriever."),
+    "graph_not_built": (409, "No concept graph for the current settings. Run: python -m app.graph build"),
 }
 
 

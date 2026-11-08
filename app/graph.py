@@ -130,3 +130,85 @@ def extract_chunk(chunk_id, text):
         except ValidationError as error:
             rejected.append({"triple": item, "error": error_text(error)})
     return {"chunk_id": chunk_id, "status": "ok", "error": None, "triples": triples, "rejected": rejected}
+
+# ---------------------------------------------------------------------------
+# Chunks and entity resolution
+# ---------------------------------------------------------------------------
+
+def kestrel_chunks(settings):
+    """[DECISION D44] (chunk_id, text) of every Kestrel chunk at these settings, in document order,
+    as stored in the collection (the way words.corpus_chunks reads them, but keeping the texts)."""
+    doc_ids = corpus_doc_ids(CORPUS)
+    rag.ensure_indexed(doc_ids, settings)
+    where = {"doc_id": doc_ids[0]} if len(doc_ids) == 1 else {"doc_id": {"$in": doc_ids}}
+    result = rag.get_collection(rag.collection_name(settings)).get(where=where, include=["documents", "metadatas"])
+    rows = sorted(zip(result["metadatas"], result["ids"], result["documents"]),
+                  key=lambda row: (row[0]["doc_id"], row[0]["chunk_index"]))
+    return [(chunk_id, text) for _, chunk_id, text in rows]
+
+
+def normalize(name):
+    """[DECISION D41] Casefolded, every run of characters other than [a-z0-9] turned into one
+    space, stripped, a leading "the " removed."""
+    text = re.sub(r"[^a-z0-9]+", " ", name.casefold()).strip()
+    return text[len("the "):] if text.startswith("the ") else text
+
+
+def resolve(extractions):
+    """[DECISION D41] Nodes and edges from the stored extractions. Two mentions are the same entity
+    iff they have the same type and the same normalized name. Edges with the same
+    (source, relation, target) are merged: chunk_ids are unioned, count is the number of triples."""
+    found = {}  # node id -> {"type", "forms": Counter, "chunk_ids": set}
+    merged = {}  # (source, relation, target) -> {"chunk_ids": set, "count": int}
+    for extraction in extractions:
+        # A failed chunk has no triples, so it adds nothing
+        for triple in extraction["triples"]:
+            ids = []
+            for side in ("subject", "object"):
+                kind, name = triple[f"{side}_type"], triple[side]
+                node_id = f"{kind}:{normalize(name)}"
+                node = found.setdefault(node_id, {"type": kind, "forms": Counter(), "chunk_ids": set()})
+                node["forms"][name] += 1
+                node["chunk_ids"].add(extraction["chunk_id"])
+                ids.append(node_id)
+            edge = merged.setdefault((ids[0], triple["relation"], ids[1]), {"chunk_ids": set(), "count": 0})
+            edge["chunk_ids"].add(extraction["chunk_id"])
+            edge["count"] += 1
+    nodes = []
+    for node_id, node in sorted(found.items()):
+        names = [form for form, _ in sorted(node["forms"].items(), key=lambda item: (-item[1], item[0]))]
+        nodes.append({"id": node_id, "type": node["type"], "name": names[0], "names": names,
+                      "chunk_ids": sorted(node["chunk_ids"])})
+    edges = [{"source": source, "relation": relation, "target": target,
+              "chunk_ids": sorted(edge["chunk_ids"]), "count": edge["count"]}
+             for (source, relation, target), edge in sorted(merged.items())]
+    return nodes, edges
+
+# ---------------------------------------------------------------------------
+# Graph file
+# ---------------------------------------------------------------------------
+
+def graph_path(settings):
+    """[DECISION D42] One file per chunk configuration: the chunk_ids it points to depend on it."""
+    return GRAPH_DIR / f"{CORPUS}_cs{settings['chunk_size']}_ov{settings['chunk_overlap']}.json"
+
+
+def graph_built(settings):
+    return graph_path(settings).exists()
+
+
+def load_graph(settings):
+    """The graph file for these settings. A missing or unreadable file is graph_not_built."""
+    try:
+        with open(graph_path(settings), "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        raise rag.RagError("graph_not_built",
+                           f"No concept graph for chunk size {settings['chunk_size']} / "
+                           f"overlap {settings['chunk_overlap']}. Run: python -m app.graph build") from None
+
+
+def write_graph(settings, graph):
+    GRAPH_DIR.mkdir(parents=True, exist_ok=True)
+    with open(graph_path(settings), "w", encoding="utf-8") as f:
+        json.dump(graph, f, indent=2, ensure_ascii=False)
