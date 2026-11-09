@@ -104,3 +104,52 @@ python bm25/ask_bm25_rag_google.py
 - https://www.gutenberg.org/ebooks/2554
 # Huckleberry Finn by Mark Twain
 - https://www.gutenberg.org/ebooks/76
+
+
+
+## V3 — Hybrid retrieval
+
+Three retrievers can be switched on and off: `dense` (V2), `bm25` and `graph` (concept graph, Kestrel only). The ones that are on are fused with RRF.
+
+### Switching retrievers
+
+- Ask and Evaluation tabs: the **Retrievers** checkboxes. Graph is disabled until a graph exists for the current chunk settings.
+- Evaluation command: `--retrievers dense,bm25,graph` (any subset, comma-separated).
+- Default: `DEFAULT_RETRIEVERS` in `app/hybrid.py` (used when the UI or the command doesn't say).
+
+### BM25
+
+The index is a JSON file per chunk configuration in `data/bm25/`. It builds itself on the first search and is rebuilt whole when the chunks in Chroma change. To force a rebuild at the saved settings: `python -m app.bm25_index --build`.
+
+### Concept graph (Kestrel only)
+
+The graph is built with one LLM call per Kestrel chunk, at the saved chunk settings, and lives in `data/graph/kestrel_cs{N}_ov{N}.json`. It is tied to those settings: change the chunk size or overlap and the graph has to be built again.
+
+```bash
+python -m app.graph build [--sleep S]          # extract every chunk (S seconds between calls, for rate limits)
+python -m app.graph build --retry-failed       # redo only the chunks that failed
+python -m app.graph resolve                    # rebuild entities and edges from the stored extractions (no LLM call)
+python -m app.graph stats                      # entities, edges, merges, failures, build cost
+```
+
+### Evaluation
+
+The three minimum configurations (retrieval only, no LLM call):
+
+```bash
+python -m evaluation.run --questions evaluation/questions/forest.jsonl  --corpus forest  --retrievers dense
+python -m evaluation.run --questions evaluation/questions/kestrel.jsonl --corpus kestrel --retrievers dense
+python -m evaluation.run --questions evaluation/questions/forest.jsonl  --corpus forest  --retrievers dense,bm25
+python -m evaluation.run --questions evaluation/questions/kestrel.jsonl --corpus kestrel --retrievers dense,bm25
+python -m evaluation.run --questions evaluation/questions/kestrel.jsonl --corpus kestrel --retrievers dense,bm25,graph
+```
+
+`--candidates N` sets how long each retriever's list is before fusion (default 20, at least 10) and `--rrf-k N` the RRF constant (default 60). Each run writes `evaluation/results/<UTC stamp>_<corpus>_cs{N}_ov{N}_<retrievers>.json`.
+
+### Extraction quality
+
+```bash
+python -m evaluation.graph_sample [--n 10] [--seed 42]
+```
+
+picks random graph edges and writes them, with the text of their chunks, to `evaluation/results/<UTC stamp>_kestrel_graph_sample.json`. Every `grade` starts as `null`: fill it in by hand with `correct`, `wrong` or `unsupported`.
