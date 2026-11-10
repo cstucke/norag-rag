@@ -249,3 +249,119 @@ No answer said anything its cited chunks don't. Both unanswerable questions were
   - Keeping stopwords gives every word of a question a row. Keeping `refund` and `refunds` apart shows the exact forms the corpus uses, which is what a vocabulary miss is about.
   - Counting stored chunks shows exactly what was embedded, including fragments cut at chunk boundaries such as `refundabl`.
   - One corpus matches how question sets are scoped. Counting the whole Forest corpus takes about 1.6 s, so nothing is cached.
+
+## V3
+
+### Results
+All runs at 1000 / 200, retrieval only, 20 candidates, RRF k = 60. Kestrel now has 10 answerable questions (I added two `two_hop`, q11 and q12), so it doesn't compare directly with V2. Files in `evaluation/results/`: `20261108T101135Z_kestrel_cs1000_ov200_dense.json`, `20261108T101200Z_kestrel_cs1000_ov200_dense+bm25.json`, `20261108T101229Z_forest_cs1000_ov200_dense.json`, `20261108T101254Z_forest_cs1000_ov200_dense+bm25.json`, `20261110T084513Z_kestrel_cs1000_ov200_dense+bm25+graph.json`.
+
+| Corpus | Retrievers | Type | n | hit@1 | hit@3 | hit@5 | hit@10 | recall@1 | recall@3 | recall@5 | recall@10 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Kestrel | dense | overall | 10 | 0.600 | 0.700 | 1.000 | 1.000 | 0.550 | 0.700 | 0.850 | 0.950 |
+| Kestrel | dense | `exact_identifier` | 2 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense | `split_answer` | 2 | 1.000 | 1.000 | 1.000 | 1.000 | 0.750 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense | `vocabulary` | 1 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense | `versions` | 2 | 0.500 | 1.000 | 1.000 | 1.000 | 0.500 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense | `two_hop` | 3 | 0.000 | 0.000 | 1.000 | 1.000 | 0.000 | 0.000 | 0.500 | 0.833 |
+| Kestrel | dense + bm25 | overall | 10 | 0.400 | 0.900 | 0.900 | 1.000 | 0.300 | 0.700 | 0.750 | 0.950 |
+| Kestrel | dense + bm25 | `exact_identifier` | 2 | 1.000 | 1.000 | 1.000 | 1.000 | 0.750 | 0.750 | 1.000 | 1.000 |
+| Kestrel | dense + bm25 | `split_answer` | 2 | 0.500 | 1.000 | 1.000 | 1.000 | 0.250 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense + bm25 | `vocabulary` | 1 | 0.000 | 0.000 | 0.000 | 1.000 | 0.000 | 0.000 | 0.000 | 1.000 |
+| Kestrel | dense + bm25 | `versions` | 2 | 0.500 | 1.000 | 1.000 | 1.000 | 0.500 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense + bm25 | `two_hop` | 3 | 0.000 | 1.000 | 1.000 | 1.000 | 0.000 | 0.500 | 0.500 | 0.833 |
+| Kestrel | dense + bm25 + graph | overall | 10 | 0.700 | 0.900 | 0.900 | 1.000 | 0.450 | 0.750 | 0.750 | 0.950 |
+| Kestrel | dense + bm25 + graph | `exact_identifier` | 2 | 1.000 | 1.000 | 1.000 | 1.000 | 0.750 | 0.750 | 0.750 | 1.000 |
+| Kestrel | dense + bm25 + graph | `split_answer` | 2 | 0.500 | 1.000 | 1.000 | 1.000 | 0.250 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense + bm25 + graph | `vocabulary` | 1 | 0.000 | 0.000 | 0.000 | 1.000 | 0.000 | 0.000 | 0.000 | 1.000 |
+| Kestrel | dense + bm25 + graph | `versions` | 2 | 0.500 | 1.000 | 1.000 | 1.000 | 0.500 | 1.000 | 1.000 | 1.000 |
+| Kestrel | dense + bm25 + graph | `two_hop` | 3 | 1.000 | 1.000 | 1.000 | 1.000 | 0.500 | 0.667 | 0.667 | 0.833 |
+| The Forest | dense | overall | 10 | 0.200 | 0.300 | 0.600 | 0.600 | 0.133 | 0.183 | 0.467 | 0.500 |
+| The Forest | dense | `exact_identifier` | 2 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| The Forest | dense | `split_answer` | 2 | 0.500 | 1.000 | 1.000 | 1.000 | 0.167 | 0.417 | 0.583 | 0.750 |
+| The Forest | dense | `vocabulary` | 2 | 0.000 | 0.000 | 0.500 | 0.500 | 0.000 | 0.000 | 0.500 | 0.500 |
+| The Forest | dense | `versions` | 2 | 0.500 | 0.500 | 1.000 | 1.000 | 0.500 | 0.500 | 1.000 | 1.000 |
+| The Forest | dense | `two_hop` | 2 | 0.000 | 0.000 | 0.500 | 0.500 | 0.000 | 0.000 | 0.250 | 0.250 |
+| The Forest | dense + bm25 | overall | 10 | 0.400 | 0.500 | 0.600 | 0.900 | 0.233 | 0.367 | 0.417 | 0.717 |
+| The Forest | dense + bm25 | `exact_identifier` | 2 | 0.000 | 0.000 | 0.000 | 1.000 | 0.000 | 0.000 | 0.000 | 1.000 |
+| The Forest | dense + bm25 | `split_answer` | 2 | 1.000 | 1.000 | 1.000 | 1.000 | 0.417 | 0.583 | 0.583 | 0.583 |
+| The Forest | dense + bm25 | `vocabulary` | 2 | 0.000 | 0.000 | 0.000 | 0.500 | 0.000 | 0.000 | 0.000 | 0.500 |
+| The Forest | dense + bm25 | `versions` | 2 | 0.500 | 1.000 | 1.000 | 1.000 | 0.500 | 1.000 | 1.000 | 1.000 |
+| The Forest | dense + bm25 | `two_hop` | 2 | 0.500 | 0.500 | 1.000 | 1.000 | 0.250 | 0.250 | 0.500 | 0.500 |
+
+`not_in_corpus` has no evidence (n = 0), so it's left out.
+
+| Corpus | Retrievers | LLM calls / q | Tokens / q | Latency / q |
+|---|---|---|---|---|
+| Kestrel | dense | 0 | 0 | 637 ms |
+| Kestrel | dense + bm25 | 0 | 0 | 619 ms |
+| Kestrel | dense + bm25 + graph | 0 | 0 | 702 ms |
+| The Forest | dense | 0 | 0 | 969 ms |
+| The Forest | dense + bm25 | 0 | 0 | 801 ms |
+
+Retrieval only, so no LLM calls or tokens. The latency differences are noise (the dense query dominates). The graph has no LLM call at query time, its cost is the one-off build (below).
+
+What I take from it:
+- BM25 fixes what dense can't. On The Forest the two identifier questions go from never found to ranks 6 and 9 (hit@10 0.0 → 1.0, overall 0.6 → 0.9). On Kestrel the two-hop hit@3 goes 0.0 → 1.0.
+- It costs precision at the top: Kestrel hit@1 0.6 → 0.4 and hit@5 1.0 → 0.9, because of one vocabulary question (see below).
+- The graph fixes the top of the ranking on chains: two-hop hit@1 0.0 → 1.0, overall hit@1 0.4 → 0.7, MRR 0.644 → 0.812. Deeper it changes nothing: hit@5 stays 0.9 and recall@10 stays 0.950. It even loses a bit on identifiers (recall@5 1.0 → 0.75).
+
+### Default configuration, and why
+`DEFAULT_RETRIEVERS = ("dense", "bm25")`. Dense + bm25 + graph is the best on Kestrel (MRR 0.812, hit@1 0.7), but the graph only exists for Kestrel: with it in the default, an evaluation on The Forest stops with `invalid_retrievers`. So the default is dense + bm25, which works on both corpora, and I switch the graph on for Kestrel. The graph also costs 37 LLM calls to build and has to be rebuilt when the chunk settings change.
+
+### BM25: index, tokenization, updates
+- **Index:** one JSON file per chunk configuration in `data/bm25/`, built from the chunks stored in Chroma, so BM25 and dense see the same chunks and ids.
+- **Tokenization:** the Words tab's tokenizer (lowercase letters and digits, no stopwords, no stemming). `KST-5031` becomes `kst` and `5031`.
+- **Scoring:** BM25, k1 = 1.5, b = 0.75, Lucene IDF, statistics over the whole collection, nothing tuned.
+- **Updates:** on each search I hash the sorted chunk ids. If the file is missing or the hash differs, the whole index is rebuilt (one line printed). No incremental update, a full rebuild is fast at this size.
+- **Fails on:** vocabulary questions (no shared word with the chunk), and common words matching unrelated chunks, since stopwords are kept.
+
+### Concept graph
+**Schema (fixed).** 8 entity types (ErrorCode, Service, Team, Person, Channel, Plan, Role, Feature) and 11 relations (raised_by, escalates_to, resolved_by, owned_by, provides, replaces, led_by, has_channel, covered_by, available_on, performed_by), each with allowed subject and object types. Fixed so the chains use the same edge kinds in every chunk. Role instead of a Policy type so q12's second hop has an edge in the right chunk. Values (IPs, durations) aren't entities.
+
+**Extraction and validation.** One LLM call per chunk (38). Each triple is checked with Pydantic against the schema, including the allowed subject and object types. A bad triple goes to `rejected`, a chunk with an LLM error or non-JSON output is `failed`, no retry. `build --retry-failed` redoes failed chunks.
+
+**Entity resolution.** Same type and same normalized name (lowercase, non-alphanumeric runs become one space, leading "the " removed). No alias table, so every merge is explainable and re-running is free.
+- Right merge: `Feature:single sign on` merges `single sign-on` and `Single sign-on` (same for the SAML form).
+- Missed merge: `audit log` exists as `Feature:audit log` and `Service:audit log`. It's the same thing under two types, and the type rule keeps them apart.
+
+**Retrieval (no LLM at query time).** Entity linking by whole-word string match on the entities' surface forms (a form inside a longer matched form is ignored). Then 2 hops over the edges in both directions. Each followed edge adds 1.0 (hop 1) or 0.5 (hop 2) to its chunks, sorted by score. No seed, empty list. Not picked: LLM or embedding entity linking (a call per question), more hops (noise).
+
+| Entities | Relations | Merges | LLM calls | Tokens | Build time |
+|---|---|---|---|---|---|
+| 63 | 65 edges | 2 | 37 | 25,189 prompt / 4,083 completion | 1,344 s |
+
+Failed chunks: 1 (`support-runbook-errors.md#8`, rate limit, never recovered). It isn't needed for the two-hop questions: KST-5031, KST-2040 and KST-6010 all have edges from other chunks. Rejected triples: 0, so Pydantic never rejected anything on the real run. The first build had 16 failed chunks on the rate limit and 6 after the first retry, so most of the 1,344 s was waiting and retrying. The call count only includes calls that got an answer.
+
+Extraction quality (10 triples, file: `evaluation/results/___`): correct / wrong / unsupported = ___ / ___ / ___. ___ (one sentence on a wrong or unsupported triple and what it cost, or "none in the 10 sampled").
+
+**Where it fails.**
+- 2 hops is a hard stop. In q08 the graph finds hop 1 (graph rank 4) but not the `| Messaging | ... |` row of the catalog (no graph rank): that row is 3 edges from KST-5031. It only reached the top 10 because dense and BM25 both had it at rank 11.
+- Names that are also words. q08 asks "which team should support contact", so `Plan:Team` became a seed along with `scheduled reports`, and the graph followed 12 edges, mostly noise. q12 says "the admin console", so `Role:Admin` became a seed.
+- q12's second hop (the 2026 refund policy) isn't reached by the graph. I think the runbook and the policy don't give the refund the same name, so the chain doesn't connect, but I didn't check.
+- A seed needs an exact name, so a nickname or typo gives an empty list.
+
+Optional features added: none.
+
+### The graph's chunks after fusion
+They reached the top k. 6 evidence items had a graph rank, and all of them were in the top 3 after fusion (67% at rank 1). But graph-only reach has n = 0: every evidence item the graph found was also in the dense or BM25 top 20. So on these questions the graph doesn't find new chunks, it reorders chunks that were already there, and a chunk all three retrievers agree on goes to rank 1 under plain RRF. That's what moves the two-hop hit@1 from 0.0 to 1.0. q11 is the clean example: the graph finds both hops (ranks 2 and 1) and they end up at fused ranks 1 and 2. I didn't change k or the candidates.
+
+### A question where adding a retriever made things worse
+Kestrel q05, "I lost my phone and I can't log in anymore. What can I do?". Dense alone has the right chunk at rank 1; with dense + bm25 it's at rank 9. BM25 doesn't find it at all (the chunk says "authenticator device" and "backup codes", the question says "phone" and "log in"). It returns other chunks, and RRF puts chunks that both lists half-agree on (about 1/62 + 1/62) above one that only dense ranks first (1/61). I think the BM25 matches come from common words, since I keep stopwords, but I didn't check. The graph doesn't fix it: with graph on, q05 is at rank 8. The same effect pushed q12's second hop out of the top 10 (dense rank 5) and Forest q06 from rank 4 to 8.
+
+### Decision log (V3)
+- **D32 BM25 index.** Options: in memory, a file, a database. Picked: a JSON file per chunk configuration in `data/bm25/`, built from Chroma's chunks. Why: it survives restarts and matches the dense chunks and ids.
+- **D33 BM25 updates.** Options: incremental or full rebuild. Picked: full rebuild when the chunk-id hash changes. Why: simple, fast, never stale.
+- **D34 Tokenization.** Options: Words tab tokenizer, a new one, stemming and stopwords. Picked: the Words tab's. Why: same words in both places, identifiers split into findable parts. Cost: the common-word matches in q05.
+- **D35 Scoring.** Picked: k1 = 1.5, b = 0.75, Lucene IDF. Why: usual defaults, nothing tuned on the questions.
+- **D36 Fusion.** Options: mixing scores, weighted RRF, plain RRF. Picked: plain RRF, k = 60, 20 candidates. Why: ranks compare across retrievers, scores don't.
+- **D37 Switches.** Picked: `dense`, `bm25`, `graph`, any subset, one `DEFAULT_RETRIEVERS` in `app/hybrid.py`.
+- **D38 Schema.** Options: open or fixed. Picked: fixed, 8 types, 11 relations. Why: the chains need the same edge kinds in every chunk.
+- **D39 Extraction.** Picked: one call per chunk. Why: provenance is the chunk, cost is the number of chunks.
+- **D40 Validation.** Picked: Pydantic per triple, invalid ones dropped and kept in `rejected`, bad chunks `failed`, no retry. Why: a bad triple never becomes an edge, but I still see it.
+- **D41 Resolution.** Options: exact names, normalized names, alias table, embeddings. Picked: same type and normalized name. Why: explainable and free to re-run.
+- **D42 Storage.** Picked: one JSON file per chunk configuration, with chunk ids on every node and edge and the build cost.
+- **D43 Graph retrieval.** Options: LLM or embedding linking, string match, more hops. Picked: string match, 2 hops, 1.0 / 0.5 per edge. Why: no query-time LLM call, readable path.
+- **D44 Settings.** Picked: built for the saved settings only. Why: its chunk ids only exist for them.
+- **D45 Metrics.** recall@k = share of a question's evidence items in the first k chunks; graph reach is computed on the items the graph found.
+- **D46 Usage counter.** A counter in `call_llm`, cost = difference of two copies, only answered calls.
+- **D47 Sample.** 10 edges from `random.Random(42)`, graded by hand.
