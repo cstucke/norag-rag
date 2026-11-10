@@ -116,7 +116,8 @@ async function ask() {
   // Hide the previous answer, so it can't be mistaken for the answer to this question
   $("result").hidden = true;
   try {
-    showResult(await api("POST", "/api/ask", { question: $("question").value, doc_ids: [...selected] }));
+    showResult(await api("POST", "/api/ask", { question: $("question").value, doc_ids: [...selected],
+      retrievers: checkedRetrievers("ask-retrievers") }));
   } catch {
     showResult({ status: "error", error: { message: "Request failed." } });
   } finally {
@@ -150,6 +151,7 @@ function showResult(data) {
       link.textContent = "wiki page";
       item.append(" ", link);
     }
+    renderFoundBy(ref, item);
     return item;
   }));
   $("retrieved").replaceChildren(...(data.retrieved || []).map((ref) => {
@@ -158,6 +160,7 @@ function showResult(data) {
     return item;
   }));
   $("result").hidden = false;
+  renderGraphPath(data.graph_path);
 }
 
 async function openChunk(chunkId) {
@@ -205,4 +208,82 @@ for (const name of TABS) {
   $(`show-${name}`).addEventListener("click", () => {
     for (const tab of TABS) $(`tab-${tab}`).hidden = tab !== name;
   });
+}
+
+// ---------------------------------------------------------------------------
+// Retrievers (V3)
+// ---------------------------------------------------------------------------
+
+const RETRIEVER_LABELS = { dense: "Dense", bm25: "BM25", graph: "Graph" };
+
+// One checkbox per retriever, checked for the defaults. A disabled box is also unchecked,
+// since input:checked would still match it
+function showRetrievers(fieldsetId, data) {
+  for (const name of data.available) {
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = name;
+    checkbox.checked = data.default.includes(name);
+    const label = document.createElement("label");
+    label.append(checkbox, " ", RETRIEVER_LABELS[name]);
+    if (name === "graph" && !data.graph_built) {
+      checkbox.disabled = true;
+      checkbox.checked = false;
+      label.append(" (not built for the current settings)");
+    }
+    $(fieldsetId).append(label, " ");
+  }
+}
+
+function checkedRetrievers(fieldsetId) {
+  return [...$(fieldsetId).querySelectorAll("input:checked")].map((checkbox) => checkbox.value);
+}
+
+// "found by: dense #2 · bm25 #1", only the retrievers that found the chunk
+function renderFoundBy(ref, element) {
+  const ranks = Object.entries(ref.found_by || {}).filter(([, rank]) => rank !== null);
+  const line = document.createElement("div");
+  line.className = "small";
+  line.textContent = "found by: " + ranks.map(([name, rank]) => `${name} #${rank}`).join(" · ");
+  element.append(line);
+}
+
+api("GET", "/api/retrievers").then((data) => {
+  showRetrievers("ask-retrievers", data);
+  showRetrievers("eval-retrievers", data);
+});
+
+// The path behind an answer when the graph is on: the entities found in the question, then the
+// edges followed that have a passage in the context, each with its passages. Hidden otherwise
+function renderGraphPath(path) {
+  const box = $("graph-path");
+  box.hidden = !path;
+  if (!path) return;
+  const title = document.createElement("h3");
+  title.textContent = "Graph path";
+  const entities = document.createElement("p");
+  entities.textContent = path.entities.length
+    ? "Entities in the question: " + path.entities.map((entity) => `${entity.name} (${entity.type})`).join(", ")
+    : "No entity from the question was found in the graph.";
+  const parts = [title, entities];
+  if (path.entities.length) {
+    const edges = document.createElement("ul");
+    edges.append(...path.edges.map((edge) => {
+      const item = document.createElement("li");
+      item.append(`${edge.source_name} —${edge.relation}→ ${edge.target_name} (hop ${edge.hop}) `);
+      for (const chunkId of edge.chunk_ids) {
+        // "support-runbook-errors.md#7" is enough to tell chunks apart; the full id is the tooltip
+        const button = passageButton(chunkId.replace(/^.*\//, "").replace(/#cs\d+-ov\d+#/, "#"), chunkId);
+        button.title = chunkId;
+        item.append(button, " ");
+      }
+      return item;
+    }));
+    const heading = document.createElement("p");
+    heading.textContent = path.edges.length
+      ? "Edges followed:" : "No edge followed from these entities has a passage in the context.";
+    parts.push(heading);
+    if (path.edges.length) parts.push(edges);
+  }
+  box.replaceChildren(...parts);
 }

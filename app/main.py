@@ -1,15 +1,18 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app import rag
+from app import graph, rag
 from app.config import BASE_DIR, load_settings, save_settings, validate_settings
 from app.rag import ERRORS, RagError
 from app.schemas import EvalRequest, WordsQuestionRequest
 from app.words import corpus_names, question_words, vocabulary, word_chunks
 from evaluation.run import load_questions, run_eval
+from app.hybrid import DEFAULT_RETRIEVERS, RETRIEVERS
 
 app = FastAPI(title="RAG V1 — The Forest wiki")
 
@@ -67,13 +70,16 @@ async def put_settings(request: Request):
 async def post_ask(request: Request):
     body = await json_body(request)
     body = body if isinstance(body, dict) else {}
-    question, doc_ids = body.get("question"), body.get("doc_ids")
+    question, doc_ids, retrievers = body.get("question"), body.get("doc_ids"), body.get("retrievers")
     # Malformed fields count as missing, so they get the catalogue's error codes
     if not isinstance(question, str):
         question = ""
     if not isinstance(doc_ids, list) or not all(isinstance(doc_id, str) for doc_id in doc_ids):
         doc_ids = []
-    response = rag.ask(question, doc_ids, load_settings())
+    # A missing or malformed list of retrievers runs the default ones
+    if not isinstance(retrievers, list):
+        retrievers = None
+    response = rag.ask(question, doc_ids, load_settings(), retrievers)
     status_code = ERRORS[response.error.code][0] if response.error else 200
     return JSONResponse(status_code=status_code, content=response.model_dump())
 
@@ -98,6 +104,10 @@ def get_question_sets():
         question_sets.append({"name": path.stem, "questions": questions})
     return {"question_sets": question_sets}
 
+@app.get("/api/retrievers")
+def get_retrievers():
+        return {"available": list(RETRIEVERS), "default": list(DEFAULT_RETRIEVERS),
+            "graph_built": graph.graph_built(load_settings())}
 
 @app.post("/api/eval")
 def post_eval(body: EvalRequest):
@@ -112,7 +122,8 @@ def post_eval(body: EvalRequest):
         settings = validate_settings(body.model_dump(exclude={"question_set", "with_llm"}))
     except ValueError as error:
         raise RagError("invalid_settings", str(error)) from None
-    results, results_path = run_eval(path, body.question_set, settings, body.with_llm)
+    results, results_path = run_eval(path, body.question_set, settings, body.with_llm,
+                                     DEFAULT_RETRIEVERS if body.retrievers is None else body.retrievers)
     return {"results_file": results_path.relative_to(BASE_DIR).as_posix(), "metrics": results["metrics"],
             "corpus_check": results["corpus_check"]}
 

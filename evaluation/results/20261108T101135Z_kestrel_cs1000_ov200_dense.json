@@ -1,0 +1,2984 @@
+{
+  "config": {
+    "chunk_size": 1000,
+    "chunk_overlap": 200,
+    "top_k": 5,
+    "corpus": "kestrel",
+    "questions_file": "kestrel.jsonl",
+    "eval_ks": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "embedding_model": "all-MiniLM-L6-v2",
+    "llm_model": null,
+    "retrievers": [
+      "dense"
+    ],
+    "candidates": 20,
+    "rrf_k": 60
+  },
+  "questions_sha256": "aa07c71f765fe0d70133073a2bfda23e49700e6fba19c38862cf3abd6be8c0bb",
+  "corpus_fingerprint": "5180fbff1f7120dfc5dea796f704900eeb34c86b5988af3b5d4e664bdf76b485",
+  "corpus_check": "no manifest",
+  "metrics": {
+    "overall": {
+      "n": 10,
+      "unanswerable": 2,
+      "hit@1": 0.6,
+      "hit@3": 0.7,
+      "hit@5": 1.0,
+      "hit@10": 1.0,
+      "all@1": 0.5,
+      "all@3": 0.7,
+      "all@5": 0.7,
+      "all@10": 0.9,
+      "recall@1": 0.55,
+      "recall@3": 0.7,
+      "recall@5": 0.85,
+      "recall@10": 0.95,
+      "mrr": 0.7150000000000001
+    },
+    "by_type": {
+      "exact_identifier": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 1.0,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 1.0,
+        "all@3": 1.0,
+        "all@5": 1.0,
+        "all@10": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0
+      },
+      "not_in_corpus": {
+        "n": 0,
+        "unanswerable": 2,
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null,
+        "hit@10": null,
+        "all@1": null,
+        "all@3": null,
+        "all@5": null,
+        "all@10": null,
+        "recall@1": null,
+        "recall@3": null,
+        "recall@5": null,
+        "recall@10": null,
+        "mrr": null
+      },
+      "split_answer": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 1.0,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 0.5,
+        "all@3": 1.0,
+        "all@5": 1.0,
+        "all@10": 1.0,
+        "recall@1": 0.75,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0
+      },
+      "two_hop": {
+        "n": 3,
+        "unanswerable": 0,
+        "hit@1": 0.0,
+        "hit@3": 0.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 0.0,
+        "all@3": 0.0,
+        "all@5": 0.0,
+        "all@10": 0.6666666666666666,
+        "recall@1": 0.0,
+        "recall@3": 0.0,
+        "recall@5": 0.5,
+        "recall@10": 0.8333333333333334,
+        "mrr": 0.21666666666666667
+      },
+      "versions": {
+        "n": 2,
+        "unanswerable": 0,
+        "hit@1": 0.5,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 0.5,
+        "all@3": 1.0,
+        "all@5": 1.0,
+        "all@10": 1.0,
+        "recall@1": 0.5,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.75
+      },
+      "vocabulary": {
+        "n": 1,
+        "unanswerable": 0,
+        "hit@1": 1.0,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "hit@10": 1.0,
+        "all@1": 1.0,
+        "all@3": 1.0,
+        "all@5": 1.0,
+        "all@10": 1.0,
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0
+      }
+    },
+    "unanswerable": {
+      "n": 2
+    },
+    "cost": {
+      "retrieval_ms": 636.9151179096662,
+      "llm_calls": 0.0,
+      "prompt_tokens": 0.0,
+      "completion_tokens": 0.0,
+      "answer_ms": null
+    }
+  },
+  "questions": [
+    {
+      "id": "q01",
+      "type": "exact_identifier",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 8000,
+          "char_end": 8519
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#5",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4800,
+          "char_end": 5800
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6400,
+          "char_end": 7400
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3366,
+          "char_end": 3407,
+          "hit_ranks": [
+            1,
+            3
+          ]
+        },
+        {
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3449,
+          "char_end": 3504,
+          "hit_ranks": [
+            1
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#5",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "quote": "the Kestrel addresses are missing from it",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "quote": "add both 203.0.113.10 and 203.0.113.11 to the allowlist",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 7465.87054093834,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q02",
+      "type": "exact_identifier",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4800,
+          "char_end": 5800
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#3",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 8000,
+          "char_end": 8519
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6400,
+          "char_end": 7400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 3200,
+          "char_end": 4200
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4973,
+          "char_end": 5011,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 5118,
+          "char_end": 5233,
+          "hit_ranks": [
+            1
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#3",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "quote": "all seats of the plan are already used",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "quote": "an Admin of the workspace must remove a member to free a seat, or the Owner must add seats or move to a larger plan",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 17.93795800767839,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q03",
+      "type": "split_answer",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#4",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6400,
+          "char_end": 7400
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#3",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 7200,
+          "char_end": 7895
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#2",
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#1",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#1",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 1600,
+          "char_end": 2600
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 3475,
+          "char_end": 3563,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 3785,
+          "char_end": 3840,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 3955,
+          "char_end": 3986,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 4129,
+          "char_end": 4195,
+          "hit_ranks": [
+            1
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#4",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#3",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#2",
+            "doc_id": "kestrel/service-catalog.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#1",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#1",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "We then retry the payment automatically 1 day, 3 days and 7 days after the first attempt",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "a grace period of 21 days from the first failed attempt",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "the workspace becomes read-only",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "60 days after the first failed attempt, the workspace is suspended",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 15.129833947867155,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q04",
+      "type": "split_answer",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#5",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#2",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#3",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#0",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#3",
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#0",
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 0,
+          "char_end": 1000
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 1385,
+          "char_end": 1434,
+          "hit_ranks": [
+            2
+          ]
+        },
+        {
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 4099,
+          "char_end": 4146,
+          "hit_ranks": [
+            1,
+            3
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#5",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#2",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#3",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#0",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#3",
+            "doc_id": "kestrel/service-catalog.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#0",
+            "doc_id": "kestrel/service-catalog.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/product-guide.md",
+            "quote": "| Single sign-on (SAML) | — | — | — | Yes | Yes |",
+            "fused_rank": 2,
+            "rank_in": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/product-guide.md",
+            "quote": "downloads the Kestrel service provider metadata",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 15.151957981288433,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q05",
+      "type": "vocabulary",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#5",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6400,
+          "char_end": 7400
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#6",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 4800,
+          "char_end": 5800
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#9",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 7200,
+          "char_end": 8200
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#4",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 3200,
+          "char_end": 4200
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 4513,
+          "char_end": 4590,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 4761,
+          "char_end": 4819,
+          "hit_ranks": [
+            1
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#5",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#2",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#6",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#9",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#4",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/product-guide.md",
+            "quote": "If you no longer have your authenticator device, use one of your backup codes",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/product-guide.md",
+            "quote": "ask an Admin of your workspace to reset your second factor",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 15.662958030588925,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q06",
+      "type": "versions",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#3",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6400,
+          "char_end": 7400
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 7200,
+          "char_end": 7895
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 3200,
+          "char_end": 4123
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 2753,
+          "char_end": 2799,
+          "hit_ranks": [
+            1
+          ]
+        },
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 2815,
+          "char_end": 2853,
+          "hit_ranks": [
+            1
+          ]
+        }
+      ],
+      "first_hit_rank": 1,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#3",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "within 60 days of the purchase or renewal date",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "pro-rated from the date of the request",
+            "fused_rank": 1,
+            "rank_in": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 15.346041996963322,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q07",
+      "type": "versions",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#1",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#1",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 3200,
+          "char_end": 4123
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 1600,
+          "char_end": 2600
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 932,
+          "char_end": 990,
+          "hit_ranks": [
+            2,
+            3
+          ]
+        }
+      ],
+      "first_hit_rank": 2,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#1",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#1",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "Customers who choose annual billing receive a 20% discount",
+            "fused_rank": 2,
+            "rank_in": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 15.8255830174312,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q08",
+      "type": "two_hop",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 8000,
+          "char_end": 8519
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#5",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 7200,
+          "char_end": 7895
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6400,
+          "char_end": 7400
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4800,
+          "char_end": 5800
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6419,
+          "char_end": 6458,
+          "hit_ranks": [
+            4,
+            9
+          ]
+        },
+        {
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 2841,
+          "char_end": 2912,
+          "hit_ranks": []
+        }
+      ],
+      "first_hit_rank": 4,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#5",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "quote": "escalate to the team that owns postroom",
+            "fused_rank": 4,
+            "rank_in": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/service-catalog.md",
+            "quote": "| Messaging | Inès Moreau | #oncall-messaging | 08:00–20:00, weekdays |",
+            "fused_rank": null,
+            "rank_in": {
+              "dense": 11,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 15.592874959111214,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q09",
+      "type": "not_in_corpus",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#0",
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#0",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#9",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 7200,
+          "char_end": 8200
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#7",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3200,
+          "char_end": 4200
+        }
+      ],
+      "evidence": [],
+      "first_hit_rank": null,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#0",
+            "doc_id": "kestrel/service-catalog.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#0",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#9",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#7",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#4",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 15.386000042781234,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q10",
+      "type": "not_in_corpus",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 1600,
+          "char_end": 2600
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#1",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#1",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#0",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 3200,
+          "char_end": 4123
+        }
+      ],
+      "evidence": [],
+      "first_hit_rank": null,
+      "all_evidence_hit": false,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#2",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#0",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#1",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#1",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#0",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 16.185541986487806,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q11",
+      "type": "two_hop",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#5",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 7200,
+          "char_end": 7895
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#3",
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 5600,
+          "char_end": 6600
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#1",
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 800,
+          "char_end": 1800
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 800,
+          "char_end": 1800
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 3065,
+          "char_end": 3158,
+          "hit_ranks": [
+            7
+          ]
+        },
+        {
+          "doc_id": "kestrel/service-catalog.md",
+          "char_start": 2679,
+          "char_end": 2768,
+          "hit_ranks": [
+            5
+          ]
+        }
+      ],
+      "first_hit_rank": 5,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#5",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#4",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#3",
+            "doc_id": "kestrel/service-catalog.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#1",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#3",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#7",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/service-catalog.md#cs1000-ov200#1",
+            "doc_id": "kestrel/service-catalog.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#1",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "quote": "to Data Integrations if several customers report it for the same source type at the same time",
+            "fused_rank": 7,
+            "rank_in": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/service-catalog.md",
+            "quote": "| Data Integrations | Tomasz Wójcik | #oncall-data-integrations | 08:00–20:00, weekdays |",
+            "fused_rank": 5,
+            "rank_in": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 16.394958016462624,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    },
+    {
+      "id": "q12",
+      "type": "two_hop",
+      "retrieved": [
+        {
+          "rank": 1,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 6400,
+          "char_end": 7400
+        },
+        {
+          "rank": 2,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#3",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 3,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 4800,
+          "char_end": 5800
+        },
+        {
+          "rank": 4,
+          "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+          "doc_id": "kestrel/product-guide.md",
+          "char_start": 8000,
+          "char_end": 8519
+        },
+        {
+          "rank": 5,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 2400,
+          "char_end": 3400
+        },
+        {
+          "rank": 6,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 0,
+          "char_end": 1000
+        },
+        {
+          "rank": 7,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#4",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 3200,
+          "char_end": 4200
+        },
+        {
+          "rank": 8,
+          "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 4000,
+          "char_end": 5000
+        },
+        {
+          "rank": 9,
+          "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+          "doc_id": "kestrel/billing-policy-2025.md",
+          "char_start": 3200,
+          "char_end": 4123
+        },
+        {
+          "rank": 10,
+          "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 7200,
+          "char_end": 7895
+        }
+      ],
+      "evidence": [
+        {
+          "doc_id": "kestrel/support-runbook-errors.md",
+          "char_start": 7705,
+          "char_end": 7747,
+          "hit_ranks": [
+            10
+          ]
+        },
+        {
+          "doc_id": "kestrel/billing-policy-2026.md",
+          "char_start": 3111,
+          "char_end": 3201,
+          "hit_ranks": [
+            5
+          ]
+        }
+      ],
+      "first_hit_rank": 5,
+      "all_evidence_hit": true,
+      "retrieval": {
+        "ranked": [
+          {
+            "rank": 1,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#8",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.01639344262295082,
+            "found_by": {
+              "dense": 1,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 2,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#3",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.016129032258064516,
+            "found_by": {
+              "dense": 2,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 3,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#6",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015873015873015872,
+            "found_by": {
+              "dense": 3,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 4,
+            "chunk_id": "kestrel/product-guide.md#cs1000-ov200#10",
+            "doc_id": "kestrel/product-guide.md",
+            "fused_score": 0.015625,
+            "found_by": {
+              "dense": 4,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 5,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#3",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.015384615384615385,
+            "found_by": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 6,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#0",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.015151515151515152,
+            "found_by": {
+              "dense": 6,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 7,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#4",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014925373134328358,
+            "found_by": {
+              "dense": 7,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 8,
+            "chunk_id": "kestrel/billing-policy-2026.md#cs1000-ov200#5",
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "fused_score": 0.014705882352941176,
+            "found_by": {
+              "dense": 8,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 9,
+            "chunk_id": "kestrel/billing-policy-2025.md#cs1000-ov200#4",
+            "doc_id": "kestrel/billing-policy-2025.md",
+            "fused_score": 0.014492753623188406,
+            "found_by": {
+              "dense": 9,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "rank": 10,
+            "chunk_id": "kestrel/support-runbook-errors.md#cs1000-ov200#9",
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "fused_score": 0.014285714285714285,
+            "found_by": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "doc_id": "kestrel/support-runbook-errors.md",
+            "quote": "request a full refund of the second charge",
+            "fused_rank": 10,
+            "rank_in": {
+              "dense": 10,
+              "bm25": null,
+              "graph": null
+            }
+          },
+          {
+            "doc_id": "kestrel/billing-policy-2026.md",
+            "quote": "Approved refunds are processed within 14 days and returned to the original payment method.",
+            "fused_rank": 5,
+            "rank_in": {
+              "dense": 5,
+              "bm25": null,
+              "graph": null
+            }
+          }
+        ],
+        "graph": null
+      },
+      "cost": {
+        "retrieval_ms": 18.49716599099338,
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "answer_ms": null
+      }
+    }
+  ]
+}

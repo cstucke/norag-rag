@@ -45,6 +45,8 @@ ERRORS = {
     "empty_question_set": (400, "The question set has no questions."),
     "evidence_check_failed": (400, "Evidence check failed."),
     "invalid_word": (400, "Enter one word (letters and digits only)."),
+    "invalid_retrievers": (400, "Switch on at least one retriever."),
+    "graph_not_built": (409, "No concept graph for the current settings. Run: python -m app.graph build"),
 }
 
 
@@ -283,6 +285,9 @@ def build_prompt(question, chunks):
         for rank, chunk in enumerate(chunks, 1))
     return PROMPT.format(excerpts=excerpts, question=question)
 
+# [DECISION D46] Running totals of LLM usage. A caller measures its own cost as the
+# difference between a copy taken before and a copy taken after
+USAGE = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
 def call_llm(prompt):
     """Gemini's raw reply text. API failures become the matching catalogue error."""
@@ -305,6 +310,11 @@ def call_llm(prompt):
         raise RagError("llm_auth_or_model") from None
     except openai.OpenAIError:
         raise RagError("llm_error") from None
+    USAGE["calls"] += 1
+    # Without a usage block the call still counts, with 0 tokens
+    if response.usage:
+        USAGE["prompt_tokens"] += response.usage.prompt_tokens
+        USAGE["completion_tokens"] += response.usage.completion_tokens
     return response.choices[0].message.content or ""
 
 
@@ -336,7 +346,7 @@ def to_reference(rank, chunk):
                      line_end=meta["line_end"], distance=chunk["distance"])
 
 
-def ask(question, doc_ids, settings):
+def ask(question, doc_ids, settings, retrievers=None):
     """The whole /api/ask logic, also used by the evaluation harness (--with-llm).
     Request errors are raised as RagError. Everything after retrieval is reported
     in the returned AskResponse."""
@@ -346,8 +356,17 @@ def ask(question, doc_ids, settings):
         raise RagError("no_documents_selected")
     config = AskConfig(chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
                        top_k=settings["top_k"], model=GEMINI_MODEL)
-    chunks = retrieve(question, doc_ids, settings)
+    # hybrid imports rag, so it can't be imported at the top of this module
+    from app import graph, hybrid
+    fused = hybrid.fused_retrieve(question, doc_ids, settings,
+                                  hybrid.DEFAULT_RETRIEVERS if retrievers is None else retrievers,
+                                  settings["top_k"])
+    chunks = fused["chunks"]
+    # None when the graph is off
+    graph_path = graph.context_path(fused["graph"], chunks)
     retrieved = [to_reference(rank, chunk) for rank, chunk in enumerate(chunks, 1)]
+    for reference, chunk in zip(retrieved, chunks):
+        reference.found_by = chunk["found_by"]
     if not chunks:
         # [DECISION D14] Nothing retrieved: the LLM is not called
         return AskResponse(status="not_found", answer="Nothing was retrieved from the selected documents.",
@@ -364,7 +383,7 @@ def ask(question, doc_ids, settings):
                            answer=f"The selected documents don't contain an answer. {llm_answer.answer}".strip(),
                            references=references, retrieved=retrieved, config=config)
     return AskResponse(status="answered", answer=llm_answer.answer, references=references,
-                       retrieved=retrieved, config=config)
+                       retrieved=retrieved, config=config, graph_path=graph_path)
 
 def get_chunk(chunk_id):
     """A stored chunk by its id, {doc_id}#cs{size}-ov{overlap}#{index}, which names

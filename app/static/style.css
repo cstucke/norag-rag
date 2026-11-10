@@ -22,3 +22,5 @@ th, td { border: 1px solid #ccc; padding: 0.1rem 0.5rem; text-align: left; }
 tr.clickable { cursor: pointer; }
 tr.clickable:hover { background: #eef; }
 tr.absent { color: #b00020; }
+#graph-path { border: 1px solid #ccc; padding: 0.1rem 0.8rem; margin: 0.5rem 0; }
+#graph-path ul { padding-left: 1.2rem; }
