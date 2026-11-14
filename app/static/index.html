@@ -52,6 +52,7 @@
         <div id="result" hidden>
           <p id="status"></p>
           <p id="answer"></p>
+          <span id="trace-slot"></span>
           <p id="config" class="small"></p>
           <h3>References</h3>
           <ul id="references"></ul>
@@ -142,8 +143,20 @@
     <button id="chunk-close">Close</button>
   </dialog>
 
+  <dialog id="trace-dialog">
+    <h3>Details</h3>
+    <p id="trace-summary"></p>
+    <table id="trace-steps"></table>
+    <details id="trace-raw" class="advanced">
+      <summary>Raw trace</summary>
+      <pre id="trace-json"></pre>
+    </details>
+    <button id="trace-close">Close</button>
+  </dialog>
+
   <script src="app.js"></script>
   <script src="evaluation.js"></script>
+  <script src="trace.js"></script>
   <script src="words.js"></script>
 </body>
 

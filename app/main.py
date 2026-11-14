@@ -161,5 +161,13 @@ def get_word_chunks(corpus: str = "", word: str = ""):
 def post_words_question(body: WordsQuestionRequest):
     return question_words(body.corpus, body.question, load_settings())
 
+
+@app.get("/api/traces/{trace_id}")
+def get_trace(trace_id: str):
+    found = trace.find(trace_id)
+    if found is None:
+        raise RagError("trace_not_found")
+    return found
+
 # The UI (Step 8). Mounted last, so the /api routes above take precedence
 app.mount("/", StaticFiles(directory=Path(__file__).parent / "static", html=True), name="static")

@@ -161,6 +161,7 @@ function showResult(data) {
   }));
   $("result").hidden = false;
   renderGraphPath(data.graph_path);
+  $("trace-slot").replaceChildren(...(data.trace_id ? [traceButton(data.trace_id)] : []));
 }
 
 async function openChunk(chunkId) {
