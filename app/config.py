@@ -16,6 +16,13 @@ DATA_DIR = BASE_DIR / "data"
 CHROMA_DIR = DATA_DIR / "chroma"
 SETTINGS_FILE = DATA_DIR / "settings.json"
 INDEX_STATE_FILE = DATA_DIR / "index_state.json"
+TRACES_DIR = DATA_DIR / "traces"
+QUARANTINE_DIR = DATA_DIR / "quarantine"
+
+# [DECISION D53] LLM prices in USD per million tokens, from Google's price list for GEMINI_MODEL.
+# 0.0 until they are set, so traces show a cost of 0
+PRICE_PER_M_PROMPT_USD = 0.0
+PRICE_PER_M_COMPLETION_USD = 0.0
 
 # [DECISION D10] Default settings. chunk_size and chunk_overlap are in characters.
 DEFAULT_SETTINGS = {"chunk_size": 1000, "chunk_overlap": 200, "top_k": 5}
