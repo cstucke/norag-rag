@@ -105,9 +105,14 @@ def main():
     parser.add_argument("--build", action="store_true", required=True, help="rebuild the index file now")
     parser.parse_args()
     settings = load_settings()
+    # [DECISION D50] One trace per indexing run
+    trace.start("index", trigger="bm25_build")
     start = time.perf_counter()
-    index = build_index(settings)
+    with trace.span("index.bm25") as span:
+        index = build_index(settings)
+        span["n_chunks"] = index["n_chunks"]
     seconds = time.perf_counter() - start
+    trace.finish("ok")
     path = index_path(settings)
     print(f"{path}: {index['n_chunks']} chunks, {len(index['df'])} words, "
           f"{path.stat().st_size / 1e6:.1f} MB, {seconds:.1f} s")

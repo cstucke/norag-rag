@@ -427,11 +427,22 @@ def main():
     settings = load_settings()
     doc_ids = [doc["doc_id"] for doc in list_documents()]
     indexed = 0
-    for i in range(0, len(doc_ids), 50):
-        indexed += ensure_indexed(doc_ids[i:i + 50], settings)
-        print(f"{min(i + 50, len(doc_ids))}/{len(doc_ids)} documents checked, {indexed} indexed")
+    # [DECISION D50] One trace per indexing run, one span per batch
+    trace.start("index", trigger="index_all", chunk_size=settings["chunk_size"],
+                chunk_overlap=settings["chunk_overlap"])
+    try:
+        for i in range(0, len(doc_ids), 50):
+            with trace.span("index", docs_checked=len(doc_ids[i:i + 50])) as span:
+                span["docs_indexed"] = ensure_indexed(doc_ids[i:i + 50], settings)
+            indexed += span["docs_indexed"]
+            print(f"{min(i + 50, len(doc_ids))}/{len(doc_ids)} documents checked, {indexed} indexed")
+    except RagError as error:
+        trace.finish("error", error_code=error.code)
+        raise
     name = collection_name(settings)
-    print(f"{name}: {get_collection(name).count()} chunks")
+    chunks = get_collection(name).count()
+    trace.finish("ok", docs_indexed=indexed, chunks=chunks)
+    print(f"{name}: {chunks} chunks")
 
 
 if __name__ == "__main__":
