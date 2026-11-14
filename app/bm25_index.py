@@ -7,7 +7,7 @@ import math
 import time
 from collections import Counter
 
-from app import rag
+from app import rag, trace
 from app.config import DATA_DIR, load_settings
 from app.words import tokenize
 
@@ -65,7 +65,9 @@ def current_index(settings):
         _index = None
     if _index is None or _index["chunk_ids_sha256"] != sha256:
         start = time.perf_counter()
-        _index = build_index(settings)
+        with trace.span("index.bm25") as span:
+            _index = build_index(settings)
+            span["n_chunks"] = _index["n_chunks"]
         print(f"BM25 index rebuilt: {_index['n_chunks']} chunks, {time.perf_counter() - start:.1f} s")
     return _index
 

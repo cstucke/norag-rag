@@ -6,8 +6,8 @@ from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app import graph, rag
-from app.config import BASE_DIR, load_settings, save_settings, validate_settings
+from app import graph, rag, trace
+from app.config import BASE_DIR, GEMINI_MODEL, load_settings, save_settings, validate_settings
 from app.rag import ERRORS, RagError
 from app.schemas import EvalRequest, WordsQuestionRequest
 from app.words import corpus_names, question_words, vocabulary, word_chunks
@@ -80,7 +80,25 @@ async def post_ask(request: Request):
     # A missing or malformed list of retrievers runs the default ones
     if not isinstance(retrievers, list):
         retrievers = None
-    response = rag.ask(question, doc_ids, load_settings(), retrievers)
+    settings = load_settings()
+    # [DECISION D50] Every question leaves a trace, also one that fails before retrieval
+    trace.start("ask", question=question, doc_count=len(doc_ids),
+                retrievers=list(DEFAULT_RETRIEVERS if retrievers is None else retrievers),
+                chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
+                top_k=settings["top_k"], model=GEMINI_MODEL)
+    try:
+        response = rag.ask(question, doc_ids, settings, retrievers)
+    except RagError as error:
+        trace.finish("error", error_code=error.code)
+        raise
+    # [DECISION D51] The trace's outcome, from the answer status
+    if response.error:
+        outcome = "invalid" if response.error.code == "invalid_llm_response" else "error"
+    else:
+        outcome = "abstained" if response.status == "not_found" else "answered"
+    response.trace_id = trace.finish(outcome, answer=response.answer,
+                                     references=[reference.chunk_id for reference in response.references],
+                                     error_code=response.error.code if response.error else None)
     status_code = ERRORS[response.error.code][0] if response.error else 200
     return JSONResponse(status_code=status_code, content=response.model_dump())
 

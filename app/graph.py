@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 from pydantic import ValidationError
 
-from app import rag
+from app import rag, trace
 from app.config import DATA_DIR, GEMINI_MODEL, load_settings
 from app.schemas import Triple
 from app.words import corpus_doc_ids
@@ -225,7 +225,9 @@ def extract_all(chunks, sleep):
     for number, (chunk_id, text) in enumerate(chunks, 1):
         if number > 1 and sleep:
             time.sleep(sleep)
-        entry = extract_chunk(chunk_id, text)
+        with trace.span("extract", chunk_id=chunk_id) as span:
+            entry = extract_chunk(chunk_id, text)
+            span.update(status=entry["status"], triples=len(entry["triples"]), rejected=len(entry["rejected"]))
         extractions.append(entry)
         detail = f" ({entry['error']['code']})" if entry["error"] else ""
         print(f"[{number}/{len(chunks)}] {chunk_id}: {entry['status']}{detail}, "
