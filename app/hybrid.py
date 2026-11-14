@@ -4,8 +4,8 @@ import time
 from app import bm25_index, graph, rag
 
 RETRIEVERS = ("dense", "bm25", "graph")
-# [DECISION D37] V2 behaviour. Changed once the default configuration is picked
-DEFAULT_RETRIEVERS = ("dense",)
+# [DECISION D37] The default configuration picked in the V3 report
+DEFAULT_RETRIEVERS = ("dense", "bm25")
 # [DECISION D36] Plain RRF constants
 RRF_K = 60
 RRF_CANDIDATES = 20

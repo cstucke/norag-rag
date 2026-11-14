@@ -14,7 +14,8 @@ from app.words import corpus_names, question_words, vocabulary, word_chunks
 from evaluation.run import load_questions, run_eval
 from app.hybrid import DEFAULT_RETRIEVERS, RETRIEVERS
 
-app = FastAPI(title="RAG V1 — The Forest wiki")
+# [DECISION D61] The name a first-time user sees
+app = FastAPI(title="Ask your documents")
 
 # [DECISION D22] One file per question set; the file stem is also its corpus
 QUESTIONS_DIR = BASE_DIR / "evaluation" / "questions"
