@@ -76,6 +76,7 @@ async function uploadDocument() {
   form.append("file", input.files[0]);
   const data = await api("POST", "/api/documents", form);
   $("doc-error").textContent = data.status === "error" ? data.error.message : "";
+  showUploadReview(data);
   input.value = "";
   await loadDocuments();
 }

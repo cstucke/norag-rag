@@ -24,3 +24,17 @@ tr.clickable:hover { background: #eef; }
 tr.absent { color: #b00020; }
 #graph-path { border: 1px solid #ccc; padding: 0.1rem 0.8rem; margin: 0.5rem 0; }
 #graph-path ul { padding-left: 1.2rem; }
+/* V4: the documents column spans the settings, the mode switch, Ask and Make a quiz */
+#documents-panel { grid-row: span 4; }
+#mode-switch { margin: 1rem 0 0; }
+#study-form label { margin-right: 0.8rem; }
+#study-count { width: 4rem; }
+#study-items li { margin-bottom: 1rem; }
+#study-items label { display: block; }
+.study-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+blockquote { margin: 0.4rem 0; padding-left: 0.8rem; border-left: 3px solid #ccc; color: #333; }
+.right { color: #1b6e20; font-weight: bold; }
+#held-message { color: #8a5a00; }
+#review-dialog { max-width: 50rem; }
+.review-item { border-bottom: 1px solid #ccc; padding-bottom: 0.6rem; margin-bottom: 0.6rem; }
+.review-item code { white-space: pre-wrap; word-break: break-word; }

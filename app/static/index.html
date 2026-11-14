@@ -28,6 +28,8 @@
         <ul id="doc-list"></ul>
         <label>Upload <input id="upload" type="file" accept=".md,.txt"></label>
         <p id="doc-error" class="error"></p>
+        <p id="held-message"></p>
+        <p id="review-notice" hidden><span id="review-count"></span> <button id="review-open">Review</button></p>
       </section>
 
       <section id="settings-panel">
@@ -40,6 +42,11 @@
         <p class="small">Changing chunk size or overlap re-indexes the selected documents on the next question (may be
           slow).</p>
       </section>
+
+      <div id="mode-switch">
+        <label><input type="radio" name="mode" value="ask" checked> Ask a question</label>
+        <label><input type="radio" name="mode" value="study"> Make a quiz</label>
+      </div>
 
       <section id="ask-panel">
         <h2>Ask</h2>
@@ -60,6 +67,29 @@
             <summary>Retrieved passages (top-k)</summary>
             <ul id="retrieved"></ul>
           </details>
+        </div>
+      </section>
+
+      <section id="study-panel" hidden>
+        <h2>Make a quiz</h2>
+        <p id="study-form">
+          Type
+          <label><input type="radio" name="study-type" value="flashcards" checked> Flashcards</label>
+          <label><input type="radio" name="study-type" value="multiple_choice"> Multiple choice</label>
+          <label>Number <input id="study-count" type="number" min="1" max="10" value="5"></label>
+          <label>Difficulty
+            <select id="study-difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </label>
+          <button id="study-generate">Generate</button>
+        </p>
+        <span id="study-working" hidden>Writing the questions from the selected documents… this can take 30 seconds.</span>
+        <div id="study-result" hidden>
+          <p><span id="study-status"></span> <span id="study-cost" class="small"></span> <span id="study-trace-slot"></span></p>
+          <ol id="study-items"></ol>
         </div>
       </section>
     </main>
@@ -135,6 +165,15 @@
     </div>
   </div>
 
+  <dialog id="review-dialog">
+    <h3>Documents waiting for review</h3>
+    <p class="small">These uploads contain passages that look like instructions to the AI. Approve adds the file
+      unchanged to the documents; Reject deletes it.</p>
+    <div id="review-list"></div>
+    <p id="review-error" class="error"></p>
+    <button id="review-close">Close</button>
+  </dialog>
+
   <dialog id="chunk-dialog">
     <h3 id="chunk-title"></h3>
     <p id="chunk-meta" class="small"></p>
@@ -145,6 +184,8 @@
   <script src="app.js"></script>
   <script src="evaluation.js"></script>
   <script src="words.js"></script>
+  <script src="quarantine.js"></script>
+  <script src="study.js"></script>
 </body>
 
 </html>

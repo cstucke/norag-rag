@@ -6,7 +6,7 @@ from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app import graph, rag
+from app import graph, rag, scanner, study, trace
 from app.config import BASE_DIR, load_settings, save_settings, validate_settings
 from app.rag import ERRORS, RagError
 from app.schemas import EvalRequest, WordsQuestionRequest
@@ -44,7 +44,49 @@ def get_documents():
 async def post_document(file: UploadFile | None = File(None)):
     if file is None:
         raise RagError("empty_document")
-    return rag.add_document(file.filename, await file.read())
+    # [DECISION D50] One upload trace, with the validate, scan and store spans of add_document
+    trace.start("upload", filename=file.filename)
+    try:
+        result = rag.add_document(file.filename, await file.read())
+    except RagError as error:
+        trace.finish("error", error_code=error.code)
+        raise
+    quarantined = result.get("status") == "quarantined"
+    trace_id = trace.finish("quarantined" if quarantined else "accepted")
+    return {**result, "trace_id": trace_id}
+
+
+@app.get("/api/quarantine")
+def get_quarantine():
+    """[DECISION D59] The uploads waiting for review, with their findings."""
+    waiting = scanner.list_quarantine()
+    for sidecar in waiting:
+        for finding in sidecar["findings"]:
+            finding["description"] = scanner.RULE_DESCRIPTIONS.get(finding["rule"], finding["rule"])
+    return {"documents": waiting}
+
+
+async def review(request, decide, outcome):
+    """Approve or reject one waiting upload, as a review trace naming the file."""
+    body = await json_body(request)
+    filename = body.get("filename") if isinstance(body, dict) else None
+    trace.start("review", filename=filename if isinstance(filename, str) else None)
+    try:
+        result = decide(filename)
+    except RagError as error:
+        trace.finish("error", error_code=error.code)
+        raise
+    return {**(result or {"status": "ok"}), "trace_id": trace.finish(outcome)}
+
+
+@app.post("/api/quarantine/approve")
+async def post_quarantine_approve(request: Request):
+    return await review(request, scanner.approve, "approved")
+
+
+@app.post("/api/quarantine/reject")
+async def post_quarantine_reject(request: Request):
+    return await review(request, scanner.reject, "rejected")
 
 
 @app.delete("/api/documents")
@@ -82,6 +124,26 @@ async def post_ask(request: Request):
     response = rag.ask(question, doc_ids, load_settings(), retrievers)
     status_code = ERRORS[response.error.code][0] if response.error else 200
     return JSONResponse(status_code=status_code, content=response.model_dump())
+
+
+@app.post("/api/study")
+async def post_study(request: Request):
+    """[DECISION D50] One study trace. Errors keep their HTTP status and carry the trace id, so
+    Details still opens, as /api/ask does."""
+    body = await json_body(request)
+    attrs = body if isinstance(body, dict) else {}
+    doc_ids = attrs.get("doc_ids")
+    trace.start("study", type=attrs.get("type"), count=attrs.get("count"), difficulty=attrs.get("difficulty"),
+                doc_count=len(doc_ids) if isinstance(doc_ids, list) else 0)
+    try:
+        result = study.generate(body, load_settings())
+    except RagError as error:
+        outcome = "invalid" if error.code in ("invalid_llm_response", "no_study_items") else "error"
+        trace_id = trace.finish(outcome, error_code=error.code)
+        return JSONResponse(status_code=error.http_status,
+                            content={"status": "error", "error": {"code": error.code, "message": error.message},
+                                     "trace_id": trace_id})
+    return {**result, "trace_id": trace.finish("ok", items=len(result["items"]), dropped=result["dropped"])}
 
 
 @app.get("/api/chunk")

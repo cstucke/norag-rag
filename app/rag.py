@@ -13,6 +13,7 @@ from openai import OpenAI
 
 from app.config import (CHROMA_DIR, CORPUS_DIR, DATA_DIR, GEMINI_MODEL, GOOGLE_API_KEY, INDEX_STATE_FILE, load_settings)
 from app.schemas import AskConfig, AskResponse, ErrorInfo, LLMAnswer, Reference
+from app import trace
 
 from app.config import CHROMA_DIR, CORPUS_DIR, DATA_DIR, INDEX_STATE_FILE, load_settings
 
@@ -47,6 +48,9 @@ ERRORS = {
     "invalid_word": (400, "Enter one word (letters and digits only)."),
     "invalid_retrievers": (400, "Switch on at least one retriever."),
     "graph_not_built": (409, "No concept graph for the current settings. Run: python -m app.graph build"),
+    "quarantine_not_found": (404, "This document is no longer waiting for review."),
+    "invalid_study_request": (400, "Invalid study request."),
+    "no_study_items": (200, "The model didn't return a usable question. Try again, or pick other documents."),
 }
 
 
@@ -152,22 +156,34 @@ def safe_filename(filename):
 
 
 def add_document(filename, raw_bytes):
-    name = safe_filename(filename or "")
-    if Path(name).suffix.lower() not in DOC_EXTENSIONS:
-        raise RagError("unsupported_file_type")
-    if len(raw_bytes) > MAX_UPLOAD_BYTES:
-        raise RagError("file_too_large")
-    try:
-        text = raw_bytes.decode("utf-8")  # strict
-    except UnicodeDecodeError:
-        raise RagError("invalid_encoding") from None
-    if not text.strip():
-        raise RagError("empty_document")
-    path = UPLOADS_DIR / name
-    if path.exists():
-        raise RagError("document_exists")
-    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(raw_bytes)
+    # scanner imports rag, so it can't be imported at the top of this module
+    from app import scanner
+    with trace.span("validate", bytes=len(raw_bytes)):
+        name = safe_filename(filename or "")
+        if Path(name).suffix.lower() not in DOC_EXTENSIONS:
+            raise RagError("unsupported_file_type")
+        if len(raw_bytes) > MAX_UPLOAD_BYTES:
+            raise RagError("file_too_large")
+        try:
+            text = raw_bytes.decode("utf-8")  # strict
+        except UnicodeDecodeError:
+            raise RagError("invalid_encoding") from None
+        if not text.strip():
+            raise RagError("empty_document")
+        path = UPLOADS_DIR / name
+        if path.exists() or scanner.quarantine_path(name).exists():
+            raise RagError("document_exists")
+    # [DECISION D59] A flagged upload waits in quarantine, so it can't be listed, indexed or cited.
+    # The trace keeps the rule and line of each finding, never the flagged text (D49)
+    with trace.span("scan", rules=len(scanner.RULES)) as attrs:
+        findings = scanner.scan(text)
+        attrs["findings"] = [{"rule": finding["rule"], "line": finding["line"]} for finding in findings]
+    with trace.span("store", destination="quarantine" if findings else "uploads"):
+        if findings:
+            scanner.quarantine(name, raw_bytes, findings)
+            return {"status": "quarantined", "filename": name, "findings": findings}
+        UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw_bytes)
     return document_info(path)
 
 
