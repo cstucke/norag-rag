@@ -268,9 +268,9 @@ def ensure_indexed(doc_ids, settings):
 PROMPT = """You answer questions using ONLY the numbered excerpts below, taken from the selected documents.
 If the excerpts do not contain the answer, set "answerable" to false and explain briefly in "answer".
 Do not use outside knowledge.
-
+{follow_ups_rule}
 Return ONLY a JSON object with exactly these keys:
-{{"answerable": true|false, "answer": "<string>", "citations": [<excerpt numbers you used>]}}
+{{"answerable": true|false, "answer": "<string>", "citations": [<excerpt numbers you used>]{follow_ups_key}}}
 
 Excerpts:
 {excerpts}
@@ -292,12 +292,22 @@ def retrieve(question, doc_ids, settings):
                 result["ids"][0], result["documents"][0], result["metadatas"][0], result["distances"][0])]
 
 
-def build_prompt(question, chunks):
+# [DECISION D70] Conversation mode asks for the suggested questions in the answer call itself
+FOLLOW_UPS_RULE = ('In "follow_ups", give two or three questions these documents can answer and that follow '
+                   'naturally from this answer; an empty list if none.\n')
+FOLLOW_UPS_KEY = ', "follow_ups": ["<question>", "<question>", "<question>"]'
+
+
+def build_prompt(question, chunks, conversation=False):
+    """With conversation off, both additions are empty and the prompt is the V3 prompt character
+    for character, which is what keeps the evaluation numbers unchanged."""
     excerpts = "\n\n".join(
         f"[{rank}] (source: {chunk['metadata']['title']}, "
         f"lines {chunk['metadata']['line_start']}-{chunk['metadata']['line_end']})\n{chunk['text']}"
         for rank, chunk in enumerate(chunks, 1))
-    return PROMPT.format(excerpts=excerpts, question=question)
+    return PROMPT.format(excerpts=excerpts, question=question,
+                         follow_ups_rule=FOLLOW_UPS_RULE if conversation else "",
+                         follow_ups_key=FOLLOW_UPS_KEY if conversation else "")
 
 # [DECISION D46] Running totals of LLM usage. A caller measures its own cost as the
 # difference between a copy taken before and a copy taken after

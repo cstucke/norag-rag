@@ -12,6 +12,9 @@ class LLMAnswer(BaseModel):
     answerable: bool
     answer: str
     citations: list[int]
+    # [DECISION D70] Asked for in conversation mode only. Untyped, so a bad list is cleaned by
+    # conversation.clean_follow_ups and never rejects the answer
+    follow_ups: Any = None
 
 
 class Flashcard(BaseModel):
@@ -111,6 +114,9 @@ class AskResponse(BaseModel):
     config: AskConfig
     graph_path: dict | None = None
     trace_id: str | None = None
+    # Conversation mode: the question that was searched, set only when the rewrite changed it
+    standalone_question: str | None = None
+    follow_ups: list[str] = []
 
 class EvalRequest(BaseModel):
     """The settings stay untyped so a bad value reaches validate_settings and gets invalid_settings."""
