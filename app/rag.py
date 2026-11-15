@@ -12,7 +12,8 @@ from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunct
 from openai import OpenAI
 
 from app import trace
-from app.config import (CHROMA_DIR, CORPUS_DIR, DATA_DIR, GEMINI_MODEL, GOOGLE_API_KEY, INDEX_STATE_FILE, load_settings)
+from app.config import (CHROMA_DIR, CORPUS_DIR, DATA_DIR, INDEX_STATE_FILE, LLM_API_KEY, LLM_MODEL, LLM_URL,
+                        load_settings)
 from app.schemas import AskConfig, AskResponse, ErrorInfo, LLMAnswer, Reference
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
@@ -31,7 +32,7 @@ ERRORS = {
     "file_too_large": (413, "File exceeds 2 MB."),
     "document_exists": (409, "A document with this name already exists."),
     "invalid_settings": (400, "Invalid settings."),
-    "llm_not_configured": (503, "LLM not configured (missing API key)."),
+    "llm_not_configured": (503, "LLM not configured. Set LLM_URL, LLM_API_KEY and LLM_MODEL in .env."),
     "llm_auth_or_model": (502, "LLM rejected the request (API key or model id)."),
     "llm_rate_limited": (503, "LLM rate limit reached — try again shortly."),
     "llm_timeout": (504, "LLM did not answer in time."),
@@ -264,8 +265,6 @@ def ensure_indexed(doc_ids, settings):
 # Retrieval and answering
 # ---------------------------------------------------------------------------
 
-GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
-
 PROMPT = """You answer questions using ONLY the numbered excerpts below, taken from the selected documents.
 If the excerpts do not contain the answer, set "answerable" to false and explain briefly in "answer".
 Do not use outside knowledge.
@@ -304,18 +303,22 @@ def build_prompt(question, chunks):
 # difference between a copy taken before and a copy taken after
 USAGE = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
+def llm_configured():
+    return bool(LLM_URL and LLM_API_KEY and LLM_MODEL)
+
+
 def call_llm(prompt):
-    """Gemini's raw reply text. API failures become the matching catalogue error."""
-    # The missing-key check is inside the span, so a call that can't be made shows as a failed step
-    with trace.span("llm", model=GEMINI_MODEL, prompt_tokens=0, completion_tokens=0) as span:
-        if not GOOGLE_API_KEY:
+    """The model's raw reply text. API failures become the matching catalogue error."""
+    # The configuration check is inside the span, so a call that can't be made shows as a failed step
+    with trace.span("llm", model=LLM_MODEL, prompt_tokens=0, completion_tokens=0) as span:
+        if not llm_configured():
             raise RagError("llm_not_configured")
         # max_retries=0: otherwise the SDK retries on its own (D15: no retry),
         # and the 60 s timeout would no longer be the limit
-        client = OpenAI(api_key=GOOGLE_API_KEY, base_url=GEMINI_BASE_URL, timeout=60, max_retries=0)
+        client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_URL, timeout=60, max_retries=0)
         try:
             response = client.chat.completions.create(
-                model=GEMINI_MODEL, messages=[{"role": "user", "content": prompt}],
+                model=LLM_MODEL, messages=[{"role": "user", "content": prompt}],
                 temperature=0, response_format={"type": "json_object"})
         except openai.APITimeoutError:
             raise RagError("llm_timeout") from None
@@ -375,7 +378,7 @@ def ask(question, doc_ids, settings, retrievers=None):
     if not doc_ids:
         raise RagError("no_documents_selected")
     config = AskConfig(chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
-                       top_k=settings["top_k"], model=GEMINI_MODEL)
+                       top_k=settings["top_k"], model=LLM_MODEL)
     # hybrid imports rag, so it can't be imported at the top of this module
     from app import graph, hybrid
     fused = hybrid.fused_retrieve(question, doc_ids, settings,

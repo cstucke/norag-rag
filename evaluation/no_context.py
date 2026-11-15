@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app import rag
-from app.config import GEMINI_MODEL
+from app.config import LLM_MODEL
 from evaluation.run import RESULTS_DIR, load_questions
 
 # [DECISION D25] The domain tells the model what the question is about, nothing more
@@ -49,7 +49,7 @@ def run_no_context(questions_path, corpus):
     RESULTS_DIR.mkdir(exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out = RESULTS_DIR / f"{stamp}_{corpus}_nocontext.json"
-    report = {"config": {"model": GEMINI_MODEL, "corpus": corpus,
+    report = {"config": {"model": LLM_MODEL, "corpus": corpus,
                          "prompt_template": PROMPT.format(domain=domain, question="<question>")},
               "questions_sha256": hashlib.sha256(questions_path.read_bytes()).hexdigest(),
               "questions": entries}

@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app import bm25_index, graph, hybrid, rag
-from app.config import BASE_DIR, CORPUS_DIR, GEMINI_MODEL, load_settings, validate_settings
+from app.config import BASE_DIR, CORPUS_DIR, LLM_MODEL, load_settings, validate_settings
 from app.words import corpus_doc_ids
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
@@ -255,7 +255,7 @@ def run_eval(questions_path, corpus, settings, with_llm, retrievers=hybrid.DEFAU
                        for field in COST_FIELDS}
 
     config = {**settings, "corpus": corpus, "questions_file": questions_path.name, "eval_ks": list(EVAL_KS),
-              "embedding_model": rag.EMBEDDING_MODEL, "llm_model": GEMINI_MODEL if with_llm else None,
+              "embedding_model": rag.EMBEDDING_MODEL, "llm_model": LLM_MODEL if with_llm else None,
               "retrievers": list(retrievers), "candidates": candidates, "rrf_k": rrf_k}
     if "bm25" in retrievers:
         config["bm25_chunk_ids_sha256"] = bm25_index.current_index(settings)["chunk_ids_sha256"]

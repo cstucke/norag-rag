@@ -15,6 +15,7 @@
     <button id="show-ask">Ask</button>
     <button id="show-eval">Evaluation</button>
     <button id="show-words">Words</button>
+    <button id="show-graph">Graph</button>
   </nav>
 
   <div id="tab-ask">
@@ -170,6 +171,38 @@
     </div>
   </div>
 
+  <div id="tab-graph" hidden>
+    <h2>Concept graph</h2>
+    <label>Documents
+      <select id="graph-corpus">
+        <option value="uploads">Uploaded documents</option>
+        <option value="kestrel">Kestrel</option>
+      </select>
+    </label>
+    <p class="small">The graph links the people, places and things named in these documents. Building it reads
+      every passage once, with one LLM call per passage, at the current chunk settings. Once it is built, tick
+      Graph under Retrievers in the Ask tab to search with it.</p>
+    <p id="graph-status"></p>
+    <button id="graph-build">Build</button>
+    <button id="graph-stop" hidden>Stop</button>
+    <p id="graph-error" class="error"></p>
+    <div id="graph-columns">
+      <section>
+        <h3>Entities</h3>
+        <input id="graph-filter" type="search" placeholder="Filter entities">
+        <p id="graph-showing" class="small"></p>
+        <div class="table-box">
+          <table id="graph-entities"></table>
+        </div>
+      </section>
+      <section id="graph-entity" hidden>
+        <h3 id="graph-entity-name"></h3>
+        <p id="graph-entity-info" class="small"></p>
+        <ul id="graph-entity-links"></ul>
+      </section>
+    </div>
+  </div>
+
   <dialog id="review-dialog">
     <h3>Documents waiting for review</h3>
     <p class="small">These uploads contain passages that look like instructions to the AI. Approve adds the file
@@ -203,6 +236,7 @@
   <script src="words.js"></script>
   <script src="quarantine.js"></script>
   <script src="study.js"></script>
+  <script src="graph.js"></script>
   <script src="advanced.js"></script>
 </body>
 

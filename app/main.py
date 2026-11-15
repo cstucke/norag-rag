@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import graph, rag, scanner, study, trace
-from app.config import BASE_DIR, GEMINI_MODEL, load_settings, save_settings, validate_settings
+from app.config import BASE_DIR, LLM_MODEL, load_settings, save_settings, validate_settings
 from app.rag import ERRORS, RagError
 from app.schemas import EvalRequest, WordsQuestionRequest
 from app.words import corpus_names, question_words, vocabulary, word_chunks
@@ -127,7 +127,7 @@ async def post_ask(request: Request):
     trace.start("ask", question=question, doc_count=len(doc_ids),
                 retrievers=list(DEFAULT_RETRIEVERS if retrievers is None else retrievers),
                 chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
-                top_k=settings["top_k"], model=GEMINI_MODEL)
+                top_k=settings["top_k"], model=LLM_MODEL)
     try:
         response = rag.ask(question, doc_ids, settings, retrievers)
     except RagError as error:
@@ -188,7 +188,19 @@ def get_question_sets():
 @app.get("/api/retrievers")
 def get_retrievers():
         return {"available": list(RETRIEVERS), "default": list(DEFAULT_RETRIEVERS),
-            "graph_built": graph.graph_built(load_settings())}
+            "graph_built": any(graph.graph_built(load_settings(), corpus) for corpus in graph.SCHEMAS)}
+
+
+@app.get("/api/graph")
+def get_graph(corpus: str = ""):
+    return graph.graph_summary(corpus, load_settings())
+
+
+@app.post("/api/graph/build")
+def post_graph_build(corpus: str = ""):
+    """[DECISION D65] One short step of the build. A plain def, so FastAPI runs it in a worker
+    thread (as /api/eval) and the LLM calls don't stop the server answering other requests."""
+    return graph.build_step(corpus, load_settings())
 
 @app.post("/api/eval")
 def post_eval(body: EvalRequest):

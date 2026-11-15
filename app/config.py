@@ -4,11 +4,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Environment
-load_dotenv()
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or None
-GEMINI_MODEL = os.getenv("GEMINI_MODEL") or "gemini-3.5-flash"
-
 # Paths, anchored to the repo root so they don't depend on the working directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 CORPUS_DIR = BASE_DIR / "corpus"
@@ -19,8 +14,17 @@ INDEX_STATE_FILE = DATA_DIR / "index_state.json"
 TRACES_DIR = DATA_DIR / "traces"
 QUARANTINE_DIR = DATA_DIR / "quarantine"
 
+# Environment. .env.local is read first, so its values win over .env (load_dotenv never overrides)
+load_dotenv(BASE_DIR / ".env.local")
+load_dotenv(BASE_DIR / ".env")
+# [DECISION D63] Any OpenAI-compatible server. All three are needed: there is no default provider
+LLM_URL = os.getenv("LLM_URL") or None
+LLM_API_KEY = os.getenv("LLM_API_KEY") or None
+LLM_MODEL = os.getenv("LLM_MODEL") or ""
+
 # [DECISION D53] LLM prices in USD per million tokens, for gemini-3.5-flash. Google's price list
-# no longer has this model: the figures are from its "What's new in Gemini 3.6 Flash" page
+# no longer has this model: the figures are from its "What's new in Gemini 3.6 Flash" page.
+# With another LLM_MODEL the cost shown in Details is not that model's
 PRICE_PER_M_PROMPT_USD = 1.50
 PRICE_PER_M_COMPLETION_USD = 9.00
 

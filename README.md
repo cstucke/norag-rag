@@ -1,6 +1,6 @@
 # Ask your documents (norag-rag)
 
-A web app that answers questions about a set of documents and shows the passages each answer comes from (RAG, retrieval-augmented generation). It also turns the selected documents into flashcards or a multiple-choice quiz, and it checks uploaded files for prompt injection before they can be used.
+A web app that answers questions about a set of documents and shows the passages each answer comes from (RAG, retrieval-augmented generation). It also turns the selected documents into flashcards or a multiple-choice quiz, checks uploaded files for prompt injection before they can be used, and builds a concept graph of the documents you upload.
 
 It comes with two document sets: 840 articles from *The Forest* game wiki, and 5 documents about Kestrel Analytics, the example company provided with the course.
 
@@ -13,7 +13,7 @@ It comes with two document sets: 840 articles from *The Forest* game wiki, and 5
 
 ## Quick start
 
-You need **Python 3.10 or newer** and a **Google AI Studio API key** ([create one here](https://aistudio.google.com/app/apikey)).
+You need **Python 3.10 or newer** and an **LLM with an OpenAI-compatible API**. `.env.example` is set up for Google Gemini, which only needs a Google AI Studio API key ([create one here](https://aistudio.google.com/app/apikey)). To use another LLM, see [Configure](#2-configure).
 
 ```bash
 git clone https://github.com/cstucke/norag-rag.git
@@ -24,7 +24,7 @@ source .venv/bin/activate            # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 cp .env.example .env                 # Windows: copy .env.example .env
-# open .env and replace your_google_api_key_here with your key
+# open .env and set LLM_API_KEY (and LLM_URL and LLM_MODEL if you don't use Gemini)
 
 uvicorn app.main:app
 ```
@@ -51,14 +51,25 @@ The first install takes a few minutes, because it downloads PyTorch and ChromaDB
 cp .env.example .env
 ```
 
-Open `.env` and set the two values:
+Open `.env` and set the three values. The app needs all three and works with any LLM server that has an OpenAI-compatible API:
 
 | Variable | Value |
 |---|---|
-| `GOOGLE_API_KEY` | Your key from [Google AI Studio](https://aistudio.google.com/app/apikey) |
-| `GEMINI_MODEL` | The model that writes the answers. Leave `gemini-3.5-flash` unless you have a reason to change it |
+| `LLM_URL` | The base URL of the server's OpenAI-compatible API. `.env.example` has Google Gemini's: `https://generativelanguage.googleapis.com/v1beta/openai/` |
+| `LLM_API_KEY` | Your API key for that server. For Gemini, your key from [Google AI Studio](https://aistudio.google.com/app/apikey). If your server needs no key, put any text |
+| `LLM_MODEL` | The model id, as the server names it. `.env.example` has `gemini-3.5-flash` |
 
-The app reads `.env` when it starts, so restart it after a change.
+For example, for a server of your own:
+
+```bash
+LLM_URL="http://localhost:11434/v1"
+LLM_API_KEY="anything"
+LLM_MODEL="your-model-id"
+```
+
+You can also put the values in `.env.local`: it is read first, so it wins over `.env`. Variables already set in your shell win over both files. The app reads the files when it starts, so restart it after a change.
+
+Two things to know with another LLM: the app asks the server for JSON output (`response_format` `json_object`), and the cost shown in Details is computed with Gemini's prices.
 
 ### 3. Prepare the documents (optional)
 
@@ -96,16 +107,26 @@ Tick **Advanced** (top right) to show the rest:
 - **Retrievers:** dense (meaning), BM25 (keywords) and the concept graph. Dense and BM25 are on by default.
 - **Retrieved passages** and the raw trace, under each answer.
 - **Evaluation** and **Words** tabs: the retrieval evaluation and the word statistics from earlier versions.
+- **Graph** tab: build and browse the concept graph (next section).
 
-### Concept graph (optional)
+### Concept graph
 
-The Graph retriever only works on the Kestrel documents, and only after the graph is built:
+The concept graph links the people, places and things named in a set of documents. It can be built for **the documents you upload** and for the Kestrel documents, then browsed and used as a retriever:
 
-```bash
-python -m app.graph build
-```
+1. **Upload** your documents in the Ask tab (step 5 above).
+2. Tick **Advanced**, open the **Graph** tab and keep **Uploaded documents** selected. The page shows how many passages there are to read.
+3. Click **Build**. The app reads each passage with one LLM call. One click reads at most 40 passages, so a long document needs several clicks; **Stop** keeps what is already done. To spend few LLM calls, upload a short document: at the default settings a passage is 1,000 characters, so a 4,000-character file is about 5 calls.
+4. **Browse.** The Entities table lists what was found. Click an entity to see its links, click the entity at the other end of a link to move there, and click a passage name to read the text a link comes from.
+5. **Search with it.** Back in the Ask tab, select your documents, tick **Graph** under Retrievers and ask. Under the answer, **Graph path** shows the entities found in your question and the links that were followed.
 
-This makes one LLM call per Kestrel passage, 38 at the default settings. See [V3 — Hybrid retrieval](#v3--hybrid-retrieval) below.
+Things to know:
+
+- Choose **Kestrel** in the Graph tab to build the graph of the Kestrel documents the same way (38 passages at the default settings, one click).
+- A graph belongs to the chunk settings it was built with. After a change of chunk size or overlap, build it again.
+- When you upload another document or replace one, the Graph tab shows the passages left to read. Click **Build** to bring the graph up to date. Only the new passages are read. The entities of a deleted document leave the Graph tab at once.
+- If the LLM refuses some passages (a rate limit, for example), the build stops and says why. Click **Build** again later: only the missing passages are read.
+- Uploaded documents use six general entity types (Person, Organization, Place, Event, Object, Concept) and free relation names. Kestrel uses the fixed schema from V3.
+- Graph files are in `data/graph/`, one per document set and chunk settings.
 
 ## Traces
 
@@ -131,12 +152,13 @@ It only reports what it finds. Nothing is moved or deleted.
 | What you see | What to do |
 |---|---|
 | The first question after start-up takes up to 20 seconds | Normal: the embedding model is loading. Later questions are faster |
-| "LLM not configured (missing API key)." | `.env` is missing or the key is empty. Set `GOOGLE_API_KEY` and restart the app |
-| "LLM rejected the request (API key or model id)." | Check the key and `GEMINI_MODEL` in `.env`, then restart |
+| "LLM not configured. Set LLM_URL, LLM_API_KEY and LLM_MODEL in .env." | `.env` is missing or one of the three values is empty. Set them and restart the app |
+| "LLM rejected the request (API key or model id)." | Check `LLM_API_KEY` and `LLM_MODEL` in `.env`, then restart. A server that doesn't support JSON output (`response_format`) gives the same message |
 | "LLM rate limit reached — try again shortly." | Wait a minute and ask again |
-| "LLM call failed." | Usually a temporary error on Google's side. Ask again |
+| "LLM call failed." | Usually a temporary error on the LLM server's side, or a wrong `LLM_URL`. Ask again, then check the URL |
 | `No module named 'app'` | Run the command from the repository root |
 | The port is already in use | Start with `uvicorn app.main:app --port 8001` |
+| Graph is greyed out under Retrievers | No graph is built for the current chunk settings. Build one in the Graph tab |
 
 ## Project layout
 
@@ -146,14 +168,14 @@ It only reports what it finds. Nothing is moved or deleted.
 | `corpus/` | The documents: `forest/`, `kestrel/` and your uploads in `uploads/` |
 | `evaluation/` | The retrieval evaluation, its questions and results |
 | `scripts/` | The one-off script that fetched the wiki snapshot |
-| `data/` | Created at run time, not committed: the index, settings, traces and held uploads |
+| `data/` | Created at run time, not committed: the index, settings, traces, concept graphs and held uploads |
 | `REPORT.md` | The design decisions and evaluation results |
 
 The sections below describe earlier versions of the project and the course's demo scripts.
 
 ## V3 — Hybrid retrieval
 
-Three retrievers can be switched on and off: `dense` (V2), `bm25` and `graph` (concept graph, Kestrel only). The ones that are on are fused with RRF.
+Three retrievers can be switched on and off: `dense` (V2), `bm25` and `graph` (concept graph). The ones that are on are fused with RRF.
 
 ### Switching retrievers
 
@@ -165,7 +187,9 @@ Three retrievers can be switched on and off: `dense` (V2), `bm25` and `graph` (c
 
 The index is a JSON file per chunk configuration in `data/bm25/`. It builds itself on the first search and is rebuilt whole when the chunks in Chroma change. To force a rebuild at the saved settings: `python -m app.bm25_index --build`.
 
-### Concept graph (Kestrel only)
+### Concept graph commands (Kestrel)
+
+These commands work on the Kestrel graph only. The graph of uploaded documents is built in the Graph tab (see [Concept graph](#concept-graph) above).
 
 The graph is built with one LLM call per Kestrel chunk, at the saved chunk settings, and lives in `data/graph/kestrel_cs{N}_ov{N}.json`. It is tied to those settings: change the chunk size or overlap and the graph has to be built again.
 
