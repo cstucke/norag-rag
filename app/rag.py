@@ -15,8 +15,6 @@ from app import trace
 from app.config import (CHROMA_DIR, CORPUS_DIR, DATA_DIR, GEMINI_MODEL, GOOGLE_API_KEY, INDEX_STATE_FILE, load_settings)
 from app.schemas import AskConfig, AskResponse, ErrorInfo, LLMAnswer, Reference
 
-from app.config import CHROMA_DIR, CORPUS_DIR, DATA_DIR, INDEX_STATE_FILE, load_settings
-
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 DOC_EXTENSIONS = {".md", ".txt"}
 UPLOADS_DIR = CORPUS_DIR / "uploads"
