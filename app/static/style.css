@@ -28,3 +28,6 @@ tr.absent { color: #b00020; }
 #trace-steps, #trace-raw { margin-bottom: 0.8rem; }
 #trace-steps td:nth-child(-n+2) { white-space: nowrap; }
 #trace-json { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 40vh; overflow-y: auto; }
+/* [DECISION D62] Hidden until the Advanced switch is on */
+body:not(.advanced) .advanced { display: none; }
+#advanced-box { float: right; }

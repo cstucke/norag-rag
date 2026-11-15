@@ -244,7 +244,7 @@ function checkedRetrievers(fieldsetId) {
 function renderFoundBy(ref, element) {
   const ranks = Object.entries(ref.found_by || {}).filter(([, rank]) => rank !== null);
   const line = document.createElement("div");
-  line.className = "small";
+  line.className = "small advanced";
   line.textContent = "found by: " + ranks.map(([name, rank]) => `${name} #${rank}`).join(" · ");
   element.append(line);
 }
