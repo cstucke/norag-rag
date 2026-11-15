@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pydantic import ValidationError
 
 from app import rag, trace
-from app.config import DATA_DIR, GEMINI_MODEL, load_settings
+from app.config import DATA_DIR, LLM_MODEL, load_settings
 from app.schemas import Triple
 from app.words import corpus_doc_ids
 
@@ -64,6 +64,20 @@ RELATION_TYPES = {
 
 SCHEMA = {"entity_types": ENTITY_TYPES, "relation_types": RELATION_TYPES}
 
+# [DECISION D64] An uploaded document can be about anything, so its graph has general entity types and
+# free relation names. Kestrel keeps the fixed schema above, so its V3 numbers still hold
+UPLOAD_ENTITY_TYPES = {
+    "Person": "A named person or character",
+    "Organization": "A company, institution, team or other group",
+    "Place": "A location, building or region",
+    "Event": "Something that happened or is planned",
+    "Object": "A product, system, document or other named thing",
+    "Concept": "An idea, topic, rule or term",
+}
+
+# One graph per corpus that has a schema. relation_types None: any relation name
+SCHEMAS = {"kestrel": SCHEMA, "uploads": {"entity_types": UPLOAD_ENTITY_TYPES, "relation_types": None}}
+
 # ---------------------------------------------------------------------------
 # Extraction
 # ---------------------------------------------------------------------------
@@ -90,13 +104,36 @@ Excerpt:
 <EXCERPT>"""
 
 
-def build_prompt(text):
-    entity_lines = "\n".join(f"- {name}: {definition}" for name, definition in ENTITY_TYPES.items())
+# [DECISION D64] The same prompt without the relation list
+UPLOAD_PROMPT = """You extract a knowledge graph from one excerpt of a document.
+
+Entity types:
+<ENTITY_TYPES>
+
+Rules:
+- Use only the entity types listed above.
+- A relation is a short verb phrase in snake_case, such as works_for or located_in.
+- Extract only facts the excerpt states. Do not infer or add outside knowledge.
+- Write entity names exactly as they appear in the excerpt.
+- If there is nothing to extract, return {"triples": []}.
+
+Return ONLY a JSON object:
+{"triples": [{"subject": "...", "subject_type": "...", "relation": "...", "object": "...", "object_type": "..."}]}
+
+Excerpt:
+<EXCERPT>"""
+
+PROMPTS = {"kestrel": PROMPT, "uploads": UPLOAD_PROMPT}
+
+
+def build_prompt(text, corpus=CORPUS):
+    schema = SCHEMAS[corpus]
+    entity_lines = "\n".join(f"- {name}: {definition}" for name, definition in schema["entity_types"].items())
     relation_lines = "\n".join(
         f"- {name} ({', '.join(rule['subject'])} → {', '.join(rule['object'])}): {rule['meaning']}"
-        for name, rule in RELATION_TYPES.items())
+        for name, rule in (schema["relation_types"] or {}).items())
     # The excerpt is put in last, so nothing in it can be mistaken for a marker
-    return (PROMPT.replace("<ENTITY_TYPES>", entity_lines).replace("<RELATION_TYPES>", relation_lines)
+    return (PROMPTS[corpus].replace("<ENTITY_TYPES>", entity_lines).replace("<RELATION_TYPES>", relation_lines)
             .replace("<EXCERPT>", text))
 
 
@@ -106,13 +143,13 @@ def error_text(error):
                      for item in error.errors())
 
 
-def extract_chunk(chunk_id, text):
+def extract_chunk(chunk_id, text, corpus=CORPUS):
     """[DECISION D40] The extraction entry of one chunk. An LLM error or an output that isn't a JSON
     object with a `triples` list marks the chunk failed. Each triple is validated on its own: an
     invalid one goes to `rejected` and the others are kept. No retry (D15)."""
     failed = {"chunk_id": chunk_id, "status": "failed", "error": None, "triples": [], "rejected": []}
     try:
-        raw = rag.call_llm(build_prompt(text))
+        raw = rag.call_llm(build_prompt(text, corpus))
     except rag.RagError as error:
         return {**failed, "error": {"code": error.code, "message": error.message}}
     try:
@@ -126,7 +163,7 @@ def extract_chunk(chunk_id, text):
     triples, rejected = [], []
     for item in items:
         try:
-            triples.append(Triple.model_validate(item, context=SCHEMA).model_dump())
+            triples.append(Triple.model_validate(item, context=SCHEMAS[corpus]).model_dump())
         except ValidationError as error:
             rejected.append({"triple": item, "error": error_text(error)})
     return {"chunk_id": chunk_id, "status": "ok", "error": None, "triples": triples, "rejected": rejected}
@@ -135,10 +172,14 @@ def extract_chunk(chunk_id, text):
 # Chunks and entity resolution
 # ---------------------------------------------------------------------------
 
-def kestrel_chunks(settings):
-    """[DECISION D44] (chunk_id, text) of every Kestrel chunk at these settings, in document order,
+def graph_chunks(settings, corpus=CORPUS):
+    """[DECISION D44] (chunk_id, text) of every chunk of the corpus at these settings, in document order,
     as stored in the collection (the way words.corpus_chunks reads them, but keeping the texts)."""
-    doc_ids = corpus_doc_ids(CORPUS)
+    try:
+        doc_ids = corpus_doc_ids(corpus)
+    except rag.RagError:
+        # Nothing uploaded yet
+        return []
     rag.ensure_indexed(doc_ids, settings)
     where = {"doc_id": doc_ids[0]} if len(doc_ids) == 1 else {"doc_id": {"$in": doc_ids}}
     result = rag.get_collection(rag.collection_name(settings)).get(where=where, include=["documents", "metadatas"])
@@ -188,29 +229,29 @@ def resolve(extractions):
 # Graph file
 # ---------------------------------------------------------------------------
 
-def graph_path(settings):
-    """[DECISION D42] One file per chunk configuration: the chunk_ids it points to depend on it."""
-    return GRAPH_DIR / f"{CORPUS}_cs{settings['chunk_size']}_ov{settings['chunk_overlap']}.json"
+def graph_path(settings, corpus=CORPUS):
+    """[DECISION D42] One file per corpus and chunk configuration: the chunk_ids it points to depend on it."""
+    return GRAPH_DIR / f"{corpus}_cs{settings['chunk_size']}_ov{settings['chunk_overlap']}.json"
 
 
-def graph_built(settings):
-    return graph_path(settings).exists()
+def graph_built(settings, corpus=CORPUS):
+    return graph_path(settings, corpus).exists()
 
 
-def load_graph(settings):
+def load_graph(settings, corpus=CORPUS):
     """The graph file for these settings. A missing or unreadable file is graph_not_built."""
     try:
-        with open(graph_path(settings), "r", encoding="utf-8") as f:
+        with open(graph_path(settings, corpus), "r", encoding="utf-8") as f:
             return json.load(f)
     except (OSError, ValueError):
         raise rag.RagError("graph_not_built",
-                           f"No concept graph for chunk size {settings['chunk_size']} / "
-                           f"overlap {settings['chunk_overlap']}. Run: python -m app.graph build") from None
+                           f"No concept graph of the {corpus} documents for chunk size {settings['chunk_size']} / "
+                           f"overlap {settings['chunk_overlap']}. Build it in the Graph tab.") from None
 
 
-def write_graph(settings, graph):
+def write_graph(settings, graph, corpus=CORPUS):
     GRAPH_DIR.mkdir(parents=True, exist_ok=True)
-    with open(graph_path(settings), "w", encoding="utf-8") as f:
+    with open(graph_path(settings, corpus), "w", encoding="utf-8") as f:
         json.dump(graph, f, indent=2, ensure_ascii=False)
 
 
@@ -218,7 +259,7 @@ def write_graph(settings, graph):
 # Build
 # ---------------------------------------------------------------------------
 
-def extract_all(chunks, sleep):
+def extract_all(chunks, sleep, corpus=CORPUS):
     """One extraction entry per (chunk_id, text), printing one progress line each. `sleep` seconds
     are waited between calls, for rate limits."""
     extractions = []
@@ -226,7 +267,7 @@ def extract_all(chunks, sleep):
         if number > 1 and sleep:
             time.sleep(sleep)
         with trace.span("extract", chunk_id=chunk_id) as span:
-            entry = extract_chunk(chunk_id, text)
+            entry = extract_chunk(chunk_id, text, corpus)
             span.update(status=entry["status"], triples=len(entry["triples"]), rejected=len(entry["rejected"]))
         extractions.append(entry)
         detail = f" ({entry['error']['code']})" if entry["error"] else ""
@@ -237,7 +278,7 @@ def extract_all(chunks, sleep):
 
 def need_api_key():
     # Not a per-chunk failure: without a key every call would fail and overwrite a good graph file
-    if not rag.GOOGLE_API_KEY:
+    if not rag.llm_configured():
         raise rag.RagError("llm_not_configured")
 
 
@@ -260,7 +301,7 @@ def build(settings, sleep):
     need_api_key()
     # [DECISION D50] One trace per build. main() ends it if the build stops on an error
     trace.start("index", trigger="graph_build")
-    chunks = kestrel_chunks(settings)
+    chunks = graph_chunks(settings)
     print(f"{len(chunks)} Kestrel chunks, so {len(chunks)} LLM calls.")
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     before, start = dict(rag.USAGE), time.perf_counter()
@@ -268,7 +309,7 @@ def build(settings, sleep):
     cost = cost_since(before, start)
     nodes, edges = resolve(extractions)
     graph = {"config": {"corpus": CORPUS, "chunk_size": settings["chunk_size"],
-                        "chunk_overlap": settings["chunk_overlap"], "model": GEMINI_MODEL,
+                        "chunk_overlap": settings["chunk_overlap"], "model": LLM_MODEL,
                         "entity_types": ENTITY_TYPES, "relation_types": RELATION_TYPES,
                         "prompt_template": PROMPT},
              "build": {"started_at": started_at, "chunks": len(chunks), **cost, **count_problems(extractions)},
@@ -282,7 +323,7 @@ def build(settings, sleep):
 def retry_failed(settings, sleep):
     """Re-extracts only the failed chunks of the existing file, re-resolves, adds their cost to build."""
     graph = load_graph(settings)
-    texts = dict(kestrel_chunks(settings))
+    texts = dict(graph_chunks(settings))
     todo = [number for number, entry in enumerate(graph["extractions"])
             if entry["status"] == "failed" and entry["chunk_id"] in texts]
     if not todo:
@@ -315,6 +356,88 @@ def resolve_again(settings):
     graph["nodes"], graph["edges"] = resolve(graph["extractions"])
     write_graph(settings, graph)
     print(f"Wrote {graph_path(settings)}: {len(graph['nodes'])} entities, {len(graph['edges'])} edges")
+
+# ---------------------------------------------------------------------------
+# Build from the page (Graph tab)
+# ---------------------------------------------------------------------------
+
+# [DECISION D65] LLM calls per request. The page calls again until nothing is left
+BUILD_STEP = 5
+
+
+def need_schema(corpus):
+    if corpus not in SCHEMAS:
+        raise rag.RagError("unknown_corpus", f"No concept graph for this corpus: {corpus}")
+
+
+def fresh_extractions(graph, texts, settings):
+    """The stored extractions that still match the documents: their chunk exists, and their document
+    has the file hash it had when it was extracted (an upload can be deleted and replaced)."""
+    hashes = rag.load_index_state().get(rag.collection_name(settings), {})
+    stale = {doc_id for doc_id, sha256 in graph.get("docs", {}).items() if hashes.get(doc_id) != sha256}
+    return [entry for entry in graph["extractions"]
+            if entry["chunk_id"] in texts and doc_id_of_chunk(entry["chunk_id"]) not in stale]
+
+
+def build_step(corpus, settings, limit=BUILD_STEP):
+    """[DECISION D65] One step of the build the Graph tab runs: extracts up to `limit` chunks that have
+    no good extraction yet (the ones never tried first, then the failed ones), resolves and writes the
+    file. A large document is then many short requests, and stopping keeps what is done."""
+    need_schema(corpus)
+    need_api_key()
+    chunks = graph_chunks(settings, corpus)
+    if not chunks:
+        raise rag.RagError("unknown_corpus", "There is no document to build a graph from. Upload one first.")
+    texts = dict(chunks)
+    try:
+        graph = load_graph(settings, corpus)
+    except rag.RagError:
+        graph = {"config": {"corpus": corpus, "chunk_size": settings["chunk_size"],
+                            "chunk_overlap": settings["chunk_overlap"], "model": LLM_MODEL,
+                            **SCHEMAS[corpus], "prompt_template": PROMPTS[corpus]},
+                 "build": {"started_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "chunks": 0,
+                           "llm_calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "seconds": 0.0},
+                 "extractions": []}
+    done = {entry["chunk_id"]: entry for entry in fresh_extractions(graph, texts, settings)}
+    failed = [chunk_id for chunk_id, entry in done.items() if entry["status"] == "failed"]
+    todo = ([chunk_id for chunk_id, _ in chunks if chunk_id not in done] + failed)[:limit]
+    trace.start("index", trigger="graph_build", corpus=corpus)
+    before, start = dict(rag.USAGE), time.perf_counter()
+    tried = extract_all([(chunk_id, texts[chunk_id]) for chunk_id in todo], 0, corpus)
+    cost = cost_since(before, start)
+    done.update((entry["chunk_id"], entry) for entry in tried)
+    # Document order, as the command-line build writes them
+    graph["extractions"] = [done[chunk_id] for chunk_id, _ in chunks if chunk_id in done]
+    hashes = rag.load_index_state()[rag.collection_name(settings)]
+    graph["docs"] = {doc_id: hashes[doc_id] for doc_id in sorted({doc_id_of_chunk(chunk_id) for chunk_id in done})}
+    build = graph["build"]
+    build["chunks"] = len(graph["extractions"])
+    for field in ("llm_calls", "prompt_tokens", "completion_tokens"):
+        build[field] += cost[field]
+    build["seconds"] = round(build["seconds"] + cost["seconds"], 1)
+    build.update(count_problems(graph["extractions"]))
+    graph["nodes"], graph["edges"] = resolve(graph["extractions"])
+    write_graph(settings, graph, corpus)
+    trace.finish("ok", chunks=len(todo), **count_problems(graph["extractions"]))
+    errors = [entry["error"] for entry in tried if entry["status"] == "failed"]
+    return {**graph_summary(corpus, settings),
+            "step": {"tried": len(tried), "extracted": len(tried) - len(errors), "error": errors[0] if errors else None}}
+
+
+def graph_summary(corpus, settings):
+    """What the Graph tab shows: how far the build is, then the entities and edges of the extractions
+    that still match the documents."""
+    need_schema(corpus)
+    texts = dict(graph_chunks(settings, corpus))
+    try:
+        graph = load_graph(settings, corpus)
+    except rag.RagError:
+        graph = {"extractions": []}
+    fresh = fresh_extractions(graph, texts, settings)
+    nodes, edges = resolve(fresh)
+    return {"corpus": corpus, "chunk_size": settings["chunk_size"], "chunk_overlap": settings["chunk_overlap"],
+            "chunks": len(texts), "chunks_done": sum(entry["status"] == "ok" for entry in fresh),
+            "build": graph.get("build"), "nodes": nodes, "edges": edges}
 
 # ---------------------------------------------------------------------------
 # Stats
@@ -389,20 +512,27 @@ def graph_search(question, doc_ids, settings, n):
     directions, up to 2 hops: an edge touching a seed is hop 1, an edge touching a hop-1 neighbour (and
     no seed) is hop 2. Each followed edge adds 1.0 (hop 1) or 0.5 (hop 2) to every chunk it comes from.
     No seed: no chunk."""
-    graph = load_graph(settings)
-    names = {node["id"]: node["name"] for node in graph["nodes"]}
-    seeds = link_entities(question, graph["nodes"])
-    seed_ids = {node["id"] for node in seeds}
-
-    followed = []  # (hop, edge)
-    for edge in graph["edges"]:
-        if {edge["source"], edge["target"]} & seed_ids:
-            followed.append((1, edge))
-    neighbours = {end for _, edge in followed for end in (edge["source"], edge["target"])} - seed_ids
-    for edge in graph["edges"]:
-        ends = {edge["source"], edge["target"]}
-        if not ends & seed_ids and ends & neighbours:
-            followed.append((2, edge))
+    # [DECISION D66] One graph per corpus. Each built graph that has a selected document is searched on
+    # its own, and the chunk scores are put together
+    built = [corpus for corpus in SCHEMAS if graph_built(settings, corpus)]
+    if not built:
+        raise rag.RagError("graph_not_built",
+                           f"No concept graph for chunk size {settings['chunk_size']} / "
+                           f"overlap {settings['chunk_overlap']}. Build one in the Graph tab.")
+    names, seeds, followed = {}, [], []  # followed: (hop, edge)
+    for corpus in built:
+        if not any(doc_id.startswith(f"{corpus}/") for doc_id in doc_ids):
+            continue
+        graph = load_graph(settings, corpus)
+        names.update((node["id"], node["name"]) for node in graph["nodes"])
+        graph_seeds = link_entities(question, graph["nodes"])
+        seeds += graph_seeds
+        seed_ids = {node["id"] for node in graph_seeds}
+        first = [(1, edge) for edge in graph["edges"] if {edge["source"], edge["target"]} & seed_ids]
+        neighbours = {end for _, edge in first for end in (edge["source"], edge["target"])} - seed_ids
+        followed += first + [(2, edge) for edge in graph["edges"]
+                             if not {edge["source"], edge["target"]} & seed_ids
+                             and {edge["source"], edge["target"]} & neighbours]
 
     scores = {}
     for hop, edge in followed:
@@ -436,7 +566,7 @@ def context_path(info, chunks):
     return {"entities": info["entities"], "edges": edges}
 
 # ---------------------------------------------------------------------------
-# CLI: python -m app.graph build | resolve | stats
+# CLI, Kestrel only: python -m app.graph build | resolve | stats
 # ---------------------------------------------------------------------------
 
 def main():

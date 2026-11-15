@@ -204,7 +204,7 @@ api("GET", "/api/settings").then(showSettings);
 // Tabs
 // ---------------------------------------------------------------------------
 
-const TABS = ["ask", "eval", "words"];
+const TABS = ["ask", "eval", "words", "graph"];
 
 for (const name of TABS) {
   $(`show-${name}`).addEventListener("click", () => {

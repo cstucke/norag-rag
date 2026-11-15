@@ -61,6 +61,12 @@ class Triple(BaseModel):
         for kind in (self.subject_type, self.object_type):
             if kind not in entity_types:
                 raise ValueError(f"unknown entity type: {kind}")
+        if relation_types is None:
+            # [DECISION D64] Any relation name, kept in snake_case so "Works for" and "works_for" are one
+            self.relation = re.sub(r"[^a-z0-9]+", "_", self.relation.casefold()).strip("_")
+            if not self.relation:
+                raise ValueError("relation must contain a letter or a digit")
+            return self
         if self.relation not in relation_types:
             raise ValueError(f"unknown relation: {self.relation}")
         rule = relation_types[self.relation]
