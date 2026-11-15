@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import graph, rag, scanner, study, trace
-from app.config import BASE_DIR, load_settings, save_settings, validate_settings
+from app.config import BASE_DIR, GEMINI_MODEL, load_settings, save_settings, validate_settings
 from app.rag import ERRORS, RagError
 from app.schemas import EvalRequest, WordsQuestionRequest
 from app.words import corpus_names, question_words, vocabulary, word_chunks
