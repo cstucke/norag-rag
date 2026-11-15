@@ -49,7 +49,8 @@ function showStudy(data) {
     ? `${plural(cost.llm_calls, "LLM call")} · ${plural(cost.prompt_tokens + cost.completion_tokens, "token")} · ` +
       `$${cost.cost_usd.toFixed(4)} · ${(cost.ms / 1000).toFixed(1)} s`
     : "";
-  // The join adds the Details button here, in #study-trace-slot: traceButton(data.trace_id) from trace.js
+  // The Details button, from trace.js. Error responses carry a trace id too
+  $("study-trace-slot").replaceChildren(...(data.trace_id ? [traceButton(data.trace_id)] : []));
   $("study-items").replaceChildren(...items.map((item, i) =>
     data.type === "multiple_choice" ? choiceItem(item, i) : flashcardItem(item)));
   $("study-result").hidden = false;
