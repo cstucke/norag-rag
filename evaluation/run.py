@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app import bm25_index, graph, hybrid, rag
-from app.config import BASE_DIR, CORPUS_DIR, GEMINI_MODEL, load_settings, validate_settings, validate_settings
+from app.config import BASE_DIR, CORPUS_DIR, GEMINI_MODEL, load_settings, validate_settings
 from app.words import corpus_doc_ids
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"

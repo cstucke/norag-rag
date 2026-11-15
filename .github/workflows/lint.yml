@@ -1,0 +1,17 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # E9 and F only: syntax errors, undefined names, unused and duplicate imports. No style rules.
+      # The course demo scripts (ask_*.py, bm25/) are not checked
+      - run: pipx run ruff==0.17.5 check --isolated --select E9,F --output-format github app evaluation scripts

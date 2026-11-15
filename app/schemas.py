@@ -82,6 +82,7 @@ class AskResponse(BaseModel):
     error: ErrorInfo | None = None
     config: AskConfig
     graph_path: dict | None = None
+    trace_id: str | None = None
 
 class EvalRequest(BaseModel):
     """The settings stay untyped so a bad value reaches validate_settings and gets invalid_settings."""

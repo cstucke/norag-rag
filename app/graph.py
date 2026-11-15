@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 from pydantic import ValidationError
 
-from app import rag
+from app import rag, trace
 from app.config import DATA_DIR, GEMINI_MODEL, load_settings
 from app.schemas import Triple
 from app.words import corpus_doc_ids
@@ -225,7 +225,9 @@ def extract_all(chunks, sleep):
     for number, (chunk_id, text) in enumerate(chunks, 1):
         if number > 1 and sleep:
             time.sleep(sleep)
-        entry = extract_chunk(chunk_id, text)
+        with trace.span("extract", chunk_id=chunk_id) as span:
+            entry = extract_chunk(chunk_id, text)
+            span.update(status=entry["status"], triples=len(entry["triples"]), rejected=len(entry["rejected"]))
         extractions.append(entry)
         detail = f" ({entry['error']['code']})" if entry["error"] else ""
         print(f"[{number}/{len(chunks)}] {chunk_id}: {entry['status']}{detail}, "
@@ -256,6 +258,8 @@ def count_problems(extractions):
 def build(settings, sleep):
     """Extracts every Kestrel chunk, resolves, writes the graph file."""
     need_api_key()
+    # [DECISION D50] One trace per build. main() ends it if the build stops on an error
+    trace.start("index", trigger="graph_build")
     chunks = kestrel_chunks(settings)
     print(f"{len(chunks)} Kestrel chunks, so {len(chunks)} LLM calls.")
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -271,6 +275,7 @@ def build(settings, sleep):
              "extractions": extractions, "nodes": nodes, "edges": edges}
     graph["build"]["seconds"] = round(graph["build"]["seconds"], 1)
     write_graph(settings, graph)
+    trace.finish("ok", chunks=len(chunks), **count_problems(extractions))
     print(f"Wrote {graph_path(settings)}")
 
 
@@ -284,6 +289,7 @@ def retry_failed(settings, sleep):
         print("No failed chunk to retry.")
         return
     need_api_key()
+    trace.start("index", trigger="graph_retry_failed")
     print(f"{len(todo)} failed chunks, so {len(todo)} LLM calls.")
     before, start = dict(rag.USAGE), time.perf_counter()
     redone = extract_all([(graph["extractions"][number]["chunk_id"], texts[graph["extractions"][number]["chunk_id"]])
@@ -298,6 +304,7 @@ def retry_failed(settings, sleep):
     build.update(count_problems(graph["extractions"]))
     graph["nodes"], graph["edges"] = resolve(graph["extractions"])
     write_graph(settings, graph)
+    trace.finish("ok", chunks=len(todo), **count_problems(graph["extractions"]))
     print(f"Wrote {graph_path(settings)}")
 
 
@@ -451,6 +458,8 @@ def main():
         else:
             print_stats(settings)
     except rag.RagError as error:
+        # Ends the build's trace, if one was started
+        trace.finish("error", error_code=error.code)
         sys.exit(error.message)
 
 
