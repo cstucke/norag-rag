@@ -4,13 +4,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RAG V1 — The Forest wiki</title>
+  <title>Ask your documents</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <h1>RAG V1 — The Forest wiki</h1>
-  <nav id="tab-bar">
+  <label id="advanced-box"><input id="advanced-toggle" type="checkbox"> Advanced</label>
+  <h1>Ask your documents</h1>
+  <nav id="tab-bar" class="advanced">
     <button id="show-ask">Ask</button>
     <button id="show-eval">Evaluation</button>
     <button id="show-words">Words</button>
@@ -21,6 +22,8 @@
     <main>
       <section id="documents-panel">
         <h2>Documents</h2>
+        <p class="small">Tick the documents to search. Type "kestrel" or "forest" in the filter, then use Select all.
+        </p>
         <p><span id="doc-count">0</span> documents, <span id="selected-count">0</span> selected</p>
         <input id="doc-filter" type="search" placeholder="Filter documents">
         <button id="select-all">Select all (filtered)</button>
@@ -32,7 +35,7 @@
         <p id="review-notice" hidden><span id="review-count"></span> <button id="review-open">Review</button></p>
       </section>
 
-      <section id="settings-panel">
+      <section id="settings-panel" class="advanced">
         <h2>Settings</h2>
         <label>Chunk size <input id="chunk-size" type="number"></label>
         <label>Overlap <input id="chunk-overlap" type="number"></label>
@@ -51,19 +54,21 @@
       <section id="ask-panel">
         <h2>Ask</h2>
         <textarea id="question" rows="3"></textarea>
-        <fieldset id="ask-retrievers">
+        <fieldset id="ask-retrievers" class="advanced">
           <legend>Retrievers</legend>
         </fieldset>
         <button id="ask">Ask</button>
-        <span id="working" hidden>Working…</span>
+        <span id="working" hidden>Searching the documents and writing an answer… The first question after start-up
+          can take 20 seconds.</span>
         <div id="result" hidden>
           <p id="status"></p>
           <p id="answer"></p>
-          <p id="config" class="small"></p>
+          <span id="trace-slot"></span>
+          <p id="config" class="small advanced"></p>
           <h3>References</h3>
           <ul id="references"></ul>
-          <div id="graph-path" hidden></div>
-          <details>
+          <div id="graph-path" class="advanced" hidden></div>
+          <details class="advanced">
             <summary>Retrieved passages (top-k)</summary>
             <ul id="retrieved"></ul>
           </details>
@@ -181,11 +186,24 @@
     <button id="chunk-close">Close</button>
   </dialog>
 
+  <dialog id="trace-dialog">
+    <h3>Details</h3>
+    <p id="trace-summary"></p>
+    <table id="trace-steps"></table>
+    <details id="trace-raw" class="advanced">
+      <summary>Raw trace</summary>
+      <pre id="trace-json"></pre>
+    </details>
+    <button id="trace-close">Close</button>
+  </dialog>
+
   <script src="app.js"></script>
   <script src="evaluation.js"></script>
+  <script src="trace.js"></script>
   <script src="words.js"></script>
   <script src="quarantine.js"></script>
   <script src="study.js"></script>
+  <script src="advanced.js"></script>
 </body>
 
 </html>

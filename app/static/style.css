@@ -38,3 +38,10 @@ blockquote { margin: 0.4rem 0; padding-left: 0.8rem; border-left: 3px solid #ccc
 #review-dialog { max-width: 50rem; }
 .review-item { border-bottom: 1px solid #ccc; padding-bottom: 0.6rem; margin-bottom: 0.6rem; }
 .review-item code { white-space: pre-wrap; word-break: break-word; }
+#trace-dialog { max-width: 50rem; }
+#trace-steps, #trace-raw { margin-bottom: 0.8rem; }
+#trace-steps td:nth-child(-n+2) { white-space: nowrap; }
+#trace-json { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 40vh; overflow-y: auto; }
+/* [DECISION D62] Hidden until the Advanced switch is on */
+body:not(.advanced) .advanced { display: none; }
+#advanced-box { float: right; }

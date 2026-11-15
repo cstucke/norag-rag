@@ -7,7 +7,7 @@ import math
 import time
 from collections import Counter
 
-from app import rag
+from app import rag, trace
 from app.config import DATA_DIR, load_settings
 from app.words import tokenize
 
@@ -65,7 +65,9 @@ def current_index(settings):
         _index = None
     if _index is None or _index["chunk_ids_sha256"] != sha256:
         start = time.perf_counter()
-        _index = build_index(settings)
+        with trace.span("index.bm25") as span:
+            _index = build_index(settings)
+            span["n_chunks"] = _index["n_chunks"]
         print(f"BM25 index rebuilt: {_index['n_chunks']} chunks, {time.perf_counter() - start:.1f} s")
     return _index
 
@@ -103,9 +105,14 @@ def main():
     parser.add_argument("--build", action="store_true", required=True, help="rebuild the index file now")
     parser.parse_args()
     settings = load_settings()
+    # [DECISION D50] One trace per indexing run
+    trace.start("index", trigger="bm25_build")
     start = time.perf_counter()
-    index = build_index(settings)
+    with trace.span("index.bm25") as span:
+        index = build_index(settings)
+        span["n_chunks"] = index["n_chunks"]
     seconds = time.perf_counter() - start
+    trace.finish("ok")
     path = index_path(settings)
     print(f"{path}: {index['n_chunks']} chunks, {len(index['df'])} words, "
           f"{path.stat().st_size / 1e6:.1f} MB, {seconds:.1f} s")

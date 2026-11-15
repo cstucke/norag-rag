@@ -11,11 +11,10 @@ import openai
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from openai import OpenAI
 
+from app import trace
 from app.config import (CHROMA_DIR, CORPUS_DIR, DATA_DIR, GEMINI_MODEL, GOOGLE_API_KEY, INDEX_STATE_FILE, load_settings)
 from app.schemas import AskConfig, AskResponse, ErrorInfo, LLMAnswer, Reference
 from app import trace
-
-from app.config import CHROMA_DIR, CORPUS_DIR, DATA_DIR, INDEX_STATE_FILE, load_settings
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 DOC_EXTENSIONS = {".md", ".txt"}
@@ -51,6 +50,7 @@ ERRORS = {
     "quarantine_not_found": (404, "This document is no longer waiting for review."),
     "invalid_study_request": (400, "Invalid study request."),
     "no_study_items": (200, "The model didn't return a usable question. Try again, or pick other documents."),
+    "trace_not_found": (404, "Details are no longer available for this answer."),
 }
 
 
@@ -307,31 +307,36 @@ USAGE = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
 def call_llm(prompt):
     """Gemini's raw reply text. API failures become the matching catalogue error."""
-    if not GOOGLE_API_KEY:
-        raise RagError("llm_not_configured")
-    # max_retries=0: otherwise the SDK retries on its own (D15: no retry),
-    # and the 60 s timeout would no longer be the limit
-    client = OpenAI(api_key=GOOGLE_API_KEY, base_url=GEMINI_BASE_URL, timeout=60, max_retries=0)
-    try:
-        response = client.chat.completions.create(
-            model=GEMINI_MODEL, messages=[{"role": "user", "content": prompt}],
-            temperature=0, response_format={"type": "json_object"})
-    except openai.APITimeoutError:
-        raise RagError("llm_timeout") from None
-    except openai.RateLimitError:
-        raise RagError("llm_rate_limited") from None
-    # Gemini answers a bad API key with 400 and an unknown model id with 404
-    except (openai.BadRequestError, openai.AuthenticationError,
-            openai.PermissionDeniedError, openai.NotFoundError):
-        raise RagError("llm_auth_or_model") from None
-    except openai.OpenAIError:
-        raise RagError("llm_error") from None
-    USAGE["calls"] += 1
-    # Without a usage block the call still counts, with 0 tokens
-    if response.usage:
-        USAGE["prompt_tokens"] += response.usage.prompt_tokens
-        USAGE["completion_tokens"] += response.usage.completion_tokens
-    return response.choices[0].message.content or ""
+    # The missing-key check is inside the span, so a call that can't be made shows as a failed step
+    with trace.span("llm", model=GEMINI_MODEL, prompt_tokens=0, completion_tokens=0) as span:
+        if not GOOGLE_API_KEY:
+            raise RagError("llm_not_configured")
+        # max_retries=0: otherwise the SDK retries on its own (D15: no retry),
+        # and the 60 s timeout would no longer be the limit
+        client = OpenAI(api_key=GOOGLE_API_KEY, base_url=GEMINI_BASE_URL, timeout=60, max_retries=0)
+        try:
+            response = client.chat.completions.create(
+                model=GEMINI_MODEL, messages=[{"role": "user", "content": prompt}],
+                temperature=0, response_format={"type": "json_object"})
+        except openai.APITimeoutError:
+            raise RagError("llm_timeout") from None
+        except openai.RateLimitError:
+            raise RagError("llm_rate_limited") from None
+        # Gemini answers a bad API key with 400 and an unknown model id with 404
+        except (openai.BadRequestError, openai.AuthenticationError,
+                openai.PermissionDeniedError, openai.NotFoundError):
+            raise RagError("llm_auth_or_model") from None
+        except openai.OpenAIError:
+            raise RagError("llm_error") from None
+        USAGE["calls"] += 1
+        # Without a usage block the call still counts, with 0 tokens
+        if response.usage:
+            USAGE["prompt_tokens"] += response.usage.prompt_tokens
+            USAGE["completion_tokens"] += response.usage.completion_tokens
+            span.update(prompt_tokens=response.usage.prompt_tokens,
+                        completion_tokens=response.usage.completion_tokens)
+        span["cost_usd"] = trace.cost_usd(span["prompt_tokens"], span["completion_tokens"])
+        return response.choices[0].message.content or ""
 
 
 def strip_code_fence(text):
@@ -388,7 +393,13 @@ def ask(question, doc_ids, settings, retrievers=None):
         return AskResponse(status="not_found", answer="Nothing was retrieved from the selected documents.",
                            config=config)
     try:
-        llm_answer = parse_llm_output(call_llm(build_prompt(question, chunks)), len(chunks))
+        with trace.span("prompt", excerpts=len(chunks)) as span:
+            prompt = build_prompt(question, chunks)
+            span["chars"] = len(prompt)
+        raw = call_llm(prompt)
+        with trace.span("validate") as span:
+            llm_answer = parse_llm_output(raw, len(chunks))
+            span.update(answerable=llm_answer.answerable, citations=llm_answer.citations)
     except RagError as error:
         return AskResponse(status="error", error=ErrorInfo(code=error.code, message=error.message),
                            retrieved=retrieved, config=config)
@@ -430,11 +441,22 @@ def main():
     settings = load_settings()
     doc_ids = [doc["doc_id"] for doc in list_documents()]
     indexed = 0
-    for i in range(0, len(doc_ids), 50):
-        indexed += ensure_indexed(doc_ids[i:i + 50], settings)
-        print(f"{min(i + 50, len(doc_ids))}/{len(doc_ids)} documents checked, {indexed} indexed")
+    # [DECISION D50] One trace per indexing run, one span per batch
+    trace.start("index", trigger="index_all", chunk_size=settings["chunk_size"],
+                chunk_overlap=settings["chunk_overlap"])
+    try:
+        for i in range(0, len(doc_ids), 50):
+            with trace.span("index", docs_checked=len(doc_ids[i:i + 50])) as span:
+                span["docs_indexed"] = ensure_indexed(doc_ids[i:i + 50], settings)
+            indexed += span["docs_indexed"]
+            print(f"{min(i + 50, len(doc_ids))}/{len(doc_ids)} documents checked, {indexed} indexed")
+    except RagError as error:
+        trace.finish("error", error_code=error.code)
+        raise
     name = collection_name(settings)
-    print(f"{name}: {get_collection(name).count()} chunks")
+    chunks = get_collection(name).count()
+    trace.finish("ok", docs_indexed=indexed, chunks=chunks)
+    print(f"{name}: {chunks} chunks")
 
 
 if __name__ == "__main__":

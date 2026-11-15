@@ -14,7 +14,8 @@ from app.words import corpus_names, question_words, vocabulary, word_chunks
 from evaluation.run import load_questions, run_eval
 from app.hybrid import DEFAULT_RETRIEVERS, RETRIEVERS
 
-app = FastAPI(title="RAG V1 — The Forest wiki")
+# [DECISION D61] The name a first-time user sees
+app = FastAPI(title="Ask your documents")
 
 # [DECISION D22] One file per question set; the file stem is also its corpus
 QUESTIONS_DIR = BASE_DIR / "evaluation" / "questions"
@@ -121,7 +122,25 @@ async def post_ask(request: Request):
     # A missing or malformed list of retrievers runs the default ones
     if not isinstance(retrievers, list):
         retrievers = None
-    response = rag.ask(question, doc_ids, load_settings(), retrievers)
+    settings = load_settings()
+    # [DECISION D50] Every question leaves a trace, also one that fails before retrieval
+    trace.start("ask", question=question, doc_count=len(doc_ids),
+                retrievers=list(DEFAULT_RETRIEVERS if retrievers is None else retrievers),
+                chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
+                top_k=settings["top_k"], model=GEMINI_MODEL)
+    try:
+        response = rag.ask(question, doc_ids, settings, retrievers)
+    except RagError as error:
+        trace.finish("error", error_code=error.code)
+        raise
+    # [DECISION D51] The trace's outcome, from the answer status
+    if response.error:
+        outcome = "invalid" if response.error.code == "invalid_llm_response" else "error"
+    else:
+        outcome = "abstained" if response.status == "not_found" else "answered"
+    response.trace_id = trace.finish(outcome, answer=response.answer,
+                                     references=[reference.chunk_id for reference in response.references],
+                                     error_code=response.error.code if response.error else None)
     status_code = ERRORS[response.error.code][0] if response.error else 200
     return JSONResponse(status_code=status_code, content=response.model_dump())
 
@@ -203,6 +222,14 @@ def get_word_chunks(corpus: str = "", word: str = ""):
 @app.post("/api/words/question")
 def post_words_question(body: WordsQuestionRequest):
     return question_words(body.corpus, body.question, load_settings())
+
+
+@app.get("/api/traces/{trace_id}")
+def get_trace(trace_id: str):
+    found = trace.find(trace_id)
+    if found is None:
+        raise RagError("trace_not_found")
+    return found
 
 # The UI (Step 8). Mounted last, so the /api routes above take precedence
 app.mount("/", StaticFiles(directory=Path(__file__).parent / "static", html=True), name="static")
