@@ -13,6 +13,28 @@ class LLMAnswer(BaseModel):
     answer: str
     citations: list[int]
 
+
+class Flashcard(BaseModel):
+    """[DECISION D57] One study item as the LLM must return it. The checks that need the excerpts
+    (excerpt range, quote) are done in study.py, as parse_llm_output does for citations."""
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True, str_min_length=1)
+
+    question: str
+    answer: str
+    excerpt: int
+    quote: str
+
+
+class ChoiceQuestion(BaseModel):
+    """[DECISION D57] answer is the position of the right option, 1 to 4."""
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True, str_min_length=1)
+
+    question: str
+    options: list[str]
+    answer: int
+    excerpt: int
+    quote: str
+
 class Triple(BaseModel):
     """[DECISION D40] One triple extracted by the LLM. The schema (entity and relation types) is passed
     as the validation context, so this module doesn't import graph.py."""
