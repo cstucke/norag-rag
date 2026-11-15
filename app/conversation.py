@@ -17,7 +17,8 @@ Rewrite the new question as ONE question that can be understood with no conversa
 
 Rules:
 - Replace every pronoun and fill in every omitted word using the conversation ("it", "that plan", "and for the other one?").
-- Keep the user's wording and language where you can. Do not answer the question.
+- A short follow-up such as "and for X?" or "what about Y?" asks the SAME thing as the user's previous question, about a new subject. Keep what was asked and change only the subject, even if an earlier answer already covers it. After "How much does the red model weigh?", the follow-up "and the blue one?" becomes "How much does the blue model weigh?".
+- Keep the user's wording and language where you can. Do not broaden the question. Do not answer it.
 - If the new question already stands on its own, return it unchanged and set "used_history" to false.
 
 Return ONLY a JSON object:
