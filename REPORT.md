@@ -369,7 +369,7 @@ Kestrel q05, "I lost my phone and I can't log in anymore. What can I do?". Dense
 
 ## V4
 
-Two people worked on V4. I (Charles) did the clean-up, Part A (traces) and the two changes asked for after the first submission: the LLM settings and the concept graph for uploaded documents. Jakub did Part B (study artifacts, conversation mode) and Part C (injection scanner). The sections below are mine unless they say otherwise.
+Two people worked on V4. Charles did the clean-up, Part A (traces) and the two changes asked for after the first submission: the LLM settings and the concept graph for uploaded documents. Jakub did Part B (study artifacts, conversation mode) and Part C (injection scanner).
 
 ### Clean-up
 **What a first-time user sees now.** The title "Ask your documents", the Documents panel (filter, select, upload), the switch between asking a question and making a quiz, the question box, and under an answer its references and a Details button.
