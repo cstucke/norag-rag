@@ -54,14 +54,10 @@
 
       <section id="ask-panel">
         <h2>Ask</h2>
-        <textarea id="question" rows="3"></textarea>
-        <fieldset id="ask-retrievers" class="advanced">
-          <legend>Retrievers</legend>
-        </fieldset>
-        <button id="ask">Ask</button>
-        <span id="working" hidden>Searching the documents and writing an answer… The first question after start-up
-          can take 20 seconds.</span>
+        <div id="transcript"></div>
         <div id="result" hidden>
+          <p id="turn-question" class="turn-question"></p>
+          <p id="searched-for" class="small" hidden></p>
           <p id="status"></p>
           <p id="answer"></p>
           <span id="trace-slot"></span>
@@ -73,7 +69,19 @@
             <summary>Retrieved passages (top-k)</summary>
             <ul id="retrieved"></ul>
           </details>
+          <div id="follow-ups" hidden>
+            <p class="small">You could ask next:</p>
+            <ul id="follow-up-list"></ul>
+          </div>
         </div>
+        <textarea id="question" rows="3" placeholder="Ask a question, then follow up on the answer"></textarea>
+        <fieldset id="ask-retrievers" class="advanced">
+          <legend>Retrievers</legend>
+        </fieldset>
+        <button id="ask">Ask</button>
+        <button id="new-conversation" hidden>New conversation</button>
+        <span id="working" hidden>Searching the documents and writing an answer… The first question after start-up
+          can take 20 seconds.</span>
       </section>
 
       <section id="study-panel" hidden>
@@ -236,6 +244,7 @@
   <script src="words.js"></script>
   <script src="quarantine.js"></script>
   <script src="study.js"></script>
+  <script src="conversation.js"></script>
   <script src="graph.js"></script>
   <script src="advanced.js"></script>
 </body>

@@ -6,7 +6,7 @@ from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app import graph, rag, scanner, study, trace
+from app import conversation, graph, rag, scanner, study, trace
 from app.config import BASE_DIR, LLM_MODEL, load_settings, save_settings, validate_settings
 from app.rag import ERRORS, RagError
 from app.schemas import EvalRequest, WordsQuestionRequest
@@ -122,17 +122,31 @@ async def post_ask(request: Request):
     # A missing or malformed list of retrievers runs the default ones
     if not isinstance(retrievers, list):
         retrievers = None
+    # [DECISION D67] Conversation mode: the page sends the previous turns with each question.
+    # Anything but true leaves the mode off, and the request is then a V3 request
+    in_conversation = body.get("conversation") is True
+    history = conversation.clean_history(body.get("history")) if in_conversation else []
+    conversation_attrs = {}
+    if in_conversation:
+        conversation_id = body.get("conversation_id")
+        # turn counts every turn the page sent, history_turns the ones the rewrite may use
+        conversation_attrs = {"conversation_id": conversation_id[:64] if isinstance(conversation_id, str) else None,
+                              "turn": len(body["history"]) + 1 if history else 1, "history_turns": len(history)}
     settings = load_settings()
     # [DECISION D50] Every question leaves a trace, also one that fails before retrieval
     trace.start("ask", question=question, doc_count=len(doc_ids),
                 retrievers=list(DEFAULT_RETRIEVERS if retrievers is None else retrievers),
                 chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
-                top_k=settings["top_k"], model=LLM_MODEL)
+                top_k=settings["top_k"], model=LLM_MODEL, **conversation_attrs)
     try:
-        response = rag.ask(question, doc_ids, settings, retrievers)
+        response = rag.ask(question, doc_ids, settings, retrievers, history, in_conversation)
     except RagError as error:
         trace.finish("error", error_code=error.code)
         raise
+    if in_conversation:
+        # The question stays as typed in the trace; this is what was searched, and how many suggestions were kept
+        conversation_attrs = {"standalone_question": response.standalone_question,
+                              "follow_ups": len(response.follow_ups)}
     # [DECISION D51] The trace's outcome, from the answer status
     if response.error:
         outcome = "invalid" if response.error.code == "invalid_llm_response" else "error"
@@ -140,7 +154,8 @@ async def post_ask(request: Request):
         outcome = "abstained" if response.status == "not_found" else "answered"
     response.trace_id = trace.finish(outcome, answer=response.answer,
                                      references=[reference.chunk_id for reference in response.references],
-                                     error_code=response.error.code if response.error else None)
+                                     error_code=response.error.code if response.error else None,
+                                     **conversation_attrs)
     status_code = ERRORS[response.error.code][0] if response.error else 200
     return JSONResponse(status_code=status_code, content=response.model_dump())
 

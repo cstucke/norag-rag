@@ -11,7 +11,7 @@ const TRACE_STEPS = {
   "retrieve.dense": "Meaning search", "retrieve.bm25": "Keyword search", "retrieve.graph": "Concept graph search",
   "fuse": "Combine", "prompt": "Build the prompt", "llm": "Ask the model", "validate": "Check the result",
   "select": "Pick passages", "scan": "Scan for suspicious text", "store": "Save the file",
-  "extract": "Extract concepts",
+  "extract": "Extract concepts", "rewrite": "Understand the follow-up",
 };
 
 const traceNumber = (value) => value.toLocaleString("en-US");
@@ -81,6 +81,12 @@ function traceSentence(span) {
     case "store":
       return [attrs.destination === "quarantine" ? "Held for review, outside the documents."
         : "Saved with the uploaded documents."];
+    case "rewrite":
+      // Its own model call is the next row, indented under this one
+      if (attrs.fell_back) return [`Could not rewrite the question (${attrs.reason}), so it was searched as typed.`];
+      return [attrs.changed
+        ? `Rewrote the question to stand on its own, from the last ${traceCount(attrs.history_turns, "turn")}.`
+        : "The question already stood on its own."];
     case "extract":
       return [...tracePassages([attrs.chunk_id]),
         ` ${attrs.status}: ${traceCount(attrs.triples, "link")} kept, ${attrs.rejected} rejected.`];

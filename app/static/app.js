@@ -116,11 +116,15 @@ async function ask() {
   $("working").hidden = false;
   // Hide the previous answer, so it can't be mistaken for the answer to this question
   $("result").hidden = true;
+  // Conversation mode (conversation.js): the previous turn joins the transcript, and this one is
+  // sent with the turns before it
+  const question = $("question").value;
+  archiveTurn();
   try {
-    showResult(await api("POST", "/api/ask", { question: $("question").value, doc_ids: [...selected],
-      retrievers: checkedRetrievers("ask-retrievers") }));
+    showTurn(question, await api("POST", "/api/ask", { question, doc_ids: [...selected],
+      retrievers: checkedRetrievers("ask-retrievers"), ...conversationFields() }));
   } catch {
-    showResult({ status: "error", error: { message: "Request failed." } });
+    showTurn(question, { status: "error", error: { message: "Request failed." } });
   } finally {
     $("ask").disabled = false;
     $("working").hidden = true;

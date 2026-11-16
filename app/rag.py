@@ -268,9 +268,9 @@ def ensure_indexed(doc_ids, settings):
 PROMPT = """You answer questions using ONLY the numbered excerpts below, taken from the selected documents.
 If the excerpts do not contain the answer, set "answerable" to false and explain briefly in "answer".
 Do not use outside knowledge.
-
+{follow_ups_rule}
 Return ONLY a JSON object with exactly these keys:
-{{"answerable": true|false, "answer": "<string>", "citations": [<excerpt numbers you used>]}}
+{{"answerable": true|false, "answer": "<string>", "citations": [<excerpt numbers you used>]{follow_ups_key}}}
 
 Excerpts:
 {excerpts}
@@ -292,12 +292,22 @@ def retrieve(question, doc_ids, settings):
                 result["ids"][0], result["documents"][0], result["metadatas"][0], result["distances"][0])]
 
 
-def build_prompt(question, chunks):
+# [DECISION D70] Conversation mode asks for the suggested questions in the answer call itself
+FOLLOW_UPS_RULE = ('In "follow_ups", give two or three questions these documents can answer and that follow '
+                   'naturally from this answer; an empty list if none.\n')
+FOLLOW_UPS_KEY = ', "follow_ups": ["<question>", "<question>", "<question>"]'
+
+
+def build_prompt(question, chunks, conversation=False):
+    """With conversation off, both additions are empty and the prompt is the V3 prompt character
+    for character, which is what keeps the evaluation numbers unchanged."""
     excerpts = "\n\n".join(
         f"[{rank}] (source: {chunk['metadata']['title']}, "
         f"lines {chunk['metadata']['line_start']}-{chunk['metadata']['line_end']})\n{chunk['text']}"
         for rank, chunk in enumerate(chunks, 1))
-    return PROMPT.format(excerpts=excerpts, question=question)
+    return PROMPT.format(excerpts=excerpts, question=question,
+                         follow_ups_rule=FOLLOW_UPS_RULE if conversation else "",
+                         follow_ups_key=FOLLOW_UPS_KEY if conversation else "")
 
 # [DECISION D46] Running totals of LLM usage. A caller measures its own cost as the
 # difference between a copy taken before and a copy taken after
@@ -369,18 +379,28 @@ def to_reference(rank, chunk):
                      line_end=meta["line_end"], distance=chunk["distance"])
 
 
-def ask(question, doc_ids, settings, retrievers=None):
+def ask(question, doc_ids, settings, retrievers=None, history=None, conversation=False):
     """The whole /api/ask logic, also used by the evaluation harness (--with-llm).
     Request errors are raised as RagError. Everything after retrieval is reported
-    in the returned AskResponse."""
+    in the returned AskResponse.
+    history and conversation are the conversation mode of /api/ask. The evaluation passes
+    neither, so it runs the V3 pipeline unchanged."""
     if not question.strip():
         raise RagError("empty_question")
     if not doc_ids:
         raise RagError("no_documents_selected")
     config = AskConfig(chunk_size=settings["chunk_size"], chunk_overlap=settings["chunk_overlap"],
                        top_k=settings["top_k"], model=LLM_MODEL)
-    # hybrid imports rag, so it can't be imported at the top of this module
+    # hybrid and conversation import rag, so they can't be imported at the top of this module
     from app import graph, hybrid
+    from app.conversation import clean_follow_ups, standalone
+    # [DECISION D68] A follow-up is rewritten to stand on its own, and the rewritten question is
+    # what retrieval and the answer prompt both use. The first turn makes no extra call
+    typed = question
+    if history:
+        question = standalone(question, history)
+    # Set only when the rewrite changed the question, so the page can show what was searched
+    standalone_question = question if question.strip() != typed.strip() else None
     fused = hybrid.fused_retrieve(question, doc_ids, settings,
                                   hybrid.DEFAULT_RETRIEVERS if retrievers is None else retrievers,
                                   settings["top_k"])
@@ -393,10 +413,10 @@ def ask(question, doc_ids, settings, retrievers=None):
     if not chunks:
         # [DECISION D14] Nothing retrieved: the LLM is not called
         return AskResponse(status="not_found", answer="Nothing was retrieved from the selected documents.",
-                           config=config)
+                           config=config, standalone_question=standalone_question)
     try:
         with trace.span("prompt", excerpts=len(chunks)) as span:
-            prompt = build_prompt(question, chunks)
+            prompt = build_prompt(question, chunks, conversation)
             span["chars"] = len(prompt)
         raw = call_llm(prompt)
         with trace.span("validate") as span:
@@ -404,15 +424,19 @@ def ask(question, doc_ids, settings, retrievers=None):
             span.update(answerable=llm_answer.answerable, citations=llm_answer.citations)
     except RagError as error:
         return AskResponse(status="error", error=ErrorInfo(code=error.code, message=error.message),
-                           retrieved=retrieved, config=config)
+                           retrieved=retrieved, config=config, standalone_question=standalone_question)
     references = [retrieved[citation - 1] for citation in llm_answer.citations]
+    # [DECISION D70] Cleaned, never fatal. Empty when conversation mode is off
+    follow_ups = clean_follow_ups(llm_answer.follow_ups) if conversation else []
     if not llm_answer.answerable:
         # [DECISION D14] The excerpts don't contain the answer
         return AskResponse(status="not_found",
                            answer=f"The selected documents don't contain an answer. {llm_answer.answer}".strip(),
-                           references=references, retrieved=retrieved, config=config)
+                           references=references, retrieved=retrieved, config=config,
+                           standalone_question=standalone_question, follow_ups=follow_ups)
     return AskResponse(status="answered", answer=llm_answer.answer, references=references,
-                       retrieved=retrieved, config=config, graph_path=graph_path)
+                       retrieved=retrieved, config=config, graph_path=graph_path,
+                       standalone_question=standalone_question, follow_ups=follow_ups)
 
 def get_chunk(chunk_id):
     """A stored chunk by its id, {doc_id}#cs{size}-ov{overlap}#{index}, which names

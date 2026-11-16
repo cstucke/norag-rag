@@ -47,3 +47,13 @@ blockquote { margin: 0.4rem 0; padding-left: 0.8rem; border-left: 3px solid #ccc
 /* [DECISION D62] Hidden until the Advanced switch is on */
 body:not(.advanced) .advanced { display: none; }
 #advanced-box { float: right; }
+/* Conversation mode: earlier turns above the newest answer, the question box below it */
+.turn { border-bottom: 1px solid #ccc; margin-bottom: 0.8rem; padding-bottom: 0.6rem; }
+.turn ul { padding-left: 1.2rem; margin: 0.3rem 0; }
+.turn-question { font-weight: bold; margin-bottom: 0.2rem; }
+.turn-question::before { content: "You: "; color: #555; font-weight: normal; }
+#searched-for { margin-top: 0; }
+#follow-up-list { list-style: none; padding: 0; margin: 0 0 0.8rem; }
+#follow-up-list li { margin-bottom: 0.3rem; }
+#follow-up-list button { text-align: left; }
+#new-conversation { margin-left: 0.5rem; }
