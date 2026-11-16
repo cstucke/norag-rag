@@ -1,6 +1,6 @@
 # Ask your documents (norag-rag)
 
-A web app that answers questions about a set of documents and shows the passages each answer comes from (RAG, retrieval-augmented generation). It also turns the selected documents into flashcards or a multiple-choice quiz, checks uploaded files for prompt injection before they can be used, and builds a concept graph of the documents you upload.
+A web app that answers questions about a set of documents and shows the passages each answer comes from (RAG, retrieval-augmented generation). You can follow up on an answer as in a conversation. It also turns the selected documents into flashcards or a multiple-choice quiz, checks uploaded files for prompt injection before they can be used, and builds a concept graph of the documents you upload.
 
 It comes with two document sets: 840 articles from *The Forest* game wiki, and 5 documents about Kestrel Analytics, the example company provided with the course.
 
@@ -95,9 +95,10 @@ Don't add `--host 0.0.0.0`. The app has no login, so anyone on your network coul
 
 1. **Pick documents.** In the Documents panel, type `kestrel` or `forest` in the filter and click **Select all (filtered)**, or tick documents one by one.
 2. **Ask a question.** Type it and click **Ask**. The answer comes with numbered references; click one to read the passage it comes from.
-3. **See what happened.** Click **Details** under an answer to see each step, how long it took, the tokens used and the cost.
-4. **Make a quiz.** Choose **Make a quiz**, then the type (flashcards or multiple choice), the number of items (1 to 10) and the difficulty, and click **Generate**. Every item links to its source passage. An item whose quote isn't found word for word in its source is dropped, and the page says how many were.
-5. **Upload a document.** Use **Upload** for a `.md` or `.txt` file (UTF-8, up to 2 MB). The file is scanned first. If it contains text that looks like instructions to the AI, it is held: click **Review**, then **Approve** to add it unchanged or **Reject** to delete it.
+3. **Follow up.** Ask the next question as you would in a conversation, for example "and for the Business plan?" after a question about single sign-on. The app first rewrites a follow-up into a question that stands on its own, and shows it as **Searched for** when it changed your wording. Earlier turns stay on screen above the newest answer. Under each answer, suggested next questions are buttons: click one to ask it. **New conversation** clears the turns, so the next question is read on its own. A follow-up costs one extra LLM call, for the rewrite; the first question of a conversation doesn't.
+4. **See what happened.** Click **Details** under an answer to see each step, how long it took, the tokens used and the cost.
+5. **Make a quiz.** Choose **Make a quiz**, then the type (flashcards or multiple choice), the number of items (1 to 10) and the difficulty, and click **Generate**. Every item links to its source passage. An item whose quote isn't found word for word in its source is dropped, and the page says how many were.
+6. **Upload a document.** Use **Upload** for a `.md` or `.txt` file (UTF-8, up to 2 MB). The file is scanned first. If it contains text that looks like instructions to the AI, it is held: click **Review**, then **Approve** to add it unchanged or **Reject** to delete it.
 
 ### Advanced
 
@@ -132,7 +133,7 @@ Things to know:
 
 Every question, quiz, upload, review decision and indexing run is recorded as one line in `data/traces/<UTC date>.jsonl`. The Details button reads from these files.
 
-- **What a trace holds:** the question and the answer, the ids of the passages used, the steps and their timings, token counts, cost, the model and the outcome. An upload trace holds the file name and the rule and line of each finding.
+- **What a trace holds:** the question and the answer, the ids of the passages used, the steps and their timings, token counts, cost, the model and the outcome. For a follow-up it also holds the rewritten question and an id shared by the turns of one conversation. An upload trace holds the file name and the rule and line of each finding.
 - **What it never holds:** the prompt, the text of a passage, the flagged text of an upload, or the API key.
 - **Where it goes:** nowhere. `data/` stays on your machine and is not committed.
 - **How long it is kept:** files older than 30 days are deleted when a new day's file is created. To delete all traces now, delete the `data/traces/` folder.
@@ -164,7 +165,7 @@ It only reports what it finds. Nothing is moved or deleted.
 
 | Path | What it is |
 |---|---|
-| `app/` | The web app: API (`main.py`), the RAG pipeline (`rag.py`), quiz generation (`study.py`), the injection scanner (`scanner.py`), traces (`trace.py`) and the page (`static/`) |
+| `app/` | The web app: API (`main.py`), the RAG pipeline (`rag.py`), follow-up questions (`conversation.py`), quiz generation (`study.py`), the injection scanner (`scanner.py`), traces (`trace.py`) and the page (`static/`) |
 | `corpus/` | The documents: `forest/`, `kestrel/` and your uploads in `uploads/` |
 | `evaluation/` | The retrieval evaluation, its questions and results |
 | `scripts/` | The one-off script that fetched the wiki snapshot |
