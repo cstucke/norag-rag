@@ -3,7 +3,8 @@
 ## Team Details
 | Member | Worked on |
 |---|---|
-| Charles Otto STUCKE | Entire project |
+| Charles Otto STUCKE | V1 to V3: entire project. V4: clean-up, traces and the Details view, LLM settings for any OpenAI-compatible server, concept graph for uploaded documents, merge of the two halves, README |
+| Jakub MOTYSIA | V4: study artifacts, injection scanner, conversation mode |
 
 ## Decision Log
 
@@ -365,3 +366,157 @@ Kestrel q05, "I lost my phone and I can't log in anymore. What can I do?". Dense
 - **D45 Metrics.** recall@k = share of a question's evidence items in the first k chunks; graph reach is computed on the items the graph found.
 - **D46 Usage counter.** A counter in `call_llm`, cost = difference of two copies, only answered calls.
 - **D47 Sample.** 10 edges from `random.Random(42)`, graded by hand.
+
+## V4
+
+Two people worked on V4. I (Charles) did the clean-up, Part A (traces) and the two changes asked for after the first submission: the LLM settings and the concept graph for uploaded documents. Jakub did Part B (study artifacts, conversation mode) and Part C (injection scanner). The sections below are mine unless they say otherwise.
+
+### Clean-up
+**What a first-time user sees now.** The title "Ask your documents", the Documents panel (filter, select, upload), the switch between asking a question and making a quiz, the question box, and under an answer its references and a Details button.
+
+**What moved behind Advanced.** One checkbox at the top right, off by default and remembered in the browser. It shows:
+- the tab bar (Evaluation, Words, Graph);
+- the Settings panel (chunk size, overlap, top-k) and the retriever boxes;
+- under an answer: the configuration line, the graph path, the list of retrieved passages and which retriever found each one;
+- the raw JSON in the Details view.
+
+**Why a switch.** Nothing is removed, so the V2 and V3 tools still work for the evaluation and the presentation. It's one CSS rule and a class on elements that already existed. Not picked: removing the tabs (the evaluation would lose its UI) or only renaming things (the first screen stays crowded).
+
+**Defaults that were wrong for a newcomer.**
+- `DEFAULT_RETRIEVERS` was still `("dense",)` in the code although the V3 report says dense + bm25. It's `("dense", "bm25")` now.
+- The page was still titled "RAG V1 — The Forest wiki".
+- `.env.example` had a placeholder as the model id, so a copied `.env` sent "MODEL" to the API.
+
+**README.** Rewritten app first after the remark that it hadn't been updated: quick start, the same steps one by one, how to use the app, troubleshooting by error message. The V3 section and the course demo text are below it, unchanged.
+
+**Install check.** On a copy of the working tree with a new virtual environment (Python 3.13): `pip install -r requirements.txt` took 39 s with a warm pip cache (1.5 GB installed), `python -m app.rag --index-all` took 103 s for 845 documents (6,348 chunks), and the page loaded with 845 documents. It wasn't a real clone, the download wasn't cold, and I didn't ask a question in it.
+
+**Left as it is.**
+- With an error status the "References" heading still shows with nothing under it.
+- A question that fails before retrieval (empty, or no document selected) has no Details button. Its trace is written, but the error response doesn't carry the id.
+
+### Traces
+**What is traced.** One trace per question, per quiz, per upload, per review decision and per indexing run (`python -m app.rag --index-all`, `python -m app.bm25_index --build`, the graph build from the command line or from the Graph tab). Indexing that happens inside a question is a step of that question's trace. A question that fails before retrieval is traced too. The evaluation isn't traced: a span does nothing when no trace is active, so `evaluation.run` calls the same functions and records nothing.
+
+**What a trace is.** One JSON object on one line: an id, the kind, the start time, the total time, the outcome, attributes, the LLM totals, and a list of spans (name, parent, start, duration, error code, attributes). A question has these spans, in order:
+
+| Span | What it records |
+|---|---|
+| `index` | documents checked, documents indexed |
+| `retrieve.dense`, `retrieve.bm25`, `retrieve.graph` | the candidate chunk ids. The graph adds the entities found and the number of edges followed |
+| `fuse` | the top k: chunk id, fused score, rank in each retriever |
+| `prompt` | number of excerpts, number of characters |
+| `llm` | model, prompt tokens, completion tokens, cost |
+| `validate` | answerable or not, the citations |
+
+**Where, and for how long.** `data/traces/<UTC date>.jsonl`, one file per day. `data/` is gitignored. Files older than 30 days are deleted when a new day's file is created. So the deletion only happens when the app writes a trace: on a machine where the app isn't used any more, the old files stay.
+
+**Who can read them. Do they leave the machine.** Anyone who can read the files, and anyone who can reach `GET /api/traces/{id}`. There's no login. Uvicorn listens on 127.0.0.1 by default, so that's this machine only, and the README says not to start it with `--host 0.0.0.0`. The traces don't leave the machine. The question and the retrieved passages do, but that's the call to the LLM provider, not the traces.
+
+**What is never in a trace.** The API key, the prompt, the text of a chunk or of a document. A trace has chunk ids, and the Details view opens the passage from the id. Checked by searching the trace file for the key, for a sentence of a retrieved chunk and for the prompt: none found.
+
+**Personal data.** The question is stored as typed and the answer as returned. The answer is written from the documents, so personal data in a document can reach a trace through the answer. I accepted that: one user, on their own laptop, 30 days, and without the question and the answer a trace can't be matched to what the user saw. I didn't add redaction (it's the other Part C feature).
+
+**From the answer to its trace.** Every answer and every quiz has a Details button. It shows one summary line (outcome, total time, LLM calls, tokens, cost), then one row per step with a plain name, the time and one sentence. Chunk ids are links to the passage viewer. This is a real one, Kestrel q01, the first question after start-up (`20261115-318c4f4e2330`):
+
+| Step | Time | What happened |
+|---|---|---|
+| Prepare documents | 4,392 ms | Checked 5 documents, none needed preparing. |
+| Meaning search | 682 ms | Found 20 passages. |
+| Keyword search | 100 ms | Found 20 passages. |
+| Combine | 0 ms | Kept the best 5. |
+| Build the prompt | 0 ms | 5 passages, 5,338 characters. |
+| Ask the model | 8,108 ms | gemini-3.5-flash read 1,374 tokens and wrote 152. |
+| Check the result | 2 ms | Accepted. It cites passages 1 and 5. |
+
+Total 13.3 s, 1 LLM call, 1,526 tokens. At the prices below that's $0.0034. The trace itself says $0.0000 because I entered the prices after that run.
+
+What I take from it:
+- The model is 61% of the time (8.1 s of 13.3 s). Retrieval is 0.8 s and the citation check 2 ms.
+- "Prepare documents 4.4 s, none needed preparing" is misleading. The time is the embedding model loading on the first question. Once it's loaded that step takes about 3 ms.
+- The passage cited as 5 was rank 1 for dense and rank 9 for BM25, and fusion put it last of the five. It's the same effect as q05 in V3.
+
+**Indexing runs.** `--index-all` writes one trace with one span per batch of 50 documents: 17 spans for 845 documents, 3.2 s when nothing needs indexing. `bm25_index --build` writes one trace with one span: 7.3 s for 6,348 chunks. The graph build writes one span per chunk, with the LLM call under it. I haven't run a graph build with a real model since the traces were added (38 LLM calls for Kestrel), so I have no real trace of one to show.
+
+**Checks.**
+- Regression: `evaluation.run` on Kestrel with dense + bm25 gives the same ranks on all 12 questions as `20261108T101200Z_kestrel_cs1000_ov200_dense+bm25.json`, and writes no trace.
+- Without an LLM configured: HTTP 503, the response still has a trace id, the trace has six spans, and Details shows "Failed: llm_not_configured" on the model step.
+- An empty question writes a trace with the outcome `error`.
+- `GET /api/traces/` with an unknown id or with `..%2F..%2F.env` gives 404. An id that doesn't have the trace format is never used to build a path.
+- With the day's file removed, Details says "Details are no longer available for this answer."
+
+**Limits.**
+- The cost uses gemini-3.5-flash's prices whatever `LLM_MODEL` is. With another model the cost in Details is wrong.
+- Google's output price includes thinking tokens. I didn't check that `completion_tokens` counts them on the OpenAI-compatible endpoint. If it doesn't, the cost is too low.
+- A failed LLM call has 0 tokens and no cost. `call_llm` turns every other API error into `llm_error` and drops the cause, so the trace says that the call failed but not why.
+- Retention runs on write only (above).
+
+**Options I rejected.**
+- SQLite: easier to query, but one more schema, and the BM25 index, the graph and the results are already plain files.
+- A self-hosted tool (Langfuse, Phoenix): a second service to install, against "easy to install and run".
+- A hosted tool: the questions and answers would leave the machine.
+- For the wiring: passing a trace argument down (it changes the signatures the evaluation and the graph build call), or timing at the route only (it can't separate the LLM call from the check of its output).
+
+**Metrics page.** Not built. The trace has what it would need: the outcome, the time of each span, tokens and cost per call, and the day in the file name.
+
+### LLM settings (asked for after the first submission)
+Before, the app read `GOOGLE_API_KEY` and `GEMINI_MODEL`, and Google's URL was hard-coded in `rag.py`. Now it reads `LLM_URL`, `LLM_API_KEY` and `LLM_MODEL` and talks to any OpenAI-compatible server.
+- `.env.local` is read before `.env`, so it wins. A variable set in the shell wins over both.
+- All three are required. There's no default provider and no fallback to the old names: with one missing, the app says "LLM not configured. Set LLM_URL, LLM_API_KEY and LLM_MODEL in .env." (503). I preferred that to an app that silently calls Google.
+- `.env.example` has Gemini's URL and model id, so the usual path is still: copy the file, paste a key.
+- The course demo scripts still read `GOOGLE_API_KEY`. I didn't touch them.
+
+Limits:
+- The request always has `response_format={"type": "json_object"}`. A server that rejects it shows as "LLM rejected the request (API key or model id)", which points at the wrong cause. The README says so.
+- An empty key blocks every call, also for a local server that needs none. The README says to put any text.
+- The prices are Gemini's (above).
+
+Checked against a local fake OpenAI-compatible server: the request goes to the configured URL with the configured key and model, and the answer comes back through the normal path. Not checked: a real second provider.
+
+### Concept graph for uploaded documents (asked for after the first submission)
+In V3 the graph was Kestrel only: a fixed schema, a command-line build, and no view of it except the graph path under an answer. Now a user uploads documents, builds their graph in the Graph tab, browses it and uses it as a retriever.
+
+**Schema.** The Kestrel schema rejects everything in another document, because `Triple` checks the types. Uploads get six general entity types (Person, Organization, Place, Event, Object, Concept) and free relation names, normalized to snake_case so "Works for" and `works_for` are one. Kestrel keeps its fixed schema, so the V3 numbers still hold. The cost: the same fact can come out under two relation names (`works_for`, `employed_by`) and they stay two edges. Retrieval follows every edge whatever its name, so the chunk is still found, but its score counts both.
+
+**Build.** `POST /api/graph/build` makes 5 LLM calls and returns. The page calls it again until nothing is left, at most 40 calls per click, and Stop keeps what's done. Chunks never tried go first, then the failed ones. One request for the whole document would have been one long wait with nothing on screen, and V3's build hit the rate limit on 16 of 38 calls. Each request is one `index` trace.
+
+**When the documents change.** The graph file keeps the file hash of each document. The extractions of an upload that was deleted or replaced are dropped when the graph is read, so the Graph tab is right at once, and the next Build only reads the new passages. The search reads the file as it was last built, so until that Build a replaced document can still be scored through its old links.
+
+**Storage and search.** One file per corpus and chunk configuration (`uploads_cs1000_ov200.json` next to `kestrel_cs1000_ov200.json`). A question searches every built graph that has a selected document and adds up the chunk scores. Entity linking and the 2 hops are V3's.
+
+**Explorer.** A table of entities (the 200 with the most links). Click one to see its links, click the other end of a link to move there, click a passage name to read the text the link comes from. It's a table, not a drawing.
+
+**Checks.** With the fake server, in a headless browser: upload, build, browse, then ask with the graph on, with no page error. A chunk that failed is tried again on the next step. The old and the new `graph_search` give the same result on a synthetic Kestrel graph (15 cases). Kestrel regression: 12 of 12 identical, as above.
+
+**Not checked.**
+- A build with a real model on an uploaded document, so I have no extraction-quality number for the general schema.
+- Retrieval quality: `evaluation.run` still refuses the graph for any corpus but Kestrel, and there's no question set for uploads.
+
+### Merging the two halves
+The two branches conflicted in four files (`main.py`, `rag.py`, `index.html`, `style.css`). I kept both sides everywhere except one import line in `main.py`, where `GEMINI_MODEL` was lost. `post_ask` still used it, so every `POST /api/ask` on `main` was a 500 (`NameError`) until the next PR. The lint check I had added on pull requests (ruff, syntax errors and pyflakes only) reported exactly that, and I merged anyway. After the fix: lint clean, Kestrel regression 12 of 12, and without a key the question, quiz, upload and review paths each give their message and their trace.
+
+### Study artifacts
+<!-- Jakub -->
+
+### Injection scanner
+<!-- Jakub -->
+
+### Conversation mode
+<!-- Jakub -->
+
+### Decision log (V4)
+D55 to D60 and D67 to D70 are Jakub's.
+- **D48 Trace store.** Options: JSON lines, SQLite, a self-hosted tool, a hosted tool. Picked: JSON lines, one file per UTC day in `data/traces/`. The id starts with the date, so opening a trace reads one file. Why: no dependency, nothing leaves the machine, retention is deleting files.
+- **D49 What a trace may hold.** Picked: the question and the answer, chunk ids, ranks, scores, counts, timings, tokens, cost, model, settings, error codes. Never the API key, a prompt or the text of a chunk. Why: the slides forbid keys and whole documents, and the chunk id is enough to open the passage. Personal data: see Traces.
+- **D50 What is traced, and how.** Picked: every question, quiz, upload, review and indexing run; not the evaluation. A span helper keeps the current trace in a context variable. Options: a trace argument passed down, timing at the route only. Why: no function signature changes, and the evaluation numbers can't move.
+- **D51 Outcomes.** A question is `answered`, `abstained` (`not_found`), `invalid` (the output was rejected) or `error`. An indexing run is `ok` or `error`. Why: they're the four the metrics page would count.
+- **D52 Retention.** Picked: 30 days, old files deleted when a new day's file is created. Why: no scheduler to run. Cost: nothing is deleted while the app isn't used.
+- **D53 Cost.** Two prices in `config.py`: $1.50 per million prompt tokens and $9.00 per million completion tokens, for gemini-3.5-flash. Google's price list no longer has that model, so the figures come from its "What's new in Gemini 3.6 Flash" page. The cost is computed in the `llm` span. Cost: wrong for any other model.
+- **D54 Details view.** Options: the raw JSON, a tool's trace view, plain sentences. Picked: one sentence per step in plain words, with the raw JSON behind Advanced. Why: the user knows the documents, not RAG.
+- **D61 Name.** "Ask your documents", in the page and the API title. Why: it says what the app does without naming a corpus.
+- **D62 Advanced switch.** Options: a switch, removing the tabs, renaming only. Picked: one switch, kept in the browser. Why: nothing is removed and the diff is small.
+- **D63 LLM settings.** Picked: `LLM_URL`, `LLM_API_KEY`, `LLM_MODEL`, all required, `.env.local` before `.env`, no fallback to the Google names. Why: a missing value should be an error message, not a call to a provider the user didn't choose.
+- **D64 Schema for uploads.** Options: the Kestrel schema, a schema per document, general types with free relations. Picked: six general types and free relation names in snake_case. Why: an upload can be about anything. Cost: the same relation under two names.
+- **D65 Build from the page.** Picked: 5 LLM calls per request, at most 40 per click, Stop, failed chunks tried again. Why: short requests, visible progress, and a rate limit only loses one step.
+- **D66 One graph per corpus.** Picked: one file per corpus and chunk configuration; a question searches every built graph that has a selected document. Why: Kestrel's graph and its numbers stay untouched.
+- **Metrics page.** Not built (optional).
