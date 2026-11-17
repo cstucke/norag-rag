@@ -58,12 +58,12 @@ def check_request(body):
     invalid_study_request naming the field; no documents is no_documents_selected."""
     body = body if isinstance(body, dict) else {}
     kind, count, difficulty, doc_ids = body.get("type"), body.get("count"), body.get("difficulty"), body.get("doc_ids")
-    if kind not in TYPES:
+    if not isinstance(kind, str) or kind not in TYPES:
         raise rag.RagError("invalid_study_request", "Invalid study request: type must be flashcards or multiple_choice.")
     # bool is a subclass of int in Python, so reject it explicitly
     if not isinstance(count, int) or isinstance(count, bool) or not 1 <= count <= MAX_COUNT:
         raise rag.RagError("invalid_study_request", f"Invalid study request: count must be a whole number from 1 to {MAX_COUNT}.")
-    if difficulty not in DIFFICULTIES:
+    if not isinstance(difficulty, str) or difficulty not in DIFFICULTIES:
         raise rag.RagError("invalid_study_request", "Invalid study request: difficulty must be easy, medium or hard.")
     # Malformed doc_ids count as missing, as in /api/ask
     if not isinstance(doc_ids, list) or not all(isinstance(doc_id, str) for doc_id in doc_ids) or not doc_ids:
